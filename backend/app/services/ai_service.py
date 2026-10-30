@@ -5,7 +5,8 @@ and general fitness chat. Provides demo-data fallbacks when no API key is set.
 
 import json
 import logging
-from typing import Any, Dict, List
+import re
+from typing import Any, Dict, List, Optional
 
 from app.config import settings
 
@@ -63,9 +64,24 @@ Structure:
 }
 """
 
-CHAT_SYSTEM_PROMPT_TEMPLATE = """You are FitBuddy AI — a friendly, knowledgeable fitness coach and nutritionist.
-You help users with diet, workouts, motivation, and general health questions.
-Keep responses concise, practical, and encouraging.
+CHAT_SYSTEM_PROMPT_TEMPLATE = """You are FitBuddy AI — an expert AI fitness coach and sports nutritionist.
+Your mission is to give accurate, encouraging, and clear answers.
+
+CRITICAL RULES FOR NUTRITION & FOOD QUESTIONS:
+1. UNDERSTAND USER INTENT:
+   - If the user asks for protein (e.g., "How much protein in 4 eggs?"), answer PROTEIN FIRST. Never replace the requested nutrient with calories or other macros!
+   - If the user asks for calories (e.g., "How many calories in 2 bananas?"), answer CALORIES FIRST.
+   - If the user asks for fat (e.g., "How much fat in 100g paneer?"), answer FAT FIRST.
+   - If the user asks for carbs (e.g., "How many carbs in 2 rotis?"), answer CARBOHYDRATES FIRST.
+   - If the user asks for both calories and protein, answer BOTH first.
+   - Support English and Hinglish (e.g., "4 ande me kitna protein hota hai?").
+
+2. STRICT 4-PART RESPONSE STRUCTURE:
+   1. Direct answer stating the exact food quantity and requested nutrient.
+   2. Amount per serving / food quantity.
+   3. Other nutrition macros (calories, protein, carbs, fat) bulleted.
+   4. Note that values are approximate and depend on portion size, cooking method, and brand.
+
 User profile: {profile}
 """
 
@@ -247,21 +263,288 @@ def generate_workout_plan(user_profile: Dict[str, Any], preferences: Dict[str, A
         return _DEMO_WORKOUT_PLAN
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Nutrition Intent & Accurate Calculation Engine
+# ─────────────────────────────────────────────────────────────────────────────
+
+NUTRITION_DATABASE = {
+    "egg": {
+        "names": ["egg", "eggs", "anda", "ande", "boiled egg", "boiled eggs", "egg white", "egg whites"],
+        "unit": "egg",
+        "portion_name": "large whole egg",
+        "default_qty": 1,
+        "per_unit": {"protein": 6.3, "calories": 72, "fat": 4.8, "carbs": 0.4},
+        "notes": "Values depend on egg size (Medium ~6g vs Large ~6.5g) and cooking method. Egg whites alone contain ~3.6g protein and 17 kcal each."
+    },
+    "banana": {
+        "names": ["banana", "bananas", "kela", "kele"],
+        "unit": "banana",
+        "portion_name": "medium banana",
+        "default_qty": 1,
+        "per_unit": {"protein": 1.3, "calories": 105, "fat": 0.3, "carbs": 27.0},
+        "notes": "Values are approximate and vary slightly with fruit size (118g average) and ripeness."
+    },
+    "paneer": {
+        "names": ["paneer", "panir", "cottage cheese"],
+        "unit": "gram",
+        "portion_name": "Indian raw paneer",
+        "default_qty": 100,
+        "per_100g": {"protein": 19.0, "calories": 275, "fat": 21.0, "carbs": 3.4},
+        "notes": "Values depend on milk fat (cow vs buffalo milk). Low-fat paneer yields ~25g protein and only 140 kcal per 100g."
+    },
+    "almond": {
+        "names": ["almond", "almonds", "badam", "badaam"],
+        "unit": "gram",
+        "portion_name": "whole raw almonds",
+        "default_qty": 100,
+        "per_100g": {"protein": 21.2, "calories": 579, "fat": 49.9, "carbs": 21.6},
+        "notes": "Almonds are dense in healthy monounsaturated fats. A standard daily handful portion is ~28g (~14g fat, 160 kcal, 6g protein)."
+    },
+    "chicken": {
+        "names": ["chicken breast", "chicken", "murga", "murgh", "boneless chicken"],
+        "unit": "gram",
+        "portion_name": "raw boneless skinless chicken breast",
+        "default_qty": 100,
+        "per_100g": {"protein": 23.0, "calories": 120, "fat": 2.6, "carbs": 0.0},
+        "notes": "Based on raw boneless chicken breast. 100g cooked/grilled yields ~31g protein and 165 kcal due to water weight loss."
+    },
+    "roti": {
+        "names": ["roti", "rotis", "chapati", "chapatis", "phulka", "fulka"],
+        "unit": "roti",
+        "portion_name": "medium whole wheat roti",
+        "default_qty": 1,
+        "per_unit": {"protein": 3.2, "calories": 85, "fat": 0.5, "carbs": 16.0},
+        "notes": "Based on 35g dough whole wheat roti without oil. Adding 1 tsp ghee adds ~45 kcal and 5g fat."
+    },
+    "milk": {
+        "names": ["milk", "doodh", "dudh", "cow milk", "toned milk"],
+        "unit": "ml",
+        "portion_name": "toned cow milk",
+        "default_qty": 250,
+        "per_100g": {"protein": 3.3, "calories": 61, "fat": 3.4, "carbs": 4.8},
+        "notes": "250ml is a standard Indian glass. Standard toned milk yields ~8.2g protein and 150 kcal; buffalo milk yields ~9.5g protein and 240 kcal."
+    },
+    "rice": {
+        "names": ["rice", "chawal", "white rice", "brown rice", "cooked rice"],
+        "unit": "gram",
+        "portion_name": "cooked white rice",
+        "default_qty": 100,
+        "per_100g": {"protein": 2.7, "calories": 130, "fat": 0.3, "carbs": 28.0},
+        "notes": "Based on cooked rice (100g raw uncooked rice contains ~365 kcal and 7g protein, and expands to ~280g cooked)."
+    },
+    "dal": {
+        "names": ["dal", "daal", "lentils", "moong dal", "chana dal", "toor dal", "masoor dal"],
+        "unit": "bowl",
+        "portion_name": "cooked dal (1 standard bowl / 150g)",
+        "default_qty": 1,
+        "per_unit": {"protein": 8.0, "calories": 150, "fat": 3.5, "carbs": 23.0},
+        "notes": "Values depend on tadka oil/ghee and thickness of the dal."
+    },
+    "soya": {
+        "names": ["soya chunks", "soy chunks", "soya", "soyabean"],
+        "unit": "gram",
+        "portion_name": "dry soya chunks",
+        "default_qty": 100,
+        "per_100g": {"protein": 52.0, "calories": 345, "fat": 0.5, "carbs": 33.0},
+        "notes": "Dry soya chunks are over 50% protein by weight. Soaking expands them 3x in water."
+    },
+    "sattu": {
+        "names": ["sattu", "chana sattu", "roasted gram flour"],
+        "unit": "gram",
+        "portion_name": "roasted chana sattu flour",
+        "default_qty": 100,
+        "per_100g": {"protein": 21.0, "calories": 385, "fat": 5.0, "carbs": 64.0},
+        "notes": "Traditional Indian superfood rich in insoluble fiber and plant protein."
+    },
+    "curd": {
+        "names": ["curd", "dahi", "yogurt", "greek yogurt"],
+        "unit": "gram",
+        "portion_name": "plain curd / dahi",
+        "default_qty": 100,
+        "per_100g": {"protein": 3.8, "calories": 62, "fat": 3.5, "carbs": 4.5},
+        "notes": "1 standard katori/bowl is ~150g, providing approx 5.7g protein and 95 kcal."
+    },
+    "fish": {
+        "names": ["fish", "machli", "salmon", "rohu", "tilapia"],
+        "unit": "gram",
+        "portion_name": "raw fish fillet",
+        "default_qty": 100,
+        "per_100g": {"protein": 20.0, "calories": 125, "fat": 4.5, "carbs": 0.0},
+        "notes": "Rich in lean protein and omega-3 fatty acids."
+    },
+    "oats": {
+        "names": ["oats", "oatmeal", "rolled oats"],
+        "unit": "gram",
+        "portion_name": "rolled oats",
+        "default_qty": 50,
+        "per_100g": {"protein": 13.5, "calories": 389, "fat": 6.9, "carbs": 66.0},
+        "notes": "1 standard breakfast serving of 50g dry oats yields ~6.7g protein and 195 kcal."
+    },
+    "peanut_butter": {
+        "names": ["peanut butter", "peanutbutter"],
+        "unit": "tbsp",
+        "portion_name": "peanut butter (2 tbsp / 32g)",
+        "default_qty": 2,
+        "per_unit": {"protein": 8.0, "calories": 190, "fat": 16.0, "carbs": 7.0},
+        "notes": "Values for unsweetened peanut butter. Calorie-dense and rich in healthy fats."
+    },
+    "tofu": {
+        "names": ["tofu", "soya paneer"],
+        "unit": "gram",
+        "portion_name": "firm tofu",
+        "default_qty": 100,
+        "per_100g": {"protein": 15.0, "calories": 83, "fat": 5.0, "carbs": 2.0},
+        "notes": "Plant-based complete protein with lower saturated fat."
+    }
+}
+
+
+def get_accurate_nutrition_response(query: str) -> Optional[str]:
+    q = query.lower()
+    has_protein = bool(re.search(r"protein|protien", q))
+    has_calories = bool(re.search(r"calorie|calories|kcal|cal|energy|kitni calorie", q))
+    has_fat = bool(re.search(r"fat|fats|charbi", q))
+    has_carbs = bool(re.search(r"carb|carbs|carbohydrate|carbohydrates", q))
+
+    if (has_protein and has_calories) or "protein and calories" in q or "calories and protein" in q or "protein aur calorie" in q:
+        intent = "both_protein_calories"
+    elif has_protein:
+        intent = "protein"
+    elif has_calories:
+        intent = "calories"
+    elif has_fat:
+        intent = "fat"
+    elif has_carbs:
+        intent = "carbs"
+    else:
+        intent = "all_macros"
+
+    matched_key = None
+    matched_food = None
+    sorted_keys = sorted(
+        NUTRITION_DATABASE.keys(),
+        key=lambda k: max(len(name) for name in NUTRITION_DATABASE[k]["names"]),
+        reverse=True
+    )
+
+    for k in sorted_keys:
+        food = NUTRITION_DATABASE[k]
+        for name in food["names"]:
+            if re.search(r"\b" + re.escape(name) + r"\b", q):
+                matched_key = k
+                matched_food = food
+                break
+        if matched_key:
+            break
+
+    if not matched_food:
+        return None
+
+    qty = float(matched_food["default_qty"])
+    g_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:g|gm|gram|grams)\b", q)
+    ml_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:ml|milliliter|milliliters)\b", q)
+    count_match = re.search(r"\b(\d+)\s*(?:large|medium|small|whole|boiled)?\s*(?:egg|eggs|anda|ande|banana|bananas|kela|kele|roti|rotis|chapati|chapatis|phulka|fulka|piece|pieces|cup|cups|bowl|bowls|glass|glasses)\b", q)
+    leading_match = re.search(r"^\s*(\d+)\b", q)
+
+    if g_match:
+        qty = float(g_match.group(1))
+    elif ml_match:
+        qty = float(ml_match.group(1))
+    elif count_match:
+        qty = float(count_match.group(1))
+    elif leading_match:
+        qty = float(leading_match.group(1))
+
+    if "per_unit" in matched_food:
+        p = round(matched_food["per_unit"]["protein"] * qty, 1)
+        c = round(matched_food["per_unit"]["calories"] * qty)
+        f = round(matched_food["per_unit"]["fat"] * qty, 1)
+        cb = round(matched_food["per_unit"]["carbs"] * qty, 1)
+    else:
+        factor = qty / 100.0
+        p = round(matched_food["per_100g"]["protein"] * factor, 1)
+        c = round(matched_food["per_100g"]["calories"] * factor)
+        f = round(matched_food["per_100g"]["fat"] * factor, 1)
+        cb = round(matched_food["per_100g"]["carbs"] * factor, 1)
+
+    is_plural = (qty != 1.0)
+    verb = "contain" if is_plural else "contains"
+    int_qty = int(qty) if qty.is_integer() else qty
+
+    if matched_food["unit"] in ["egg", "banana", "roti"]:
+        unit_label = f"{int_qty} {matched_food['portion_name']}s" if is_plural else f"1 {matched_food['portion_name']}"
+    elif matched_food["unit"] == "gram":
+        unit_label = f"{int_qty}g of {matched_food['portion_name']}"
+    elif matched_food["unit"] == "ml":
+        unit_label = f"{int_qty}ml of {matched_food['portion_name']}"
+    else:
+        unit_label = f"{int_qty} {matched_food['unit']}(s) of {matched_food['portion_name']}"
+
+    if intent == "protein":
+        lead = f"{unit_label} {verb} approximately **{p}g of protein**."
+        breakdown = f"• **Protein:** **{p}g**\n• Calories: {c} kcal\n• Fat: {f}g\n• Carbohydrates: {cb}g"
+    elif intent == "calories":
+        lead = f"{unit_label} {verb} approximately **{c} kcal (calories)**."
+        breakdown = f"• **Calories:** **{c} kcal**\n• Carbohydrates: {cb}g\n• Protein: {p}g\n• Fat: {f}g"
+    elif intent == "fat":
+        lead = f"{unit_label} {verb} approximately **{f}g of fat**."
+        breakdown = f"• **Fat:** **{f}g**\n• Calories: {c} kcal\n• Protein: {p}g\n• Carbohydrates: {cb}g"
+    elif intent == "carbs":
+        lead = f"{unit_label} {verb} approximately **{cb}g of carbohydrates**."
+        breakdown = f"• **Carbohydrates:** **{cb}g**\n• Calories: {c} kcal\n• Protein: {p}g\n• Fat: {f}g"
+    elif intent == "both_protein_calories":
+        lead = f"{unit_label} {verb} approximately **{c} kcal and {p}g of protein**."
+        breakdown = f"• **Calories:** **{c} kcal**\n• **Protein:** **{p}g**\n• Carbohydrates: {cb}g\n• Fat: {f}g"
+    else:
+        lead = f"Here is the complete nutrition breakdown for {unit_label}:"
+        breakdown = f"• Calories: {c} kcal\n• Protein: {p}g\n• Carbohydrates: {cb}g\n• Fat: {f}g"
+
+    return f"{lead}\n\n{breakdown}\n\n💡 *Note:* {matched_food['notes']} Values are approximate and depend on exact portion size and preparation method."
+
+
 def chat_response(messages: List[Dict[str, str]], system_prompt: str) -> str:
     """
     Get a conversational AI response.
-
-    Args:
-        messages: List of {role, content} dicts (full conversation history).
-        system_prompt: System instruction (should include user profile).
-
-    Returns:
-        Assistant reply string.
     """
+    # Extract the user's latest query
+    latest_query = ""
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            latest_query = msg.get("content", "")
+            break
+
+    # 1. First priority: Check exact nutrition calculation engine
+    if latest_query:
+        nutrition_res = get_accurate_nutrition_response(latest_query)
+        if nutrition_res:
+            return nutrition_res
+
+    # 2. Check OpenAI API availability
     if not _has_api_key():
+        # Fallback for general questions when OpenAI is not configured
+        q = latest_query.lower()
+        if "workout" in q or "exercise" in q or "training" in q:
+            return (
+                "Here is a great full-body foundational workout:\n\n"
+                "• Squats: 3 sets x 12 reps\n"
+                "• Push-Ups: 3 sets x 10-12 reps\n"
+                "• Dumbbell / Inverted Rows: 3 sets x 10 reps\n"
+                "• Plank: 3 sets x 45 seconds\n\n"
+                "Remember to maintain progressive overload and keep 1-2 reps in reserve! 💪"
+            )
+        if "diet" in q or "meal" in q or "food" in q or "eat" in q:
+            return (
+                "A balanced Indian high-protein meal template:\n\n"
+                "• 2 Multigrain Rotis\n"
+                "• 1 Bowl Dal Tadka (Moong / Toor)\n"
+                "• 100g Paneer Bhurji OR Grilled Chicken Breast\n"
+                "• 1 Bowl fresh Cucumber Tomato Salad with lemon\n\n"
+                "Provides ~480-520 kcal and 30g+ of bioavailable protein! 🥗"
+            )
         return (
-            "👋 Hi! I'm FitBuddy AI. I'm running in demo mode right now (no API key configured). "
-            "Add your OpenAI API key to get personalised fitness coaching!"
+            "👋 Hi! I'm FitBuddy AI Coach. I can accurately calculate calories, protein, and macros for foods "
+            "(e.g., 'How much protein in 4 eggs?', 'Calories in 2 bananas?'), design Indian diet plans, and suggest workout routines. "
+            "How can I help you today? 💪"
         )
 
     try:

@@ -303,14 +303,249 @@ const DEMO_RESPONSES = {
   default: 'I\'m FitBuddy AI Coach! I can help you with:\n\n• **Diet planning** – personalized meal plans\n• **Workout routines** – beginner to advanced\n• **Calorie tracking** – what to eat and how much\n• **Nutrition info** – macros, vitamins, Indian foods\n\nWhat would you like to know? Ask me anything about fitness and nutrition! 💚',
 };
 
+const NUTRITION_DATABASE = {
+  egg: {
+    names: ['egg', 'eggs', 'anda', 'ande', 'boiled egg', 'boiled eggs', 'egg white', 'egg whites'],
+    unit: 'egg',
+    portionName: 'large whole egg',
+    defaultQty: 1,
+    perUnit: { protein: 6.3, calories: 72, fat: 4.8, carbs: 0.4 },
+    notes: 'Values depend on egg size (Medium ~6g vs Large ~6.5g) and cooking method. Egg whites alone contain ~3.6g protein and 17 kcal each.'
+  },
+  banana: {
+    names: ['banana', 'bananas', 'kela', 'kele'],
+    unit: 'banana',
+    portionName: 'medium banana',
+    defaultQty: 1,
+    perUnit: { protein: 1.3, calories: 105, fat: 0.3, carbs: 27.0 },
+    notes: 'Values are approximate and vary slightly with fruit size (118g average) and ripeness.'
+  },
+  paneer: {
+    names: ['paneer', 'panir', 'cottage cheese'],
+    unit: 'gram',
+    portionName: 'Indian raw paneer',
+    defaultQty: 100,
+    per100g: { protein: 19.0, calories: 275, fat: 21.0, carbs: 3.4 },
+    notes: 'Values depend on milk fat (cow vs buffalo milk). Low-fat paneer yields ~25g protein and only 140 kcal per 100g.'
+  },
+  almond: {
+    names: ['almond', 'almonds', 'badam', 'badaam'],
+    unit: 'gram',
+    portionName: 'whole raw almonds',
+    defaultQty: 100,
+    per100g: { protein: 21.2, calories: 579, fat: 49.9, carbs: 21.6 },
+    notes: 'Almonds are dense in healthy monounsaturated fats. A standard daily handful portion is ~28g (~14g fat, 160 kcal, 6g protein).'
+  },
+  chicken: {
+    names: ['chicken breast', 'chicken', 'murga', 'murgh', 'boneless chicken'],
+    unit: 'gram',
+    portionName: 'raw boneless skinless chicken breast',
+    defaultQty: 100,
+    per100g: { protein: 23.0, calories: 120, fat: 2.6, carbs: 0.0 },
+    notes: 'Based on raw boneless chicken breast. 100g cooked/grilled yields ~31g protein and 165 kcal due to water weight loss.'
+  },
+  roti: {
+    names: ['roti', 'rotis', 'chapati', 'chapatis', 'phulka', 'fulka'],
+    unit: 'roti',
+    portionName: 'medium whole wheat roti',
+    defaultQty: 1,
+    perUnit: { protein: 3.2, calories: 85, fat: 0.5, carbs: 16.0 },
+    notes: 'Based on 35g dough whole wheat roti without oil. Adding 1 tsp ghee adds ~45 kcal and 5g fat.'
+  },
+  milk: {
+    names: ['milk', 'doodh', 'dudh', 'cow milk', 'toned milk'],
+    unit: 'ml',
+    portionName: 'toned cow milk',
+    defaultQty: 250,
+    per100g: { protein: 3.3, calories: 61, fat: 3.4, carbs: 4.8 },
+    notes: '250ml is a standard Indian glass. Standard toned milk yields ~8.2g protein and 150 kcal; buffalo milk yields ~9.5g protein and 240 kcal.'
+  },
+  rice: {
+    names: ['rice', 'chawal', 'white rice', 'brown rice', 'cooked rice'],
+    unit: 'gram',
+    portionName: 'cooked white rice',
+    defaultQty: 100,
+    per100g: { protein: 2.7, calories: 130, fat: 0.3, carbs: 28.0 },
+    notes: 'Based on cooked rice (100g raw uncooked rice contains ~365 kcal and 7g protein, and expands to ~280g cooked).'
+  },
+  dal: {
+    names: ['dal', 'daal', 'lentils', 'moong dal', 'chana dal', 'toor dal', 'masoor dal'],
+    unit: 'bowl',
+    portionName: 'cooked dal (1 standard bowl / 150g)',
+    defaultQty: 1,
+    perUnit: { protein: 8.0, calories: 150, fat: 3.5, carbs: 23.0 },
+    notes: 'Values depend on tadka oil/ghee and thickness of the dal.'
+  },
+  soya: {
+    names: ['soya chunks', 'soy chunks', 'soya', 'soyabean'],
+    unit: 'gram',
+    portionName: 'dry soya chunks',
+    defaultQty: 100,
+    per100g: { protein: 52.0, calories: 345, fat: 0.5, carbs: 33.0 },
+    notes: 'Dry soya chunks are over 50% protein by weight. Soaking expands them 3x in water.'
+  },
+  sattu: {
+    names: ['sattu', 'chana sattu', 'roasted gram flour'],
+    unit: 'gram',
+    portionName: 'roasted chana sattu flour',
+    defaultQty: 100,
+    per100g: { protein: 21.0, calories: 385, fat: 5.0, carbs: 64.0 },
+    notes: 'Traditional Indian superfood rich in insoluble fiber and plant protein.'
+  },
+  curd: {
+    names: ['curd', 'dahi', 'yogurt', 'greek yogurt'],
+    unit: 'gram',
+    portionName: 'plain curd / dahi',
+    defaultQty: 100,
+    per100g: { protein: 3.8, calories: 62, fat: 3.5, carbs: 4.5 },
+    notes: '1 standard katori/bowl is ~150g, providing approx 5.7g protein and 95 kcal.'
+  },
+  fish: {
+    names: ['fish', 'machli', 'salmon', 'rohu', 'tilapia'],
+    unit: 'gram',
+    portionName: 'raw fish fillet',
+    defaultQty: 100,
+    per100g: { protein: 20.0, calories: 125, fat: 4.5, carbs: 0.0 },
+    notes: 'Rich in lean protein and omega-3 fatty acids.'
+  },
+  oats: {
+    names: ['oats', 'oatmeal', 'rolled oats'],
+    unit: 'gram',
+    portionName: 'rolled oats',
+    defaultQty: 50,
+    per100g: { protein: 13.5, calories: 389, fat: 6.9, carbs: 66.0 },
+    notes: '1 standard breakfast serving of 50g dry oats yields ~6.7g protein and 195 kcal.'
+  },
+  peanut_butter: {
+    names: ['peanut butter', 'peanutbutter'],
+    unit: 'tbsp',
+    portionName: 'peanut butter (2 tbsp / 32g)',
+    defaultQty: 2,
+    perUnit: { protein: 8.0, calories: 190, fat: 16.0, carbs: 7.0 },
+    notes: 'Values for unsweetened peanut butter. Calorie-dense and rich in healthy fats.'
+  },
+  tofu: {
+    names: ['tofu', 'soya paneer'],
+    unit: 'gram',
+    portionName: 'firm tofu',
+    defaultQty: 100,
+    per100g: { protein: 15.0, calories: 83, fat: 5.0, carbs: 2.0 },
+    notes: 'Plant-based complete protein with lower saturated fat.'
+  }
+};
+
+function formatNutritionAnswer(query) {
+  const q = query.toLowerCase();
+  const sortedKeys = Object.keys(NUTRITION_DATABASE).sort((a, b) => {
+    const maxA = Math.max(...NUTRITION_DATABASE[a].names.map(n => n.length));
+    const maxB = Math.max(...NUTRITION_DATABASE[b].names.map(n => n.length));
+    return maxB - maxA;
+  });
+
+  let matchedFood = null;
+  for (const key of sortedKeys) {
+    const food = NUTRITION_DATABASE[key];
+    for (const name of food.names) {
+      const regex = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\b`, 'i');
+      if (regex.test(q)) {
+        matchedFood = food;
+        break;
+      }
+    }
+    if (matchedFood) break;
+  }
+  if (!matchedFood) return null;
+
+  let qty = matchedFood.defaultQty;
+  const gMatch = q.match(/(\d+(?:\.\d+)?)\s*(?:g|gm|gram|grams)\b/i);
+  const mlMatch = q.match(/(\d+(?:\.\d+)?)\s*(?:ml|milliliter|milliliters)\b/i);
+  const countMatch = q.match(/\b(\d+)\s*(?:large|medium|small|whole|boiled)?\s*(?:egg|eggs|anda|ande|banana|bananas|kela|kele|roti|rotis|chapati|chapatis|phulka|fulka|piece|pieces|cup|cups|bowl|bowls|glass|glasses)\b/i);
+  const leadingNumMatch = q.match(/^\s*(\d+)\b/);
+
+  if (gMatch) qty = parseFloat(gMatch[1]);
+  else if (mlMatch) qty = parseFloat(mlMatch[1]);
+  else if (countMatch) qty = parseFloat(countMatch[1]);
+  else if (leadingNumMatch) qty = parseFloat(leadingNumMatch[1]);
+
+  let m;
+  if (matchedFood.perUnit) {
+    m = {
+      protein: parseFloat((matchedFood.perUnit.protein * qty).toFixed(1)),
+      calories: Math.round(matchedFood.perUnit.calories * qty),
+      fat: parseFloat((matchedFood.perUnit.fat * qty).toFixed(1)),
+      carbs: parseFloat((matchedFood.perUnit.carbs * qty).toFixed(1))
+    };
+  } else {
+    const factor = qty / 100.0;
+    m = {
+      protein: parseFloat((matchedFood.per100g.protein * factor).toFixed(1)),
+      calories: Math.round(matchedFood.per100g.calories * factor),
+      fat: parseFloat((matchedFood.per100g.fat * factor).toFixed(1)),
+      carbs: parseFloat((matchedFood.per100g.carbs * factor).toFixed(1))
+    };
+  }
+
+  const isPlural = (qty !== 1);
+  const verb = isPlural ? 'contain' : 'contains';
+  let unitLabel = '';
+  if (['egg', 'banana', 'roti'].includes(matchedFood.unit)) {
+    unitLabel = isPlural ? `${qty} ${matchedFood.portionName}s` : `1 ${matchedFood.portionName}`;
+  } else if (matchedFood.unit === 'gram') {
+    unitLabel = `${qty}g of ${matchedFood.portionName}`;
+  } else if (matchedFood.unit === 'ml') {
+    unitLabel = `${qty}ml of ${matchedFood.portionName}`;
+  } else {
+    unitLabel = `${qty} ${matchedFood.unit}(s) of ${matchedFood.portionName}`;
+  }
+
+  const hasProtein = /protein|protien/i.test(q);
+  const hasCalories = /calorie|calories|kcal|cal|energy|kitni calorie/i.test(q);
+  const hasFat = /fat|fats|charbi/i.test(q);
+  const hasCarbs = /carb|carbs|carbohydrate|carbohydrates/i.test(q);
+
+  let lead = '';
+  let breakdown = '';
+  if ((hasProtein && hasCalories) || /protein and calories|calories and protein|protein aur calorie/i.test(q)) {
+    lead = `${unitLabel} ${verb} approximately **${m.calories} kcal and ${m.protein}g of protein**.`;
+    breakdown = `• **Calories:** **${m.calories} kcal**\n• **Protein:** **${m.protein}g**\n• Carbohydrates: ${m.carbs}g\n• Fat: ${m.fat}g`;
+  } else if (hasProtein) {
+    lead = `${unitLabel} ${verb} approximately **${m.protein}g of protein**.`;
+    breakdown = `• **Protein:** **${m.protein}g**\n• Calories: ${m.calories} kcal\n• Fat: ${m.fat}g\n• Carbohydrates: ${m.carbs}g`;
+  } else if (hasCalories) {
+    lead = `${unitLabel} ${verb} approximately **${m.calories} kcal (calories)**.`;
+    breakdown = `• **Calories:** **${m.calories} kcal**\n• Carbohydrates: ${m.carbs}g\n• Protein: ${m.protein}g\n• Fat: ${m.fat}g`;
+  } else if (hasFat) {
+    lead = `${unitLabel} ${verb} approximately **${m.fat}g of fat**.`;
+    breakdown = `• **Fat:** **${m.fat}g**\n• Calories: ${m.calories} kcal\n• Protein: ${m.protein}g\n• Carbohydrates: ${m.carbs}g`;
+  } else if (hasCarbs) {
+    lead = `${unitLabel} ${verb} approximately **${m.carbs}g of carbohydrates**.`;
+    breakdown = `• **Carbohydrates:** **${m.carbs}g**\n• Calories: ${m.calories} kcal\n• Protein: ${m.protein}g\n• Fat: ${m.fat}g`;
+  } else {
+    lead = `Here is the complete nutrition breakdown for ${unitLabel}:`;
+    breakdown = `• Calories: ${m.calories} kcal\n• Protein: ${m.protein}g\n• Carbohydrates: ${m.carbs}g\n• Fat: ${m.fat}g`;
+  }
+
+  return `${lead}\n\n${breakdown}\n\n💡 *Note:* ${matchedFood.notes} Values are approximate and depend on exact portion size and preparation method.`;
+}
+
 const getDemoChatResponse = (message, userProfile) => {
+  const nutritionAnswer = formatNutritionAnswer(message);
+  if (nutritionAnswer) {
+    return {
+      id: `msg_${Date.now()}`,
+      role: 'assistant',
+      content: nutritionAnswer,
+      created_at: new Date().toISOString(),
+    };
+  }
+
   const msg = message.toLowerCase();
   let reply = DEMO_RESPONSES.default;
 
-  if (msg.includes('protein')) reply = DEMO_RESPONSES.protein;
-  else if (msg.includes('diet') || msg.includes('eat') || msg.includes('meal') || msg.includes('food')) reply = DEMO_RESPONSES.diet;
+  if (msg.includes('diet') || msg.includes('eat') || msg.includes('meal') || msg.includes('food')) reply = DEMO_RESPONSES.diet;
   else if (msg.includes('workout') || msg.includes('exercise') || msg.includes('training')) reply = DEMO_RESPONSES.workout;
   else if (msg.includes('calorie') || msg.includes('weight') || msg.includes('bmi')) reply = DEMO_RESPONSES.calories;
+  else if (msg.includes('protein')) reply = DEMO_RESPONSES.protein;
 
   if (userProfile?.name) {
     reply = `Hey ${userProfile.name}! 👋\n\n` + reply;
