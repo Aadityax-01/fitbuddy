@@ -1039,7 +1039,7 @@
 
     function getActiveUser() {
       const activeKey = getActiveUserEmail();
-      if (activeKey === '__GUEST__') {
+      if (activeKey && (activeKey.toLowerCase() === '__guest__' || activeKey === '__GUEST__')) {
         return getGuestData();
       }
       if (!activeKey) return null;
@@ -1049,7 +1049,7 @@
 
     function updateActiveUser(mutator) {
       const activeKey = getActiveUserEmail();
-      if (activeKey === '__GUEST__') {
+      if (activeKey && (activeKey.toLowerCase() === '__guest__' || activeKey === '__GUEST__')) {
         const guest = getGuestData();
         mutator(guest);
         saveGuestData(guest);
@@ -1082,7 +1082,7 @@
     /* Start Guest Session (Immediate 100% Access) */
     function startGuestSession(targetTab = 'dashboard') {
       try {
-        setActiveUserEmail('__GUEST__');
+        setActiveUserEmail('__guest__');
         closeModal('login-modal');
         closeModal('register-modal');
         syncAuthState();
@@ -1105,12 +1105,6 @@
     }
 
     function switchTab(tabKey) {
-      let user = getActiveUser();
-      if (!user && tabKey !== 'public') {
-        startGuestSession(tabKey);
-        return;
-      }
-
       const tabs = ['public', 'dashboard', 'diet', 'workout', 'coach', 'bmi', 'progress', 'profile'];
       tabs.forEach(t => {
         const view = document.getElementById('view-' + t);
@@ -1188,7 +1182,6 @@
         if (userBadge) { userBadge.classList.add('hidden'); userBadge.style.display = 'none'; }
         if (userNav) { userNav.classList.add('hidden'); userNav.style.display = 'none'; }
         if (mobileNav) { mobileNav.classList.add('hidden'); mobileNav.style.display = 'none'; }
-        switchTab('public');
       }
     }
 
@@ -1966,11 +1959,22 @@
       alert(`Logged weight: ${val} kg!`);
     }
 
-    /* Initialize on DOM load */
-    window.addEventListener('DOMContentLoaded', () => {
-      // Sync auth state on load
+    /* Bulletproof Initialization on Load */
+    function initFitBuddy() {
       syncAuthState();
-    });
+      const user = getActiveUser();
+      if (user) {
+        switchTab('dashboard');
+      } else {
+        switchTab('public');
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFitBuddy);
+    } else {
+      initFitBuddy();
+    }
   </script>
 </body>
 </html>
