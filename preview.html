@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitBuddy AI – Interactive Preview</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #0a0a0a;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .neon-text {
+      color: #39ff14;
+      text-shadow: 0 0 12px rgba(57, 255, 20, 0.4);
+    }
+    .neon-border {
+      border-color: #39ff14;
+      box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+    }
+    .neon-btn {
+      background-color: #39ff14;
+      color: #000000;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .neon-btn:hover {
+      background-color: #2dd410;
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+      transform: translateY(-1px);
+    }
+    .card-dark {
+      background-color: #111111;
+      border: 1px solid #1a1a1a;
+      border-radius: 16px;
+    }
+    .card-dark:hover {
+      border-color: #262626;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111111; }
+    ::-webkit-scrollbar-thumb { background: #39ff14; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen flex flex-col antialiased">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-[#111111] border-b border-[#1a1a1a] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-[#39ff1415] border border-[#39ff1440] flex items-center justify-center text-[#39ff14] text-lg font-black shadow-sm">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-base font-black tracking-tight leading-none text-white">
+          FitBuddy <span class="text-[#39ff14]">AI</span>
+        </h1>
+        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mt-0.5">
+          AI Fitness & Nutrition Assistant
+        </p>
+      </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <nav class="hidden md:flex items-center gap-1 bg-[#161616] border border-[#222222] p-1 rounded-xl">
+      <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-[#39ff14] text-black transition-all">
+        Dashboard
+      </button>
+      <button onclick="switchTab('bmi')" id="btn-bmi" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-white transition-all">
+        BMI & Calories
+      </button>
+      <button onclick="switchTab('diet')" id="btn-diet" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-white transition-all">
+        AI Diet Planner
+      </button>
+      <button onclick="switchTab('workout')" id="btn-workout" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-white transition-all">
+        Workout Generator
+      </button>
+      <button onclick="switchTab('coach')" id="btn-coach" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-white transition-all">
+        AI Coach Chat
+      </button>
+    </nav>
+
+    <!-- User status badge -->
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-[#39ff14] animate-pulse"></span>
+      <span class="text-xs text-gray-300 font-medium">Alex Hunter</span>
+      <div class="w-8 h-8 rounded-full bg-[#39ff14] text-black font-black text-xs flex items-center justify-center ml-1">
+        A
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Tab navigation -->
+  <div class="md:hidden flex items-center gap-1 overflow-x-auto bg-[#141414] border-b border-[#222222] p-2">
+    <button onclick="switchTab('dashboard')" class="tab-btn px-3 py-1 text-xs font-bold rounded-lg bg-[#39ff14] text-black whitespace-nowrap">Dashboard</button>
+    <button onclick="switchTab('bmi')" class="tab-btn px-3 py-1 text-xs font-semibold rounded-lg text-gray-400 whitespace-nowrap">BMI Calculator</button>
+    <button onclick="switchTab('diet')" class="tab-btn px-3 py-1 text-xs font-semibold rounded-lg text-gray-400 whitespace-nowrap">Diet Plan</button>
+    <button onclick="switchTab('workout')" class="tab-btn px-3 py-1 text-xs font-semibold rounded-lg text-gray-400 whitespace-nowrap">Workouts</button>
+    <button onclick="switchTab('coach')" class="tab-btn px-3 py-1 text-xs font-semibold rounded-lg text-gray-400 whitespace-nowrap">AI Coach</button>
+  </div>
+
+  <!-- Main View Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="space-y-6">
+      <!-- Greeting Banner -->
+      <div class="card-dark p-6 bg-gradient-to-r from-[#111111] via-[#141414] to-[#111111] border-l-4 border-l-[#39ff14]">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] uppercase tracking-wider font-bold text-[#39ff14] bg-[#39ff1415] px-2.5 py-0.5 rounded-full border border-[#39ff1430]">
+                Daily Trajectory Active
+              </span>
+              <span class="text-xs text-gray-400">Target: 2,100 kcal / 140g Protein</span>
+            </div>
+            <h2 class="text-2xl font-black text-white">Good evening, <span class="text-[#39ff14]">Alex</span> 👋</h2>
+            <p class="text-xs text-gray-400 mt-1">
+              You are currently at <strong class="text-white">69%</strong> of your daily nutrition target. 650 kcal remaining for dinner.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="switchTab('coach')" class="px-3.5 py-2 rounded-xl bg-[#1a1a1a] border border-[#2a2a2a] text-xs font-semibold hover:text-[#39ff14] transition-all">
+              Ask AI Coach ⚡
+            </button>
+            <button onclick="switchTab('diet')" class="neon-btn px-4 py-2 rounded-xl text-xs">
+              View Meal Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Calories -->
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs text-gray-400 uppercase font-semibold">Calories Left</p>
+              <h3 class="text-2xl font-black text-white mt-1">650 <span class="text-xs text-gray-500 font-normal">kcal</span></h3>
+              <p class="text-[11px] text-gray-400 mt-1">Consumed: 1,450 / 2,100</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-[#39ff1415] text-[#39ff14] flex items-center justify-center font-bold text-lg">
+              🔥
+            </div>
+          </div>
+          <div class="w-full bg-[#1c1c1c] h-1.5 rounded-full mt-4 overflow-hidden">
+            <div class="bg-[#39ff14] h-full rounded-full" style="width: 69%;"></div>
+          </div>
+        </div>
+
+        <!-- Protein -->
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs text-gray-400 uppercase font-semibold">Protein Intake</p>
+              <h3 class="text-2xl font-black text-white mt-1">96 <span class="text-xs text-gray-500 font-normal">/ 140g</span></h3>
+              <p class="text-[11px] text-gray-400 mt-1">Target: 68% Achieved</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-[#38bdf815] text-[#38bdf8] flex items-center justify-center font-bold text-lg">
+              💪
+            </div>
+          </div>
+          <div class="w-full bg-[#1c1c1c] h-1.5 rounded-full mt-4 overflow-hidden">
+            <div class="bg-[#38bdf8] h-full rounded-full" style="width: 68%;"></div>
+          </div>
+        </div>
+
+        <!-- Water -->
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs text-gray-400 uppercase font-semibold">Hydration</p>
+              <h3 class="text-2xl font-black text-white mt-1" id="dash-water-display">1.75 <span class="text-xs text-gray-500 font-normal">/ 2.5L</span></h3>
+              <p class="text-[11px] text-gray-400 mt-1">70% of 2,500 ml</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-[#06b6d415] text-[#06b6d4] flex items-center justify-center font-bold text-lg">
+              💧
+            </div>
+          </div>
+          <div class="w-full bg-[#1c1c1c] h-1.5 rounded-full mt-4 overflow-hidden">
+            <div id="dash-water-bar" class="bg-[#06b6d4] h-full rounded-full transition-all duration-300" style="width: 70%;"></div>
+          </div>
+        </div>
+
+        <!-- BMI -->
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs text-gray-400 uppercase font-semibold">Current BMI</p>
+              <h3 class="text-2xl font-black text-white mt-1">24.5</h3>
+              <span class="inline-block text-[11px] font-bold text-[#39ff14] bg-[#39ff1415] px-2 py-0.5 rounded-full mt-1">
+                Normal Weight
+              </span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-[#a855f715] text-[#a855f7] flex items-center justify-center font-bold text-lg">
+              ⚖️
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-4 pt-2 border-t border-[#1a1a1a]">Weight: 72.5 kg · Height: 172 cm</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Water Buttons & Interactive Workouts -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Interactive Workout checklist -->
+        <div class="lg:col-span-2 card-dark p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>🏋️</span> Today's Full-Body Workout Routine
+              </h3>
+              <p class="text-xs text-gray-400">Click any exercise to mark as complete</p>
+            </div>
+            <span id="workout-counter" class="text-xs font-bold text-[#39ff14] bg-[#39ff1415] px-2.5 py-1 rounded-full border border-[#39ff1430]">
+              2 of 4 Complete
+            </span>
+          </div>
+
+          <div class="space-y-2.5" id="workout-list">
+            <div onclick="toggleExercise(this)" class="p-3.5 rounded-xl border bg-[#152515] border-[#39ff1440] text-[#86efac] flex items-center justify-between cursor-pointer transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-base font-bold text-[#39ff14]">✓</span>
+                <div>
+                  <p class="text-xs font-bold text-gray-300 line-through">Push-ups (3 sets × 12 reps)</p>
+                  <p class="text-[10px] text-gray-500">Pectorals, Anterior Deltoids, Triceps</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#39ff1420] text-[#39ff14]">Completed</span>
+            </div>
+
+            <div onclick="toggleExercise(this)" class="p-3.5 rounded-xl border bg-[#152515] border-[#39ff1440] text-[#86efac] flex items-center justify-between cursor-pointer transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-base font-bold text-[#39ff14]">✓</span>
+                <div>
+                  <p class="text-xs font-bold text-gray-300 line-through">Dumbbell Goblet Squats (3 sets × 15 reps)</p>
+                  <p class="text-[10px] text-gray-500">Quadriceps, Glutes, Hamstrings</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#39ff1420] text-[#39ff14]">Completed</span>
+            </div>
+
+            <div onclick="toggleExercise(this)" class="p-3.5 rounded-xl border bg-[#141414] border-[#222222] text-white flex items-center justify-between cursor-pointer hover:border-[#333] transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-base text-gray-500 font-bold">○</span>
+                <div>
+                  <p class="text-xs font-bold text-white">Dumbbell Bent-Over Rows (3 sets × 12 reps)</p>
+                  <p class="text-[10px] text-gray-400">Lats, Rhomboids, Biceps</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1c1c1c] text-gray-400">Tap to finish</span>
+            </div>
+
+            <div onclick="toggleExercise(this)" class="p-3.5 rounded-xl border bg-[#141414] border-[#222222] text-white flex items-center justify-between cursor-pointer hover:border-[#333] transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-base text-gray-500 font-bold">○</span>
+                <div>
+                  <p class="text-xs font-bold text-white">Forearm Plank Hold (3 sets × 45 seconds)</p>
+                  <p class="text-[10px] text-gray-400">Core, Transverse Abdominis</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1c1c1c] text-gray-400">Tap to finish</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Water Logger -->
+        <div class="card-dark p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>💧</span> Quick Hydration
+              </h3>
+              <span id="water-ml-label" class="text-xs font-bold text-[#06b6d4]">1,750 ml</span>
+            </div>
+
+            <p class="text-xs text-gray-400 mb-4">
+              Drink water regularly throughout the day to optimize muscle recovery and nutrient absorption.
+            </p>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <button onclick="addWater(250)" class="p-3 bg-[#161616] hover:bg-[#202020] border border-[#262626] rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5">
+                +250 ml (Glass)
+              </button>
+              <button onclick="addWater(500)" class="p-3 bg-[#161616] hover:bg-[#202020] border border-[#262626] rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5">
+                +500 ml (Bottle)
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 rounded-xl bg-[#06b6d410] border border-[#06b6d430] text-[11px] text-[#67e8f9]">
+            💡 <strong>Hydration Tip:</strong> Drinking 500ml upon waking boosts basal metabolic rate by 24% for 90 minutes.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. BMI CALCULATOR VIEW -->
+    <section id="view-bmi" class="hidden space-y-6">
+      <div class="card-dark p-6 bg-gradient-to-r from-[#111111] to-[#141414] border-l-4 border-l-[#38bdf8]">
+        <h2 class="text-2xl font-black text-white">Scientific <span class="text-[#38bdf8]">BMI & Calorie Calculator</span></h2>
+        <p class="text-xs text-gray-400 mt-1">Calculates your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using Mifflin-St Jeor.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Form Inputs -->
+        <div class="lg:col-span-5 card-dark p-6 space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase">Height (cm)</label>
+            <input type="number" id="calc-height" value="172" oninput="runBmiCalc()" class="w-full bg-[#161616] border border-[#2a2a2a] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#38bdf8] mt-1" />
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase">Weight (kg)</label>
+            <input type="number" id="calc-weight" value="72.5" step="0.5" oninput="runBmiCalc()" class="w-full bg-[#161616] border border-[#2a2a2a] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#38bdf8] mt-1" />
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase">Age (years)</label>
+            <input type="number" id="calc-age" value="25" oninput="runBmiCalc()" class="w-full bg-[#161616] border border-[#2a2a2a] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#38bdf8] mt-1" />
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase">Activity Level</label>
+            <select id="calc-activity" onchange="runBmiCalc()" class="w-full bg-[#161616] border border-[#2a2a2a] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#38bdf8] mt-1">
+              <option value="1.2">Sedentary (desk job, no exercise)</option>
+              <option value="1.375">Lightly Active (1–3 days/wk)</option>
+              <option value="1.55" selected>Moderately Active (3–5 days/wk)</option>
+              <option value="1.725">Very Active (6–7 days/wk)</option>
+              <option value="1.9">Extremely Active (athletes & heavy labor)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase">Primary Goal</label>
+            <select id="calc-goal" onchange="runBmiCalc()" class="w-full bg-[#161616] border border-[#2a2a2a] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#38bdf8] mt-1">
+              <option value="-500">Weight Loss (-500 kcal deficit)</option>
+              <option value="0" selected>Maintenance (Recomposition)</option>
+              <option value="350">Lean Muscle Gain (+350 kcal surplus)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Calculated Results -->
+        <div class="lg:col-span-7 card-dark p-6 space-y-5">
+          <div class="text-center p-6 rounded-2xl bg-[#161616] border border-[#222222]">
+            <span class="text-xs uppercase text-gray-400 font-bold">Body Mass Index (BMI)</span>
+            <div id="res-bmi-val" class="text-5xl font-black text-[#39ff14] mt-1">24.5</div>
+            <span id="res-bmi-cat" class="inline-block text-xs font-bold px-3 py-1 rounded-full bg-[#39ff1420] text-[#39ff14] mt-2">
+              Normal Weight
+            </span>
+            <p class="text-xs text-gray-400 mt-2">Healthy BMI range is between 18.5 and 24.9.</p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="p-4 rounded-xl bg-[#141414] border border-[#222]">
+              <span class="text-[11px] text-gray-400 uppercase">BMR</span>
+              <p id="res-bmr-val" class="text-xl font-bold text-white mt-0.5">1,690</p>
+              <span class="text-[10px] text-gray-500">kcal at rest</span>
+            </div>
+            <div class="p-4 rounded-xl bg-[#141414] border border-[#222]">
+              <span class="text-[11px] text-gray-400 uppercase">TDEE</span>
+              <p id="res-tdee-val" class="text-xl font-bold text-white mt-0.5">2,620</p>
+              <span class="text-[10px] text-gray-500">maintenance kcal</span>
+            </div>
+            <div class="p-4 rounded-xl bg-[#141414] border border-[#222]">
+              <span class="text-[11px] text-gray-400 uppercase">Target</span>
+              <p id="res-target-val" class="text-xl font-bold text-[#39ff14] mt-0.5">2,120</p>
+              <span class="text-[10px] text-gray-500">daily calorie goal</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#161616] border border-[#222] space-y-2">
+            <span class="text-xs font-bold text-white uppercase block">Target Daily Macronutrients</span>
+            <div class="flex justify-between text-xs text-gray-300">
+              <span>Protein (30%): <strong id="res-protein-val" class="text-[#39ff14]">159g</strong></span>
+              <span>Carbs (45%): <strong id="res-carbs-val" class="text-[#38bdf8]">238g</strong></span>
+              <span>Fats (25%): <strong id="res-fats-val" class="text-[#f59e0b]">59g</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DIET PLANNER VIEW -->
+    <section id="view-diet" class="hidden space-y-6">
+      <div class="card-dark p-6 bg-gradient-to-r from-[#111111] to-[#141414] border-l-4 border-l-[#22c55e] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-black text-white">AI <span class="text-[#22c55e]">Indian Diet Planner</span></h2>
+          <p class="text-xs text-gray-400 mt-1">High-protein, traditional Indian meal planning with macro and portion breakdown.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="diet-type-selector" onchange="renderDietPlan()" class="bg-[#1a1a1a] border border-[#2a2a2a] text-xs text-white px-3 py-2 rounded-xl">
+            <option value="veg">Vegetarian Plan (Paneer, Dal, Curd)</option>
+            <option value="nonveg">Non-Vegetarian Plan (Eggs, Chicken, Fish)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="diet-cards-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- 4. WORKOUT GENERATOR VIEW -->
+    <section id="view-workout" class="hidden space-y-6">
+      <div class="card-dark p-6 bg-gradient-to-r from-[#111111] to-[#141414] border-l-4 border-l-[#39ff14] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-black text-white">Adaptive <span class="text-[#39ff14]">Workout Generator</span></h2>
+          <p class="text-xs text-gray-400 mt-1">Custom exercise architecture with sets, reps, rest intervals, and coaching tips.</p>
+        </div>
+        <button onclick="regenerateWorkouts()" class="neon-btn px-4 py-2 rounded-xl text-xs">
+          Regenerate Routine ⚡
+        </button>
+      </div>
+
+      <div class="card-dark p-6 space-y-4" id="workout-routine-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- 5. AI COACH CHAT VIEW -->
+    <section id="view-coach" class="hidden space-y-4">
+      <div class="card-dark p-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#39ff1415] border border-[#39ff1440] flex items-center justify-center text-[#39ff14] text-xl">
+            🤖
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              FitBuddy AI Coach
+              <span class="text-[10px] text-[#39ff14] bg-[#39ff1415] px-2 py-0.5 rounded-full">Active</span>
+            </h2>
+            <p class="text-xs text-gray-400">Ask about nutrition, workout technique, or calorie counts</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages Window -->
+      <div id="chat-window" class="card-dark p-6 h-[420px] overflow-y-auto space-y-4 bg-[#0c0c0c]">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-[#1a1a1a] text-[#39ff14] flex items-center justify-center text-sm font-bold shrink-0">
+            🤖
+          </div>
+          <div class="p-4 rounded-2xl bg-[#161616] border border-[#222] text-xs text-white max-w-[80%] leading-relaxed">
+            Hey Alex! ⚡ I'm your FitBuddy AI Coach. I know you're targeting <strong>2,100 calories</strong> and aiming for muscle recomposition. What can I help you optimize right now?
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="flex items-center gap-2 overflow-x-auto py-1">
+        <button onclick="sendQuickPrompt('How much protein is in 100g of paneer?')" class="px-3 py-1 text-xs rounded-full bg-[#161616] hover:bg-[#202020] border border-[#262626] text-gray-300 whitespace-nowrap">
+          How much protein is in 100g of paneer?
+        </button>
+        <button onclick="sendQuickPrompt('Suggest a healthy Indian dinner under 500 kcal')" class="px-3 py-1 text-xs rounded-full bg-[#161616] hover:bg-[#202020] border border-[#262626] text-gray-300 whitespace-nowrap">
+          Suggest a healthy Indian dinner
+        </button>
+        <button onclick="sendQuickPrompt('Give me a 3-day beginner workout plan')" class="px-3 py-1 text-xs rounded-full bg-[#161616] hover:bg-[#202020] border border-[#262626] text-gray-300 whitespace-nowrap">
+          Beginner workout split
+        </button>
+      </div>
+
+      <!-- Input box -->
+      <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+        <input type="text" id="chat-input" placeholder="Ask your AI Fitness Coach anything..." class="flex-1 bg-[#141414] border border-[#242424] focus:border-[#39ff14] rounded-xl px-4 py-3 text-xs text-white focus:outline-none" />
+        <button type="submit" class="neon-btn px-6 py-3 rounded-xl text-xs">
+          Send
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabKey) {
+      const tabs = ['dashboard', 'bmi', 'diet', 'workout', 'coach'];
+      tabs.forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const btn = document.getElementById('btn-' + t);
+        if (view) view.classList.toggle('hidden', t !== tabKey);
+        if (btn) {
+          if (t === tabKey) {
+            btn.className = "tab-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-[#39ff14] text-black transition-all";
+          } else {
+            btn.className = "tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 hover:text-white transition-all";
+          }
+        }
+      });
+      if (tabKey === 'diet') renderDietPlan();
+      if (tabKey === 'workout') regenerateWorkouts();
+    }
+
+    // Water tracker state
+    let currentWaterMl = 1750;
+    function addWater(amount) {
+      currentWaterMl = Math.min(3500, currentWaterMl + amount);
+      const litres = (currentWaterMl / 1000).toFixed(2);
+      const percent = Math.min(100, Math.round((currentWaterMl / 2500) * 100));
+
+      const display = document.getElementById('dash-water-display');
+      if (display) display.innerHTML = `${litres} <span class="text-xs text-gray-500 font-normal">/ 2.5L</span>`;
+
+      const bar = document.getElementById('dash-water-bar');
+      if (bar) bar.style.width = percent + '%';
+
+      const label = document.getElementById('water-ml-label');
+      if (label) label.innerText = `${currentWaterMl.toLocaleString()} ml`;
+    }
+
+    // Workout checklist
+    function toggleExercise(el) {
+      const isDone = el.classList.contains('bg-[#152515]');
+      if (isDone) {
+        el.className = "p-3.5 rounded-xl border bg-[#141414] border-[#222222] text-white flex items-center justify-between cursor-pointer hover:border-[#333] transition-all";
+        el.querySelector('span:first-child').innerText = '○';
+        el.querySelector('span:first-child').className = 'text-base text-gray-500 font-bold';
+        el.querySelector('p:first-child').classList.remove('line-through', 'text-gray-300');
+        el.querySelector('p:first-child').classList.add('text-white');
+        el.querySelector('span:last-child').className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-[#1c1c1c] text-gray-400';
+        el.querySelector('span:last-child').innerText = 'Tap to finish';
+      } else {
+        el.className = "p-3.5 rounded-xl border bg-[#152515] border-[#39ff1440] text-[#86efac] flex items-center justify-between cursor-pointer transition-all";
+        el.querySelector('span:first-child').innerText = '✓';
+        el.querySelector('span:first-child').className = 'text-base font-bold text-[#39ff14]';
+        el.querySelector('p:first-child').classList.add('line-through', 'text-gray-300');
+        el.querySelector('p:first-child').classList.remove('text-white');
+        el.querySelector('span:last-child').className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-[#39ff1420] text-[#39ff14]';
+        el.querySelector('span:last-child').innerText = 'Completed';
+      }
+
+      const completed = document.querySelectorAll('#workout-list .bg-\\[\\#152515\\]').length;
+      document.getElementById('workout-counter').innerText = `${completed} of 4 Complete`;
+    }
+
+    // BMI Calculation
+    function runBmiCalc() {
+      const h = parseFloat(document.getElementById('calc-height').value) || 172;
+      const w = parseFloat(document.getElementById('calc-weight').value) || 72.5;
+      const a = parseInt(document.getElementById('calc-age').value) || 25;
+      const act = parseFloat(document.getElementById('calc-activity').value) || 1.55;
+      const adj = parseInt(document.getElementById('calc-goal').value) || 0;
+
+      const bmi = w / ((h / 100) * (h / 100));
+      const bmr = 10 * w + 6.25 * h - 5 * a + 5;
+      const tdee = bmr * act;
+      const target = Math.round(tdee + adj);
+
+      document.getElementById('res-bmi-val').innerText = bmi.toFixed(1);
+      document.getElementById('res-bmr-val').innerText = Math.round(bmr).toLocaleString();
+      document.getElementById('res-tdee-val').innerText = Math.round(tdee).toLocaleString();
+      document.getElementById('res-target-val').innerText = target.toLocaleString();
+
+      const catEl = document.getElementById('res-bmi-cat');
+      if (bmi < 18.5) {
+        catEl.innerText = 'Underweight';
+        catEl.className = 'inline-block text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 mt-2';
+      } else if (bmi < 25) {
+        catEl.innerText = 'Normal Weight';
+        catEl.className = 'inline-block text-xs font-bold px-3 py-1 rounded-full bg-[#39ff1420] text-[#39ff14] mt-2';
+      } else if (bmi < 30) {
+        catEl.innerText = 'Overweight';
+        catEl.className = 'inline-block text-xs font-bold px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 mt-2';
+      } else {
+        catEl.innerText = 'Obese';
+        catEl.className = 'inline-block text-xs font-bold px-3 py-1 rounded-full bg-red-500/20 text-red-400 mt-2';
+      }
+
+      document.getElementById('res-protein-val').innerText = Math.round((target * 0.3) / 4) + 'g';
+      document.getElementById('res-carbs-val').innerText = Math.round((target * 0.45) / 4) + 'g';
+      document.getElementById('res-fats-val').innerText = Math.round((target * 0.25) / 9) + 'g';
+    }
+
+    // Diet Plan Data & Renderer
+    function renderDietPlan() {
+      const isVeg = document.getElementById('diet-type-selector').value === 'veg';
+      const container = document.getElementById('diet-cards-container');
+
+      const meals = isVeg ? [
+        { title: 'Breakfast (8:00 AM)', cal: '480 kcal', name: 'Oats with Milk & Almonds', desc: '1 bowl rolled oats (80g) + 200ml low-fat milk + 1 banana + 10 soaked almonds', p: '20g', c: '65g', f: '12g' },
+        { title: 'Lunch (1:00 PM)', cal: '620 kcal', name: 'Paneer Sabzi & Dal Tadka', desc: '2 multigrain rotis + 100g paneer curry + 1 katori yellow dal + cucumber salad', p: '32g', c: '68g', f: '22g' },
+        { title: 'Snack (4:30 PM)', cal: '240 kcal', name: 'Roasted Chana & Green Tea', desc: '40g roasted chana + 1 cup green tea with lemon', p: '10g', c: '25g', f: '5g' },
+        { title: 'Dinner (8:00 PM)', cal: '520 kcal', name: 'Soya Chunks & Brown Rice', desc: '50g soya chunks curry + 1 cup brown rice + bowl of fresh curd (100g)', p: '38g', c: '58g', f: '10g' }
+      ] : [
+        { title: 'Breakfast (8:00 AM)', cal: '510 kcal', name: 'Boiled Eggs & Masala Oats', desc: '3 whole eggs boiled/scrambled + 1 bowl spiced oats + black coffee', p: '28g', c: '48g', f: '18g' },
+        { title: 'Lunch (1:00 PM)', cal: '680 kcal', name: 'Grilled Chicken & Dal Rice', desc: '150g grilled chicken breast + 1 cup steamed rice + 1 katori dal + curd', p: '48g', c: '62g', f: '14g' },
+        { title: 'Snack (4:30 PM)', cal: '220 kcal', name: 'Whey Protein & Apple', desc: '1 scoop whey protein isolate in water + 1 fresh apple', p: '26g', c: '22g', f: '2g' },
+        { title: 'Dinner (8:00 PM)', cal: '540 kcal', name: 'Fish Curry / Tandoori Chicken', desc: '150g Rohu fish or chicken breast + 2 phulkas + mixed green salad', p: '42g', c: '35g', f: '12g' }
+      ];
+
+      container.innerHTML = meals.map(m => `
+        <div class="card-dark p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#39ff14] uppercase tracking-wider">${m.title}</span>
+              <span class="text-xs text-gray-400 font-semibold">${m.cal}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">${m.name}</h4>
+            <p class="text-xs text-gray-400 mt-2 leading-relaxed">${m.desc}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[#1c1c1c] flex justify-between text-[11px] text-gray-400">
+            <span>P: <strong class="text-white">${m.p}</strong></span>
+            <span>C: <strong class="text-white">${m.c}</strong></span>
+            <span>F: <strong class="text-white">${m.f}</strong></span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Workout generator
+    function regenerateWorkouts() {
+      const container = document.getElementById('workout-routine-container');
+      const exercises = [
+        { name: 'Warm-up: Arm Circles & High Knees', sets: '2 rounds', reps: '60 sec', target: 'Cardio & Joint Mobility', tip: 'Prime core temperature and shoulders.' },
+        { name: 'Dumbbell Romanian Deadlifts', sets: '3 sets', reps: '10–12 reps', target: 'Hamstrings & Glutes', tip: 'Hinge at hips with neutral spine.' },
+        { name: 'Push-ups to Plank Hold', sets: '3 sets', reps: '12 reps + 30s hold', target: 'Chest, Triceps, Abs', tip: 'Keep glutes clenched throughout.' },
+        { name: 'Goblet Squats', sets: '3 sets', reps: '15 reps', target: 'Quads & Hip Drive', tip: 'Push floor away through your heels.' },
+        { name: 'Cool-down: Cobra & Child Pose', sets: '1 round', reps: '3 min', target: 'Lumbar Spine Reset', tip: 'Slow down heart rate with nose breathing.' }
+      ];
+
+      container.innerHTML = exercises.map((e, idx) => `
+        <div class="p-4 rounded-xl bg-[#141414] border border-[#222222] flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-[#39ff14]">#${idx + 1}</span>
+              <h4 class="text-sm font-bold text-white">${e.name}</h4>
+              <span class="text-[10px] bg-[#222] text-[#39ff14] px-2 py-0.5 rounded uppercase font-semibold">${e.target}</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">💡 <strong>Coach tip:</strong> ${e.tip}</p>
+          </div>
+          <div class="text-xs font-bold text-gray-300 bg-[#1c1c1c] px-3 py-1.5 rounded-lg shrink-0">
+            ${e.sets} × ${e.reps}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Chatbot logic
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage('user', text);
+      input.value = '';
+
+      setTimeout(() => {
+        let reply = "As your FitBuddy AI Coach, I suggest maintaining a consistent 300–500 calorie deficit for sustainable fat loss, consuming 1.6–2.0g of protein per kg of bodyweight, and progressively overloading your compound lifts.";
+        const lower = text.toLowerCase();
+        if (lower.includes('protein') && lower.includes('paneer')) {
+          reply = "100g of raw paneer packs approximately **18g of high-quality casein protein**, 20g of healthy fats, and 265 kcal. It is fantastic for satiety and overnight recovery!";
+        } else if (lower.includes('dinner') || lower.includes('eat')) {
+          reply = "For a high-protein Indian dinner under 500 kcal, try:\n• 150g grilled paneer or chicken\n• 1 large bowl of mixed cucumber & tomato salad\n• 1 katori yellow moong dal\n• 1 phulka (rotis) with no added ghee\nTotal: ~440 kcal and 32g protein!";
+        } else if (lower.includes('workout') || lower.includes('split')) {
+          reply = "For beginners, an alternating Full-Body 3-day split (Mon/Wed/Fri) is king:\n• Monday: Squats, Push-ups, Rows\n• Wednesday: Deadlifts, Overhead Press, Planks\n• Friday: Lunges, Pull-downs, Dumbbell Bench Press\nRest on weekends and walk 8,000 steps daily!";
+        }
+        appendChatMessage('assistant', reply);
+      }, 500);
+    }
+
+    function sendQuickPrompt(prompt) {
+      appendChatMessage('user', prompt);
+      setTimeout(() => {
+        let reply = "Great question! Balanced nutrition paired with progressive overload yields the fastest physical transformations.";
+        if (prompt.includes('paneer')) {
+          reply = "100g of fresh paneer contains around **18.3g of protein**, 2.2g of carbs, and 20.8g of fat (approx 265 calories). It is ideal for vegetarian bodybuilding!";
+        } else if (prompt.includes('dinner')) {
+          reply = "A great Indian healthy dinner is: 2 multigrain phulkas + 1 bowl palak dal + 100g grilled tofu or chicken + green salad. That comes out to ~460 kcal and 28g protein.";
+        } else if (prompt.includes('beginner')) {
+          reply = "Start with 3 days per week of compound full-body movements: Goblet Squats, Push-ups, Dumbbell Rows, and Planks. 3 sets of 10-12 reps with 60 seconds rest.";
+        }
+        appendChatMessage('assistant', reply);
+      }, 500);
+    }
+
+    function appendChatMessage(role, text) {
+      const window = document.getElementById('chat-window');
+      const isUser = role === 'user';
+      const div = document.createElement('div');
+      div.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`;
+
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-full ${isUser ? 'bg-[#39ff14] text-black' : 'bg-[#1a1a1a] text-[#39ff14]'} flex items-center justify-center text-xs font-black shrink-0">
+          ${isUser ? 'A' : '🤖'}
+        </div>
+        <div class="p-3.5 rounded-2xl ${isUser ? 'bg-[#39ff14] text-black font-semibold' : 'bg-[#161616] border border-[#222] text-white'} text-xs max-w-[80%] leading-relaxed whitespace-pre-wrap">
+          ${text}
+        </div>
+      `;
+
+      window.appendChild(div);
+      window.scrollTop = window.scrollHeight;
+    }
+
+    // Initial run
+    runBmiCalc();
+    renderDietPlan();
+  </script>
+</body>
+</html>
