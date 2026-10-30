@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FitBuddy AI – Free & Unrestricted AI Fitness Platform</title>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body {
@@ -14,6 +14,9 @@
       margin: 0;
       padding: 0;
       -webkit-font-smoothing: antialiased;
+    }
+    .hidden {
+      display: none !important;
     }
     .neon-text {
       color: #39ff14;
@@ -933,10 +936,32 @@
     const ACTIVE_KEY = 'fitbuddy_current_active_user';
     const GUEST_KEY = 'fitbuddy_guest_session_data';
 
+    // Fail-safe storage wrapper (survives Brave Shields / incognito blocks)
+    const memStore = {};
+    function safeStorageGet(key) {
+      try {
+        const val = localStorage.getItem(key);
+        if (val !== null) return val;
+      } catch (e) {}
+      return memStore[key] || null;
+    }
+    function safeStorageSet(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {}
+      memStore[key] = val;
+    }
+    function safeStorageRemove(key) {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {}
+      delete memStore[key];
+    }
+
     /* In-memory user database */
     function getUsersDb() {
       try {
-        const raw = localStorage.getItem(DB_KEY);
+        const raw = safeStorageGet(DB_KEY);
         return raw ? JSON.parse(raw) : {};
       } catch (e) {
         return {};
@@ -944,25 +969,25 @@
     }
 
     function saveUsersDb(db) {
-      localStorage.setItem(DB_KEY, JSON.stringify(db));
+      safeStorageSet(DB_KEY, JSON.stringify(db));
     }
 
     function getActiveUserEmail() {
-      return localStorage.getItem(ACTIVE_KEY) || null;
+      return safeStorageGet(ACTIVE_KEY) || null;
     }
 
     function setActiveUserEmail(email) {
       if (email) {
-        localStorage.setItem(ACTIVE_KEY, email.toLowerCase().trim());
+        safeStorageSet(ACTIVE_KEY, email.toLowerCase().trim());
       } else {
-        localStorage.removeItem(ACTIVE_KEY);
+        safeStorageRemove(ACTIVE_KEY);
       }
     }
 
     /* Guest session data persistence */
     function getGuestData() {
       try {
-        const raw = localStorage.getItem(GUEST_KEY);
+        const raw = safeStorageGet(GUEST_KEY);
         if (raw) return JSON.parse(raw);
       } catch (e) {}
 
@@ -1009,7 +1034,7 @@
     }
 
     function saveGuestData(data) {
-      localStorage.setItem(GUEST_KEY, JSON.stringify(data));
+      safeStorageSet(GUEST_KEY, JSON.stringify(data));
     }
 
     function getActiveUser() {
@@ -1038,23 +1063,35 @@
       return db[activeKey];
     }
 
-    /* Modal Helpers */
+    /* Modal Helpers with guaranteed display */
     function openModal(id) {
       const m = document.getElementById(id);
-      if (m) m.classList.remove('hidden');
+      if (m) {
+        m.classList.remove('hidden');
+        m.style.display = 'flex';
+      }
     }
     function closeModal(id) {
       const m = document.getElementById(id);
-      if (m) m.classList.add('hidden');
+      if (m) {
+        m.classList.add('hidden');
+        m.style.display = 'none';
+      }
     }
 
     /* Start Guest Session (Immediate 100% Access) */
     function startGuestSession(targetTab = 'dashboard') {
-      setActiveUserEmail('__GUEST__');
-      closeModal('login-modal');
-      closeModal('register-modal');
-      syncAuthState();
-      switchTab(targetTab);
+      try {
+        setActiveUserEmail('__GUEST__');
+        closeModal('login-modal');
+        closeModal('register-modal');
+        syncAuthState();
+        switchTab(targetTab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error('startGuestSession error:', err);
+        switchTab(targetTab);
+      }
     }
 
     /* Navigation */
@@ -1068,8 +1105,6 @@
     }
 
     function switchTab(tabKey) {
-      // If a user clicks ANY tab while not in a session, seamlessly enter Guest Mode!
-      // NEVER lock, disable, or gate any feature!
       let user = getActiveUser();
       if (!user && tabKey !== 'public') {
         startGuestSession(tabKey);
@@ -1081,7 +1116,13 @@
         const view = document.getElementById('view-' + t);
         const btn = document.getElementById('btn-' + t);
         if (view) {
-          view.classList.toggle('hidden', t !== tabKey);
+          if (t === tabKey) {
+            view.classList.remove('hidden');
+            view.style.display = 'block';
+          } else {
+            view.classList.add('hidden');
+            view.style.display = 'none';
+          }
         }
         if (btn) {
           if (t === tabKey) {
@@ -1092,16 +1133,21 @@
         }
       });
 
-      // Render tab data
-      if (tabKey === 'dashboard') renderDashboard();
-      if (tabKey === 'diet') renderDietPlan();
-      if (tabKey === 'workout') renderWorkoutRoutine();
-      if (tabKey === 'coach') renderChatMessages();
-      if (tabKey === 'profile') populateProfileForm();
-      if (tabKey === 'progress') renderProgressLists();
+      // Render tab data safely
+      try {
+        if (tabKey === 'dashboard') renderDashboard();
+        if (tabKey === 'diet') renderDietPlan();
+        if (tabKey === 'workout') renderWorkoutRoutine();
+        if (tabKey === 'coach') renderChatMessages();
+        if (tabKey === 'profile') populateProfileForm();
+        if (tabKey === 'progress') renderProgressLists();
+      } catch (e) {
+        console.error("Tab render error for", tabKey, e);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /* Auth State Sync */
+    /* Auth State Sync with direct style toggles */
     function syncAuthState() {
       const user = getActiveUser();
       const guestBtns = document.getElementById('guest-buttons');
@@ -1112,29 +1158,36 @@
       const mobileNav = document.getElementById('mobile-nav');
 
       if (user) {
-        if (guestBtns) guestBtns.classList.add('hidden');
-        if (userBadge) userBadge.classList.remove('hidden');
-        if (userNav) userNav.classList.remove('hidden');
-        if (mobileNav) mobileNav.classList.remove('hidden');
+        if (guestBtns) { guestBtns.classList.add('hidden'); guestBtns.style.display = 'none'; }
+        if (userBadge) { userBadge.classList.remove('hidden'); userBadge.style.display = 'flex'; }
+        if (userNav) { userNav.classList.remove('hidden'); userNav.style.display = 'flex'; }
+        if (mobileNav) { mobileNav.classList.remove('hidden'); mobileNav.style.display = 'flex'; }
 
         if (user.isGuest) {
-          if (guestPill) guestPill.classList.remove('hidden');
-          if (regPill) regPill.classList.add('hidden');
-          document.getElementById('nav-user-avatar').innerText = 'G';
-          document.getElementById('nav-user-avatar').className = 'w-8 h-8 rounded-full bg-[#39ff14] text-black font-black text-xs flex items-center justify-center';
+          if (guestPill) { guestPill.classList.remove('hidden'); guestPill.style.display = 'flex'; }
+          if (regPill) { regPill.classList.add('hidden'); regPill.style.display = 'none'; }
+          const avatar = document.getElementById('nav-user-avatar');
+          if (avatar) {
+            avatar.innerText = 'G';
+            avatar.className = 'w-8 h-8 rounded-full bg-[#39ff14] text-black font-black text-xs flex items-center justify-center';
+          }
         } else {
-          if (guestPill) guestPill.classList.add('hidden');
-          if (regPill) regPill.classList.remove('hidden');
+          if (guestPill) { guestPill.classList.add('hidden'); guestPill.style.display = 'none'; }
+          if (regPill) { regPill.classList.remove('hidden'); regPill.style.display = 'block'; }
           const firstName = user.name.split(' ')[0] || user.name;
-          document.getElementById('nav-user-name').innerText = user.name;
-          document.getElementById('nav-user-avatar').innerText = firstName.charAt(0).toUpperCase();
-          document.getElementById('nav-user-avatar').className = 'w-8 h-8 rounded-full bg-sky-400 text-black font-black text-xs flex items-center justify-center';
+          const navName = document.getElementById('nav-user-name');
+          if (navName) navName.innerText = user.name;
+          const avatar = document.getElementById('nav-user-avatar');
+          if (avatar) {
+            avatar.innerText = firstName.charAt(0).toUpperCase();
+            avatar.className = 'w-8 h-8 rounded-full bg-sky-400 text-black font-black text-xs flex items-center justify-center';
+          }
         }
       } else {
-        if (guestBtns) guestBtns.classList.remove('hidden');
-        if (userBadge) userBadge.classList.add('hidden');
-        if (userNav) userNav.classList.add('hidden');
-        if (mobileNav) mobileNav.classList.add('hidden');
+        if (guestBtns) { guestBtns.classList.remove('hidden'); guestBtns.style.display = 'flex'; }
+        if (userBadge) { userBadge.classList.add('hidden'); userBadge.style.display = 'none'; }
+        if (userNav) { userNav.classList.add('hidden'); userNav.style.display = 'none'; }
+        if (mobileNav) { mobileNav.classList.add('hidden'); mobileNav.style.display = 'none'; }
         switchTab('public');
       }
     }
