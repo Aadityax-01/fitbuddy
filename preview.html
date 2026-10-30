@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FitBuddy AI – AI Fitness & Nutrition Platform</title>
+  <title>FitBuddy AI – Free & Unrestricted AI Fitness Platform</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -67,7 +67,7 @@
       <div>
         <h1 class="text-lg font-black tracking-tight leading-none text-white flex items-center gap-1.5">
           FitBuddy <span class="text-[#39ff14]">AI</span>
-          <span class="text-[9px] px-1.5 py-0.5 rounded bg-[#39ff1420] text-[#39ff14] font-bold uppercase tracking-wider">v2.0</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-[#39ff1420] text-[#39ff14] font-bold uppercase tracking-wider">v2.0 Free</span>
         </h1>
         <p class="text-[10px] text-gray-400 font-medium tracking-wide mt-0.5">
           AI Fitness & Indian Nutrition
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <!-- Navigation for logged-in user -->
+    <!-- Navigation for active session (Guest or Registered) -->
     <nav id="user-nav" class="hidden md:flex items-center gap-1 bg-[#161616] border border-[#222222] p-1 rounded-xl">
       <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-[#39ff14] text-black transition-all">
         Dashboard
@@ -102,34 +102,54 @@
     </nav>
 
     <!-- Right Header Controls -->
-    <div id="auth-controls" class="flex items-center gap-3">
-      <!-- Public / Guest State -->
+    <div id="auth-controls" class="flex items-center gap-2 sm:gap-3">
+      <!-- 1. Public Visitor View (Before Entering App) -->
       <div id="guest-buttons" class="flex items-center gap-2">
-        <button onclick="openModal('login-modal')" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#262626] bg-[#141414] text-gray-200 hover:text-white hover:border-[#39ff1440] transition-all">
-          Sign In
+        <button onclick="startGuestSession()" class="neon-btn px-3.5 py-2 text-xs font-black rounded-xl shadow-sm flex items-center gap-1.5">
+          <span>⚡ Continue as Guest</span>
         </button>
-        <button onclick="openModal('register-modal')" class="neon-btn px-4 py-2 text-xs font-bold rounded-xl shadow-sm">
-          Get Started Free
+        <button onclick="openModal('register-modal')" class="hidden sm:inline-block px-3 py-2 text-xs font-bold rounded-xl border border-[#2c2c2c] bg-[#161616] text-gray-300 hover:text-white hover:border-[#39ff1440] transition-all">
+          Register
+        </button>
+        <button onclick="openModal('login-modal')" class="px-3 py-2 text-xs font-bold rounded-xl border border-[#2c2c2c] bg-[#161616] text-gray-300 hover:text-white hover:border-[#39ff1440] transition-all">
+          Login
         </button>
       </div>
 
-      <!-- Logged In State -->
-      <div id="user-badge" class="hidden flex items-center gap-3">
-        <div class="text-right hidden sm:block">
+      <!-- 2. Active Session View (Guest Mode OR Registered Mode) -->
+      <div id="user-badge" class="hidden flex items-center gap-2 sm:gap-3">
+        <!-- Guest Mode indicator & save shortcut -->
+        <div id="guest-pill" class="hidden flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-full bg-[#39ff1415] border border-[#39ff1440] text-[#39ff14] text-[11px] font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#39ff14] animate-pulse"></span>
+            Guest Mode (Full Access)
+          </span>
+          <button onclick="openModal('register-modal')" class="hidden lg:inline-block text-[11px] text-gray-400 hover:text-[#39ff14] underline font-medium">
+            Save Account
+          </button>
+          <button onclick="openModal('login-modal')" class="hidden lg:inline-block text-[11px] text-gray-400 hover:text-white underline font-medium">
+            Sign In
+          </button>
+        </div>
+
+        <!-- Registered user name display -->
+        <div id="registered-pill" class="hidden text-right hidden sm:block">
           <p id="nav-user-name" class="text-xs font-bold text-white leading-tight">Athlete</p>
-          <span class="text-[10px] text-[#39ff14] font-medium">Logged In</span>
+          <span class="text-[10px] text-[#39ff14] font-medium">Synced Account</span>
         </div>
+
         <div id="nav-user-avatar" class="w-8 h-8 rounded-full bg-[#39ff14] text-black font-black text-xs flex items-center justify-center">
-          U
+          G
         </div>
-        <button onclick="handleLogout()" title="Log Out" class="p-2 rounded-xl bg-[#1a1a1a] hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-all border border-[#242424]">
+
+        <button onclick="handleLogout()" title="Exit / Switch Account" class="p-2 rounded-xl bg-[#1a1a1a] hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-all border border-[#242424]">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Mobile Tab navigation (when logged in) -->
+  <!-- Mobile Tab navigation (when active) -->
   <div id="mobile-nav" class="hidden md:hidden flex items-center gap-1 overflow-x-auto bg-[#141414] border-b border-[#222222] p-2">
     <button onclick="switchTab('dashboard')" class="tab-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-[#39ff14] text-black whitespace-nowrap">Dashboard</button>
     <button onclick="switchTab('diet')" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-400 whitespace-nowrap">Indian Diet</button>
@@ -146,7 +166,7 @@
   <main class="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
 
     <!-- ========================================== -->
-    <!-- VIEW 0: PUBLIC WELCOME PAGE (Before Login) -->
+    <!-- VIEW 0: PUBLIC WELCOME PAGE                -->
     <!-- ========================================== -->
     <section id="view-public" class="space-y-12 py-6">
       <!-- Hero Section -->
@@ -156,7 +176,7 @@
         <div class="relative z-10 max-w-3xl mx-auto space-y-6">
           <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#39ff1415] border border-[#39ff1430] text-[#39ff14] text-xs font-bold uppercase tracking-wider">
             <span class="w-2 h-2 rounded-full bg-[#39ff14] animate-ping"></span>
-            Next-Gen Autonomous Fitness Intelligence
+            100% Free &amp; Unrestricted AI Fitness Intelligence
           </div>
 
           <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-tight text-white">
@@ -164,109 +184,107 @@
             <span class="neon-text">FitBuddy AI</span>
           </h1>
 
-          <p class="text-sm md:text-base text-gray-400 leading-relaxed max-w-2xl mx-auto">
-            Your personalized AI fitness companion. Tailored Indian diet planning, custom workout splits, intelligent progress tracking, and 24/7 personal coach guidance — built for real results.
+          <p class="text-sm md:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
+            Experience complete, unrestricted access to our AI Coach, Indian diet planner, smart workout generator, and macro trackers. No sign-up required to explore all features.
           </p>
 
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button onclick="openModal('register-modal')" class="neon-btn w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-lg">
-              <span>Create Free Account</span>
+          <!-- Main Hero CTAs: Guest, Register, Login -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+            <button onclick="startGuestSession()" class="neon-btn w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-black flex items-center justify-center gap-2 shadow-lg">
+              <span>⚡ Continue as Guest (Full Instant Access)</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </button>
-            <button onclick="openModal('login-modal')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold bg-[#181818] hover:bg-[#222222] border border-[#2a2a2a] text-white transition-all">
-              Already a Member? Sign In
+            <button onclick="openModal('register-modal')" class="w-full sm:w-auto px-6 py-4 rounded-xl text-sm font-bold bg-[#181818] hover:bg-[#222222] border border-[#2a2a2a] text-white transition-all">
+              Register (Save Progress)
+            </button>
+            <button onclick="openModal('login-modal')" class="w-full sm:w-auto px-6 py-4 rounded-xl text-sm font-bold bg-[#141414] hover:bg-[#1a1a1a] border border-[#242424] text-gray-300 hover:text-white transition-all">
+              Login
             </button>
           </div>
 
+          <!-- Feature Highlights bar -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-[#1f1f1f] text-left">
             <div>
-              <p class="text-xl md:text-2xl font-black text-white">100%</p>
-              <p class="text-xs text-gray-500">Personalized Profiles</p>
+              <p class="text-xl md:text-2xl font-black text-[#39ff14]">Zero Barriers</p>
+              <p class="text-xs text-gray-400">1-Click Instant Guest Mode</p>
             </div>
             <div>
-              <p class="text-xl md:text-2xl font-black text-[#39ff14]">Indian Diets</p>
-              <p class="text-xs text-gray-500">Veg, Non-Veg & Vegan</p>
+              <p class="text-xl md:text-2xl font-black text-white">Indian Diets</p>
+              <p class="text-xs text-gray-400">Veg, Non-Veg, Egg &amp; Vegan</p>
             </div>
             <div>
-              <p class="text-xl md:text-2xl font-black text-white">AI Coach</p>
-              <p class="text-xs text-gray-500">24/7 Intelligent Guidance</p>
+              <p class="text-xl md:text-2xl font-black text-[#38bdf8]">AI Coach</p>
+              <p class="text-xs text-gray-400">Unlimited Natural Dialogue</p>
             </div>
             <div>
-              <p class="text-xl md:text-2xl font-black text-[#38bdf8]">Private & Secure</p>
-              <p class="text-xs text-gray-500">Independent User Data</p>
+              <p class="text-xl md:text-2xl font-black text-white">All Features</p>
+              <p class="text-xs text-gray-400">100% Unlocked For Everyone</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Feature Grid -->
+      <!-- Feature Interactive Teaser Grid (Clicking any jumps directly into that feature in guest mode) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="card-dark p-6 space-y-3">
+        <div onclick="startGuestSession('diet')" class="card-dark p-6 space-y-3 cursor-pointer hover:border-[#39ff1460] transition-all group">
           <div class="w-12 h-12 rounded-2xl bg-[#39ff1415] border border-[#39ff1430] flex items-center justify-center text-2xl text-[#39ff14]">
             🥗
           </div>
-          <h3 class="text-lg font-bold text-white">Smart Indian Diet Planner</h3>
+          <h3 class="text-lg font-bold text-white group-hover:text-[#39ff14] transition-colors flex items-center justify-between">
+            <span>Indian Diet Planner</span>
+            <span class="text-xs text-[#39ff14]">Open →</span>
+          </h3>
           <p class="text-xs text-gray-400 leading-relaxed">
-            Personalized macro-balanced Indian meal plans (Roti, Dal, Paneer, Chicken, Soya, Oats, Poha) calculated to your exact calorie target.
+            Macro-balanced Indian meal plans (Roti, Dal, Paneer, Chicken, Soya, Oats, Poha) calculated to your exact calorie target. Fully unlocked.
           </p>
         </div>
 
-        <div class="card-dark p-6 space-y-3">
+        <div onclick="startGuestSession('workout')" class="card-dark p-6 space-y-3 cursor-pointer hover:border-purple-500/60 transition-all group">
           <div class="w-12 h-12 rounded-2xl bg-[#a855f715] border border-[#a855f730] flex items-center justify-center text-2xl text-purple-400">
             🏋️
           </div>
-          <h3 class="text-lg font-bold text-white">Adaptive Workout Generator</h3>
+          <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors flex items-center justify-between">
+            <span>Adaptive Workouts</span>
+            <span class="text-xs text-purple-400">Open →</span>
+          </h3>
           <p class="text-xs text-gray-400 leading-relaxed">
-            Custom routines based on your fitness level, equipment (Home, Dumbbells, Full Gym), and schedule with sets, reps, and rest intervals.
+            Custom routines based on your fitness level, equipment (Home, Dumbbells, Full Gym), and schedule with sets, reps, and form notes.
           </p>
         </div>
 
-        <div class="card-dark p-6 space-y-3">
+        <div onclick="startGuestSession('coach')" class="card-dark p-6 space-y-3 cursor-pointer hover:border-sky-500/60 transition-all group">
           <div class="w-12 h-12 rounded-2xl bg-[#38bdf815] border border-[#38bdf830] flex items-center justify-center text-2xl text-sky-400">
             🤖
           </div>
-          <h3 class="text-lg font-bold text-white">24/7 AI Fitness Coach</h3>
+          <h3 class="text-lg font-bold text-white group-hover:text-sky-400 transition-colors flex items-center justify-between">
+            <span>AI Fitness Coach</span>
+            <span class="text-xs text-sky-400">Open →</span>
+          </h3>
           <p class="text-xs text-gray-400 leading-relaxed">
             Ask any question about exercise form, meal replacements, Indian food nutrition, or plateau breakthroughs with conversational memory.
           </p>
         </div>
       </div>
-
-      <!-- Security / Multi-user Guarantee -->
-      <div class="card-dark p-6 border-[#39ff1425] flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-xl bg-[#39ff1415] flex items-center justify-center text-[#39ff14] text-lg font-bold">
-            🔒
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-white">Multi-User Account Architecture</h4>
-            <p class="text-xs text-gray-400">Each registered user enjoys completely isolated records, personalized calculations, and private chat history.</p>
-          </div>
-        </div>
-        <button onclick="openModal('register-modal')" class="neon-btn px-6 py-2.5 rounded-xl text-xs whitespace-nowrap">
-          Register Your Profile
-        </button>
-      </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- VIEW 1: DASHBOARD (Logged-In User)         -->
+    <!-- VIEW 1: DASHBOARD                          -->
     <!-- ========================================== -->
     <section id="view-dashboard" class="hidden space-y-6">
       <!-- Greeting Banner -->
       <div class="bg-gradient-to-r from-[#141414] via-[#111111] to-[#141414] border border-[#1f1f1f] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-card">
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#39ff14] bg-[#39ff1415] px-2 py-0.5 rounded-full border border-[#39ff1430]">
-              Personalized Dashboard
+            <span id="dash-mode-badge" class="text-[10px] uppercase tracking-wider font-extrabold text-[#39ff14] bg-[#39ff1415] px-2 py-0.5 rounded-full border border-[#39ff1430]">
+              Full Access Active
             </span>
             <span id="dash-date" class="text-xs text-gray-400">Today</span>
           </div>
           <h2 class="text-2xl md:text-3xl font-black text-white">
-            Welcome, <span id="dash-user-name" class="text-[#39ff14]">Athlete</span> 💪
+            Welcome, <span id="dash-user-name" class="text-[#39ff14]">Guest Athlete</span> 💪
           </h2>
           <p id="dash-summary-text" class="text-xs text-gray-400 mt-1">
-            Loading your personalized fitness benchmarks...
+            Goal: Weight Loss • Diet: Vegetarian • Daily Intake: 2,100 kcal
           </p>
         </div>
 
@@ -281,22 +299,6 @@
         </div>
       </div>
 
-      <!-- Profile Incomplete Setup Banner -->
-      <div id="setup-prompt-banner" class="hidden card-dark border-amber-500/40 p-5 bg-gradient-to-r from-amber-950/20 to-[#111] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
-            ⚠️
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-white">Complete Your Fitness Profile</h4>
-            <p class="text-xs text-gray-400">Enter your age, height, weight, and fitness goal to calculate exact calorie targets & custom Indian diet.</p>
-          </div>
-        </div>
-        <button onclick="switchTab('profile')" class="px-4 py-2 text-xs font-bold bg-amber-500 text-black hover:bg-amber-400 rounded-xl whitespace-nowrap transition-all">
-          Setup Profile Now →
-        </button>
-      </div>
-
       <!-- Metric Stat Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Daily Calories -->
@@ -307,12 +309,12 @@
           </div>
           <div class="flex items-baseline gap-1.5">
             <span id="dash-cal-consumed" class="text-2xl font-black text-white">0</span>
-            <span id="dash-cal-target" class="text-xs text-gray-500">/ 2,000 kcal</span>
+            <span id="dash-cal-target" class="text-xs text-gray-500">/ 2,100 kcal</span>
           </div>
           <div class="w-full bg-[#1c1c1c] rounded-full h-1.5 overflow-hidden">
             <div id="dash-cal-bar" class="bg-[#39ff14] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
-          <p id="dash-cal-remaining" class="text-[11px] text-gray-400">2,000 kcal remaining</p>
+          <p id="dash-cal-remaining" class="text-[11px] text-gray-400">2,100 kcal remaining</p>
         </div>
 
         <!-- Water Intake -->
@@ -342,10 +344,10 @@
             <span class="text-lg">⚖️</span>
           </div>
           <div class="flex items-baseline gap-1.5">
-            <span id="dash-bmi-val" class="text-2xl font-black text-white">—</span>
-            <span id="dash-bmi-badge" class="text-xs font-bold text-[#39ff14]">Pending</span>
+            <span id="dash-bmi-val" class="text-2xl font-black text-white">23.7</span>
+            <span id="dash-bmi-badge" class="text-xs font-bold text-[#39ff14]">Normal</span>
           </div>
-          <p id="dash-bmi-desc" class="text-[11px] text-gray-400">Configure height & weight in profile</p>
+          <p id="dash-bmi-desc" class="text-[11px] text-gray-400">Tap to recalculate anytime</p>
         </div>
 
         <!-- Protein Target -->
@@ -356,7 +358,7 @@
           </div>
           <div class="flex items-baseline gap-1.5">
             <span id="dash-protein-consumed" class="text-2xl font-black text-white">0g</span>
-            <span id="dash-protein-target" class="text-xs text-gray-500">/ 120g target</span>
+            <span id="dash-protein-target" class="text-xs text-gray-500">/ 125g target</span>
           </div>
           <div class="w-full bg-[#1c1c1c] rounded-full h-1.5 overflow-hidden">
             <div id="dash-protein-bar" class="bg-purple-400 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -372,17 +374,17 @@
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <span>🏋️</span> Today's Workout Session
+                <span>🏋️</span> Today's Workout Routine
               </h3>
               <p class="text-xs text-gray-400">Interactive checklist for today's exercises</p>
             </div>
             <button onclick="switchTab('workout')" class="text-xs text-[#39ff14] hover:underline font-bold">
-              Regenerate Plan →
+              View All Splits →
             </button>
           </div>
 
           <div id="dash-workout-list" class="space-y-2.5">
-            <!-- Dynamically populated or empty state -->
+            <!-- Dynamically populated -->
           </div>
         </div>
 
@@ -461,7 +463,7 @@
               <option value="Full Body">Full Body (3 Days)</option>
               <option value="Upper Lower">Upper / Lower Split (4 Days)</option>
               <option value="Push Pull Legs">Push / Pull / Legs (5-6 Days)</option>
-              <option value="Home Fat Burn">Home HIIT & Bodyweight (No Equipment)</option>
+              <option value="Home Fat Burn">Home HIIT &amp; Bodyweight (No Equipment)</option>
             </select>
             <select id="workout-equipment-select" onchange="generateWorkoutRoutine()" class="bg-[#181818] border border-[#2a2a2a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#39ff14]">
               <option value="gym">Full Commercial Gym</option>
@@ -482,7 +484,7 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- VIEW 4: AI COACH CHATBOT                   -->
+    <!-- VIEW 4: AI COACH CHATBOT (UNRESTRICTED)    -->
     <!-- ========================================== -->
     <section id="view-coach" class="hidden space-y-4">
       <div class="card-dark flex flex-col h-[650px] border-[#222222] overflow-hidden">
@@ -495,9 +497,10 @@
             <div>
               <h3 class="text-sm font-bold text-white flex items-center gap-2">
                 FitBuddy AI Coach
-                <span class="w-2 h-2 rounded-full bg-[#39ff14]"></span>
+                <span class="w-2 h-2 rounded-full bg-[#39ff14] animate-pulse"></span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#39ff1415] text-[#39ff14] border border-[#39ff1430]">Unrestricted Dialogue</span>
               </h3>
-              <p id="chat-sub-label" class="text-[10px] text-gray-400">Context aware • Indian diet & fitness expert</p>
+              <p id="chat-sub-label" class="text-[10px] text-gray-400">Ask any question on fitness, nutrition, calculations, exercises, or daily life</p>
             </div>
           </div>
           <button onclick="clearChatHistory()" class="px-3 py-1 text-[11px] rounded-lg bg-[#1a1a1a] hover:bg-rose-500/20 text-gray-400 hover:text-rose-300 border border-[#2a2a2a]">
@@ -510,7 +513,7 @@
           <!-- Dynamically populated -->
         </div>
 
-        <!-- Quick Prompts -->
+        <!-- Quick Prompts (Suggested topics, but user can type ANY question) -->
         <div class="p-2 border-t border-[#1a1a1a] bg-[#121212] flex gap-2 overflow-x-auto text-[11px]">
           <button onclick="askCoachPrompt('How much protein is in 100g of paneer vs 100g of tofu?')" class="px-3 py-1.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#262626] text-gray-300 whitespace-nowrap">
             Paneer vs Tofu Protein?
@@ -524,11 +527,14 @@
           <button onclick="askCoachPrompt('What are good Indian pre-workout snacks for energy?')" class="px-3 py-1.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#262626] text-gray-300 whitespace-nowrap">
             Pre-Workout Snacks
           </button>
+          <button onclick="askCoachPrompt('How many calories should I eat to lose 5kg in 2 months?')" class="px-3 py-1.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#262626] text-gray-300 whitespace-nowrap">
+            Weight Loss Calculation
+          </button>
         </div>
 
         <!-- Input Area -->
         <form onsubmit="handleSendChat(event)" class="p-3 border-t border-[#1c1c1c] bg-[#141414] flex gap-2">
-          <input type="text" id="coach-input" placeholder="Ask your FitBuddy AI Coach anything..." class="flex-1 bg-[#181818] border border-[#262626] focus:border-[#39ff14] rounded-xl px-4 py-3 text-xs text-white focus:outline-none" />
+          <input type="text" id="coach-input" placeholder="Ask your FitBuddy AI Coach any fitness, nutrition, or general question..." class="flex-1 bg-[#181818] border border-[#262626] focus:border-[#39ff14] rounded-xl px-4 py-3 text-xs text-white focus:outline-none" />
           <button type="submit" class="neon-btn px-6 py-3 rounded-xl text-xs font-bold flex items-center gap-1.5">
             <span>Send</span>
             <span>⚡</span>
@@ -545,9 +551,9 @@
         <!-- Interactive Form -->
         <div class="card-dark p-6 space-y-4">
           <h2 class="text-lg font-black text-white flex items-center gap-2">
-            <span>⚖️</span> Scientific Calorie & BMI Calculator
+            <span>⚖️</span> Scientific Calorie &amp; BMI Calculator
           </h2>
-          <p class="text-xs text-gray-400">Uses Mifflin-St Jeor formula for basal metabolic calculations.</p>
+          <p class="text-xs text-gray-400">Mifflin-St Jeor formula for basal metabolic calculations. Free for everyone.</p>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
@@ -613,7 +619,7 @@
             </div>
 
             <div class="p-4 rounded-xl bg-[#161616] border border-[#222222]">
-              <span class="text-[10px] uppercase font-bold text-gray-400">TDEE (Maintenance)</span>
+              <span class="text-[10px] uppercase font-bold text-gray-400">TDEE (Burn)</span>
               <p id="res-tdee" class="text-2xl font-black text-white mt-1">2,600</p>
               <span class="text-[10px] text-gray-500">Daily burn</span>
             </div>
@@ -626,7 +632,7 @@
           </div>
 
           <button onclick="applyCalculatedToProfile()" class="w-full py-2.5 rounded-xl border border-[#39ff1440] hover:bg-[#39ff1410] text-[#39ff14] text-xs font-bold transition-all">
-            Save These Targets to My Profile
+            Apply These Targets to My Session ⚡
           </button>
         </div>
       </div>
@@ -642,10 +648,10 @@
             <h2 class="text-xl font-black text-white flex items-center gap-2">
               <span>📈</span> Personal Progress History
             </h2>
-            <p class="text-xs text-gray-400">Historical logs saved exclusively to your user account.</p>
+            <p class="text-xs text-gray-400">Log meals and body weight. Fully active for guests and registered users.</p>
           </div>
           <button onclick="openModal('food-modal')" class="neon-btn px-4 py-2 rounded-xl text-xs font-bold">
-            + Log New Entry
+            + Log New Meal
           </button>
         </div>
 
@@ -683,28 +689,30 @@
         <div class="flex items-center justify-between border-b border-[#1c1c1c] pb-4">
           <div>
             <h2 class="text-xl font-black text-white">Fitness Profile Configuration</h2>
-            <p class="text-xs text-gray-400">Update your biometric details anytime to re-tune calorie & workout targets.</p>
+            <p class="text-xs text-gray-400">Update your biometric details anytime. (Optional for guests, auto-saved to session).</p>
           </div>
-          <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold">
-            Logout
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold">
+              Exit Session
+            </button>
+          </div>
         </div>
 
         <form onsubmit="handleSaveProfile(event)" class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div>
-              <label class="text-xs font-bold text-gray-400">Full Name</label>
-              <input type="text" id="prof-name" required class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <label class="text-xs font-bold text-gray-400">Display Name</label>
+              <input type="text" id="prof-name" placeholder="e.g. Guest Athlete or your name" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
-              <label class="text-xs font-bold text-gray-400">Registered Email</label>
-              <input type="email" id="prof-email" disabled class="w-full mt-1 bg-[#121212] border border-[#1f1f1f] rounded-xl px-3 py-2.5 text-xs text-gray-500 cursor-not-allowed" />
+              <label class="text-xs font-bold text-gray-400">Account Status</label>
+              <input type="text" id="prof-email" disabled class="w-full mt-1 bg-[#121212] border border-[#1f1f1f] rounded-xl px-3 py-2.5 text-xs text-gray-400 cursor-not-allowed" />
             </div>
 
             <div>
               <label class="text-xs font-bold text-gray-400">Age</label>
-              <input type="number" id="prof-age" required min="10" max="100" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <input type="number" id="prof-age" min="10" max="100" value="24" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
@@ -718,17 +726,17 @@
 
             <div>
               <label class="text-xs font-bold text-gray-400">Height (cm)</label>
-              <input type="number" id="prof-height" required min="100" max="250" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <input type="number" id="prof-height" min="100" max="250" value="172" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
               <label class="text-xs font-bold text-gray-400">Current Weight (kg)</label>
-              <input type="number" step="0.1" id="prof-weight" required min="30" max="250" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <input type="number" step="0.1" id="prof-weight" min="30" max="250" value="70" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
               <label class="text-xs font-bold text-gray-400">Target Weight (kg)</label>
-              <input type="number" step="0.1" id="prof-target-weight" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <input type="number" step="0.1" id="prof-target-weight" value="68" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
@@ -736,7 +744,7 @@
               <select id="prof-goal" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]">
                 <option value="Weight Loss">Weight Loss (Fat Reduction)</option>
                 <option value="Muscle Gain">Muscle Gain (Hypertrophy)</option>
-                <option value="Maintenance">Maintenance & Tone</option>
+                <option value="Maintenance">Maintenance &amp; Tone</option>
                 <option value="General Fitness">General Cardiovascular Fitness</option>
               </select>
             </div>
@@ -746,7 +754,7 @@
               <select id="prof-activity" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]">
                 <option value="1.2">Sedentary (Little or no exercise)</option>
                 <option value="1.375">Lightly Active (1-3 days/week)</option>
-                <option value="1.55">Moderately Active (3-5 days/week)</option>
+                <option value="1.55" selected>Moderately Active (3-5 days/week)</option>
                 <option value="1.725">Very Active (6-7 days/week)</option>
               </select>
             </div>
@@ -763,7 +771,7 @@
 
             <div>
               <label class="text-xs font-bold text-gray-400">Food Allergies / Restrictions</label>
-              <input type="text" id="prof-allergies" placeholder="e.g. Peanuts, Gluten, Dairy (or None)" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
+              <input type="text" id="prof-allergies" value="None" placeholder="e.g. Peanuts, Gluten (or None)" class="w-full mt-1 bg-[#161616] border border-[#242424] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
             </div>
 
             <div>
@@ -776,9 +784,10 @@
             </div>
           </div>
 
-          <div class="pt-4 flex justify-end">
+          <div class="pt-4 flex items-center justify-between">
+            <span class="text-xs text-gray-400">All fields are optional for guests.</span>
             <button type="submit" class="neon-btn px-8 py-3 rounded-xl text-xs font-black shadow-lg">
-              Save Profile & Recalculate AI Targets ⚡
+              Save Preferences &amp; Recalculate ⚡
             </button>
           </div>
         </form>
@@ -791,7 +800,7 @@
   <!-- MODALS: LOGIN, REGISTER, LOG FOOD          -->
   <!-- ========================================== -->
 
-  <!-- LOGIN MODAL -->
+  <!-- LOGIN MODAL (OPTIONAL) -->
   <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="card-dark w-full max-w-md p-6 md:p-8 space-y-5 border-[#282828] relative">
       <button onclick="closeModal('login-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-white">✕</button>
@@ -800,8 +809,8 @@
         <div class="w-10 h-10 rounded-xl bg-[#39ff1415] border border-[#39ff1430] text-[#39ff14] text-lg font-black mx-auto flex items-center justify-center mb-2">
           ⚡
         </div>
-        <h3 class="text-xl font-black text-white">Welcome Back</h3>
-        <p class="text-xs text-gray-400">Sign in to your private FitBuddy AI account</p>
+        <h3 class="text-xl font-black text-white">Sign In to Saved Account</h3>
+        <p class="text-xs text-gray-400">Access your permanently saved progress &amp; history</p>
       </div>
 
       <div id="login-error" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs"></div>
@@ -816,20 +825,22 @@
           <input type="password" id="login-password" required placeholder="••••••••" class="w-full mt-1 bg-[#161616] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
         </div>
         <button type="submit" class="neon-btn w-full py-3 rounded-xl text-xs font-black">
-          Sign In to Dashboard
+          Sign In
         </button>
       </form>
 
-      <p class="text-center text-xs text-gray-400">
-        Don't have an account? 
-        <button onclick="closeModal('login-modal'); openModal('register-modal')" class="text-[#39ff14] font-bold hover:underline">
-          Register Here
+      <div class="pt-2 text-center space-y-2">
+        <p class="text-xs text-gray-400">
+          Want instant access without logging in?
+        </p>
+        <button onclick="closeModal('login-modal'); startGuestSession()" class="text-xs text-[#39ff14] font-bold hover:underline">
+          ⚡ Continue as Guest (Full Free Access)
         </button>
-      </p>
+      </div>
     </div>
   </div>
 
-  <!-- REGISTER MODAL -->
+  <!-- REGISTER MODAL (OPTIONAL) -->
   <div id="register-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="card-dark w-full max-w-md p-6 md:p-8 space-y-5 border-[#282828] relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeModal('register-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-white">✕</button>
@@ -838,8 +849,8 @@
         <div class="w-10 h-10 rounded-xl bg-[#39ff1415] border border-[#39ff1430] text-[#39ff14] text-lg font-black mx-auto flex items-center justify-center mb-2">
           ⚡
         </div>
-        <h3 class="text-xl font-black text-white">Create FitBuddy Account</h3>
-        <p class="text-xs text-gray-400">Get your personalized fitness & nutrition intelligence</p>
+        <h3 class="text-xl font-black text-white">Save Progress Permanently</h3>
+        <p class="text-xs text-gray-400">Register to keep your meals, weight records, and chat history saved across devices</p>
       </div>
 
       <div id="register-error" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs"></div>
@@ -862,16 +873,23 @@
           <input type="password" id="reg-confirm" required minlength="6" placeholder="Confirm your password" class="w-full mt-1 bg-[#161616] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]" />
         </div>
         <button type="submit" class="neon-btn w-full py-3 rounded-xl text-xs font-black">
-          Complete Registration & Setup Profile
+          Create Account &amp; Sync Session
         </button>
       </form>
 
-      <p class="text-center text-xs text-gray-400">
-        Already registered? 
-        <button onclick="closeModal('register-modal'); openModal('login-modal')" class="text-[#39ff14] font-bold hover:underline">
-          Sign In
-        </button>
-      </p>
+      <div class="pt-2 text-center space-y-2">
+        <p class="text-xs text-gray-400">
+          Already registered? 
+          <button onclick="closeModal('register-modal'); openModal('login-modal')" class="text-[#39ff14] font-bold hover:underline">
+            Sign In
+          </button>
+        </p>
+        <div>
+          <button onclick="closeModal('register-modal'); startGuestSession()" class="text-xs text-gray-400 hover:text-white underline">
+            Continue as Guest without registering
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -881,7 +899,7 @@
       <button onclick="closeModal('food-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-white">✕</button>
 
       <h3 class="text-base font-black text-white flex items-center gap-2">
-        <span>🥗</span> Log Indian Food Intake
+        <span>🥗</span> Log Food / Indian Meal
       </h3>
 
       <form onsubmit="handleFoodLogSubmit(event)" class="space-y-3">
@@ -913,6 +931,7 @@
     /* Database keys */
     const DB_KEY = 'fitbuddy_multi_users';
     const ACTIVE_KEY = 'fitbuddy_current_active_user';
+    const GUEST_KEY = 'fitbuddy_guest_session_data';
 
     /* In-memory user database */
     function getUsersDb() {
@@ -940,21 +959,83 @@
       }
     }
 
+    /* Guest session data persistence */
+    function getGuestData() {
+      try {
+        const raw = localStorage.getItem(GUEST_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+
+      // Default rich guest session with all features 100% unlocked
+      const defaultGuest = {
+        isGuest: true,
+        name: 'Guest Athlete',
+        email: 'guest@fitbuddy.local',
+        profile: {
+          age: 24,
+          gender: 'male',
+          height: 172,
+          weight: 70,
+          targetWeight: 68,
+          goal: 'Weight Loss',
+          activity: '1.55',
+          dietType: 'Vegetarian',
+          allergies: 'None',
+          equipment: 'gym',
+          calorieTarget: 2100,
+          proteinTarget: 125,
+          waterTarget: 2500,
+          bmi: 23.7,
+          bmiCategory: 'Normal Weight'
+        },
+        logs: {
+          waterToday: 0,
+          caloriesToday: 0,
+          proteinToday: 0,
+          meals: [],
+          weights: [],
+          workoutsDone: []
+        },
+        chatHistory: [
+          {
+            role: 'assistant',
+            text: `Hello and welcome to FitBuddy AI! 🤖 You are in completely free, unrestricted Guest Mode.\n\nYou have FULL access to everything: ask me any fitness or nutrition questions, generate custom Indian diet plans, create workout splits, track water and meals, or calculate your BMI and macros!\n\nWhat can I help you achieve today?`,
+            time: 'Just now'
+          }
+        ]
+      };
+      saveGuestData(defaultGuest);
+      return defaultGuest;
+    }
+
+    function saveGuestData(data) {
+      localStorage.setItem(GUEST_KEY, JSON.stringify(data));
+    }
+
     function getActiveUser() {
-      const email = getActiveUserEmail();
-      if (!email) return null;
+      const activeKey = getActiveUserEmail();
+      if (activeKey === '__GUEST__') {
+        return getGuestData();
+      }
+      if (!activeKey) return null;
       const db = getUsersDb();
-      return db[email] || null;
+      return db[activeKey] || null;
     }
 
     function updateActiveUser(mutator) {
-      const email = getActiveUserEmail();
-      if (!email) return null;
+      const activeKey = getActiveUserEmail();
+      if (activeKey === '__GUEST__') {
+        const guest = getGuestData();
+        mutator(guest);
+        saveGuestData(guest);
+        return guest;
+      }
+      if (!activeKey) return null;
       const db = getUsersDb();
-      if (!db[email]) return null;
-      mutator(db[email]);
+      if (!db[activeKey]) return null;
+      mutator(db[activeKey]);
       saveUsersDb(db);
-      return db[email];
+      return db[activeKey];
     }
 
     /* Modal Helpers */
@@ -965,6 +1046,15 @@
     function closeModal(id) {
       const m = document.getElementById(id);
       if (m) m.classList.add('hidden');
+    }
+
+    /* Start Guest Session (Immediate 100% Access) */
+    function startGuestSession(targetTab = 'dashboard') {
+      setActiveUserEmail('__GUEST__');
+      closeModal('login-modal');
+      closeModal('register-modal');
+      syncAuthState();
+      switchTab(targetTab);
     }
 
     /* Navigation */
@@ -978,9 +1068,11 @@
     }
 
     function switchTab(tabKey) {
-      const user = getActiveUser();
+      // If a user clicks ANY tab while not in a session, seamlessly enter Guest Mode!
+      // NEVER lock, disable, or gate any feature!
+      let user = getActiveUser();
       if (!user && tabKey !== 'public') {
-        openModal('login-modal');
+        startGuestSession(tabKey);
         return;
       }
 
@@ -1000,7 +1092,7 @@
         }
       });
 
-      // Tab specific triggers
+      // Render tab data
       if (tabKey === 'dashboard') renderDashboard();
       if (tabKey === 'diet') renderDietPlan();
       if (tabKey === 'workout') renderWorkoutRoutine();
@@ -1014,6 +1106,8 @@
       const user = getActiveUser();
       const guestBtns = document.getElementById('guest-buttons');
       const userBadge = document.getElementById('user-badge');
+      const guestPill = document.getElementById('guest-pill');
+      const regPill = document.getElementById('registered-pill');
       const userNav = document.getElementById('user-nav');
       const mobileNav = document.getElementById('mobile-nav');
 
@@ -1023,15 +1117,18 @@
         if (userNav) userNav.classList.remove('hidden');
         if (mobileNav) mobileNav.classList.remove('hidden');
 
-        const firstName = user.name.split(' ')[0] || user.name;
-        document.getElementById('nav-user-name').innerText = user.name;
-        document.getElementById('nav-user-avatar').innerText = firstName.charAt(0).toUpperCase();
-
-        // Check if profile setup complete
-        if (!user.profile || !user.profile.age) {
-          switchTab('profile');
+        if (user.isGuest) {
+          if (guestPill) guestPill.classList.remove('hidden');
+          if (regPill) regPill.classList.add('hidden');
+          document.getElementById('nav-user-avatar').innerText = 'G';
+          document.getElementById('nav-user-avatar').className = 'w-8 h-8 rounded-full bg-[#39ff14] text-black font-black text-xs flex items-center justify-center';
         } else {
-          switchTab('dashboard');
+          if (guestPill) guestPill.classList.add('hidden');
+          if (regPill) regPill.classList.remove('hidden');
+          const firstName = user.name.split(' ')[0] || user.name;
+          document.getElementById('nav-user-name').innerText = user.name;
+          document.getElementById('nav-user-avatar').innerText = firstName.charAt(0).toUpperCase();
+          document.getElementById('nav-user-avatar').className = 'w-8 h-8 rounded-full bg-sky-400 text-black font-black text-xs flex items-center justify-center';
         }
       } else {
         if (guestBtns) guestBtns.classList.remove('hidden');
@@ -1055,7 +1152,7 @@
       const user = db[email];
 
       if (!user) {
-        errBox.innerText = 'No account found with this email. Please register first.';
+        errBox.innerText = 'No account found with this email. You can register or use Continue as Guest.';
         errBox.classList.remove('hidden');
         return;
       }
@@ -1069,6 +1166,7 @@
       setActiveUserEmail(email);
       closeModal('login-modal');
       syncAuthState();
+      switchTab('dashboard');
     }
 
     /* Registration Action */
@@ -1101,28 +1199,33 @@
         return;
       }
 
-      // Create new user account with independent storage
+      // Check if user was previously a guest and preserve their progress!
+      const currentGuest = getGuestData();
+
       db[email] = {
+        isGuest: false,
         name,
         email,
         password,
         registeredAt: new Date().toISOString(),
-        profile: {
-          age: null,
+        profile: currentGuest.profile ? { ...currentGuest.profile } : {
+          age: 24,
           gender: 'male',
-          height: null,
-          weight: null,
-          targetWeight: null,
+          height: 172,
+          weight: 70,
+          targetWeight: 68,
           goal: 'Weight Loss',
           activity: '1.55',
           dietType: 'Vegetarian',
           allergies: 'None',
           equipment: 'gym',
-          calorieTarget: 2000,
-          proteinTarget: 120,
+          calorieTarget: 2100,
+          proteinTarget: 125,
           waterTarget: 2500,
+          bmi: 23.7,
+          bmiCategory: 'Normal Weight'
         },
-        logs: {
+        logs: currentGuest.logs ? { ...currentGuest.logs } : {
           waterToday: 0,
           caloriesToday: 0,
           proteinToday: 0,
@@ -1130,10 +1233,10 @@
           weights: [],
           workoutsDone: []
         },
-        chatHistory: [
+        chatHistory: currentGuest.chatHistory || [
           {
             role: 'assistant',
-            text: `Namaste ${name.split(' ')[0]}! 🤖 I am your personalized FitBuddy AI Coach.\n\nLet's get your fitness profile set up so I can tailor your Indian nutrition targets, calorie targets, and workouts specifically for you!`,
+            text: `Namaste ${name.split(' ')[0]}! 🤖 Welcome to your permanently saved FitBuddy AI account. Your data will now be kept safe!`,
             time: 'Just now'
           }
         ]
@@ -1143,18 +1246,20 @@
       setActiveUserEmail(email);
       closeModal('register-modal');
       syncAuthState();
+      switchTab('dashboard');
+      alert(`Account created for ${name}! Your profile and logs are permanently saved.`);
     }
 
-    /* Logout Action */
+    /* Logout Action (Clears active session, returns to public page) */
     function handleLogout() {
       setActiveUserEmail(null);
       syncAuthState();
+      switchTab('public');
     }
 
     /* Scientific Metric Calculations */
     function computeProfileMetrics(weight, height, age, gender, activityMultiplier, goalStr) {
       if (!weight || !height || !age) return null;
-      // Mifflin-St Jeor formula
       let bmr = (10 * weight) + (6.25 * height) - (5 * age);
       bmr = (gender === 'female') ? bmr - 161 : bmr + 5;
 
@@ -1165,9 +1270,7 @@
       if (goalStr.includes('Loss')) targetCals = tdee - 500;
       else if (goalStr.includes('Gain')) targetCals = tdee + 300;
 
-      // Protein target ~ 1.8g per kg bodyweight
       const targetProtein = Math.round(weight * 1.8);
-      // Water target ~ 35ml per kg bodyweight
       const targetWater = Math.round(weight * 35);
 
       const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
@@ -1193,11 +1296,11 @@
       const user = getActiveUser();
       if (!user) return;
 
-      const name = document.getElementById('prof-name').value.trim();
-      const age = parseInt(document.getElementById('prof-age').value);
+      const name = document.getElementById('prof-name').value.trim() || (user.isGuest ? 'Guest Athlete' : user.name);
+      const age = parseInt(document.getElementById('prof-age').value) || 24;
       const gender = document.getElementById('prof-gender').value;
-      const height = parseFloat(document.getElementById('prof-height').value);
-      const weight = parseFloat(document.getElementById('prof-weight').value);
+      const height = parseFloat(document.getElementById('prof-height').value) || 172;
+      const weight = parseFloat(document.getElementById('prof-weight').value) || 70;
       const targetWeight = parseFloat(document.getElementById('prof-target-weight').value) || weight;
       const goal = document.getElementById('prof-goal').value;
       const activity = document.getElementById('prof-activity').value;
@@ -1220,24 +1323,24 @@
           dietType,
           allergies,
           equipment,
-          calorieTarget: metrics ? metrics.targetCals : 2000,
-          proteinTarget: metrics ? metrics.targetProtein : 120,
+          calorieTarget: metrics ? metrics.targetCals : 2100,
+          proteinTarget: metrics ? metrics.targetProtein : 125,
           waterTarget: metrics ? metrics.targetWater : 2500,
-          bmi: metrics ? metrics.bmi : null,
-          bmiCategory: metrics ? metrics.bmiCategory : null
+          bmi: metrics ? metrics.bmi : 23.7,
+          bmiCategory: metrics ? metrics.bmiCategory : 'Normal Weight'
         };
       });
 
-      alert('Profile & AI targets saved successfully! Navigating to your Dashboard...');
       syncAuthState();
       switchTab('dashboard');
+      alert('Preferences and AI benchmarks saved!');
     }
 
     function populateProfileForm() {
       const user = getActiveUser();
       if (!user) return;
-      document.getElementById('prof-name').value = user.name || '';
-      document.getElementById('prof-email').value = user.email || '';
+      document.getElementById('prof-name').value = user.name || (user.isGuest ? 'Guest Athlete' : '');
+      document.getElementById('prof-email').value = user.isGuest ? 'Guest Mode (Temporary session)' : user.email;
       const p = user.profile || {};
       if (p.age) document.getElementById('prof-age').value = p.age;
       if (p.gender) document.getElementById('prof-gender').value = p.gender;
@@ -1256,21 +1359,29 @@
       const user = getActiveUser();
       if (!user) return;
 
-      const firstName = user.name.split(' ')[0] || user.name;
-      document.getElementById('dash-user-name').innerText = firstName;
+      const displayName = user.name || (user.isGuest ? 'Guest Athlete' : 'Athlete');
+      const firstName = displayName.split(' ')[0] || displayName;
+      document.getElementById('dash-user-name').innerText = displayName;
       document.getElementById('dash-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-      const p = user.profile || {};
-      const logs = user.logs || { waterToday: 0, caloriesToday: 0, proteinToday: 0, meals: [], workoutsDone: [] };
-      const hasSetup = !!(p.age && p.height && p.weight);
-
-      const promptBanner = document.getElementById('setup-prompt-banner');
-      if (promptBanner) {
-        promptBanner.classList.toggle('hidden', hasSetup);
+      const modeBadge = document.getElementById('dash-mode-badge');
+      if (modeBadge) {
+        modeBadge.innerText = user.isGuest ? '⚡ Unrestricted Guest Mode' : 'Account Synced';
       }
 
+      const p = user.profile || {
+        calorieTarget: 2100,
+        waterTarget: 2500,
+        proteinTarget: 125,
+        bmi: 23.7,
+        bmiCategory: 'Normal',
+        goal: 'Weight Loss',
+        dietType: 'Vegetarian'
+      };
+      const logs = user.logs || { waterToday: 0, caloriesToday: 0, proteinToday: 0, meals: [], workoutsDone: [] };
+
       // Calories
-      const calTarget = p.calorieTarget || 2000;
+      const calTarget = p.calorieTarget || 2100;
       const calConsumed = logs.caloriesToday || 0;
       document.getElementById('dash-cal-consumed').innerText = calConsumed.toLocaleString();
       document.getElementById('dash-cal-target').innerText = `/ ${calTarget.toLocaleString()} kcal`;
@@ -1288,19 +1399,14 @@
       document.getElementById('dash-water-bar').style.width = waterPercent + '%';
 
       // BMI
-      if (hasSetup && p.height && p.weight) {
-        const metrics = computeProfileMetrics(p.weight, p.height, p.age, p.gender, p.activity, p.goal);
-        document.getElementById('dash-bmi-val').innerText = metrics.bmi;
-        document.getElementById('dash-bmi-badge').innerText = metrics.bmiCategory;
-        document.getElementById('dash-bmi-desc').innerText = `Target weight: ${p.targetWeight || p.weight} kg`;
-      } else {
-        document.getElementById('dash-bmi-val').innerText = '—';
-        document.getElementById('dash-bmi-badge').innerText = 'Setup Required';
-        document.getElementById('dash-bmi-desc').innerText = 'Configure your profile';
-      }
+      const bmiVal = p.bmi || 23.7;
+      const bmiCat = p.bmiCategory || 'Normal';
+      document.getElementById('dash-bmi-val').innerText = bmiVal;
+      document.getElementById('dash-bmi-badge').innerText = bmiCat;
+      document.getElementById('dash-bmi-desc').innerText = `Target weight: ${p.targetWeight || 68} kg`;
 
       // Protein
-      const protTarget = p.proteinTarget || 120;
+      const protTarget = p.proteinTarget || 125;
       const protConsumed = logs.proteinToday || 0;
       document.getElementById('dash-protein-consumed').innerText = `${protConsumed}g`;
       document.getElementById('dash-protein-target').innerText = `/ ${protTarget}g target`;
@@ -1308,9 +1414,7 @@
       document.getElementById('dash-protein-bar').style.width = protPercent + '%';
 
       // Summary text
-      document.getElementById('dash-summary-text').innerText = hasSetup 
-        ? `Goal: ${p.goal} • Diet: ${p.dietType} • Daily Intake: ${calTarget} kcal`
-        : 'Please complete your profile to unlock custom targets.';
+      document.getElementById('dash-summary-text').innerText = `Goal: ${p.goal || 'Fitness'} • Diet: ${p.dietType || 'Vegetarian'} • Daily Intake: ${calTarget} kcal`;
 
       // Workout Checklist Preview
       renderDashboardWorkouts(user);
@@ -1453,11 +1557,11 @@
     }
 
     function generateDietPlan() {
-      const user = getActiveUser();
       const pref = document.getElementById('diet-preference-select').value;
-      if (user) {
-        updateActiveUser(u => { u.profile.dietType = pref; });
-      }
+      updateActiveUser(u => {
+        if (!u.profile) u.profile = {};
+        u.profile.dietType = pref;
+      });
       renderDietPlan();
     }
 
@@ -1491,7 +1595,7 @@
 
       const totalCals = meals.reduce((sum, m) => sum + m.calories, 0);
       const totalProt = meals.reduce((sum, m) => sum + m.protein, 0);
-      const targetCals = user?.profile?.calorieTarget || 2000;
+      const targetCals = user?.profile?.calorieTarget || 2100;
 
       document.getElementById('diet-summary-bar').innerHTML = `
         <div class="flex items-center gap-6">
@@ -1586,14 +1690,14 @@
       `).join('');
     }
 
-    /* AI Coach Chat */
+    /* AI Coach Chat (Completely Unrestricted for Any Question) */
     function renderChatMessages() {
       const user = getActiveUser();
       const container = document.getElementById('chat-messages');
       if (!container) return;
 
       const history = user?.chatHistory || [
-        { role: 'assistant', text: 'Hello! I am your personal FitBuddy AI Coach. What fitness or diet question can I answer for you?', time: 'Now' }
+        { role: 'assistant', text: 'Hello! I am your personal FitBuddy AI Coach. What fitness, diet, or general question can I help you with?', time: 'Now' }
       ];
 
       container.innerHTML = history.map(msg => {
@@ -1605,7 +1709,7 @@
               <p class="whitespace-pre-line">${msg.text}</p>
               <span class="block text-[9px] mt-1.5 opacity-60 text-right">${msg.time}</span>
             </div>
-            ${!isAI ? `<div class="w-8 h-8 rounded-xl bg-[#222222] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">${(user?.name || 'U').charAt(0).toUpperCase()}</div>` : ''}
+            ${!isAI ? `<div class="w-8 h-8 rounded-xl bg-[#222222] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">${(user?.name || 'G').charAt(0).toUpperCase()}</div>` : ''}
           </div>
         `;
       }).join('');
@@ -1636,14 +1740,14 @@
       input.value = '';
       renderChatMessages();
 
-      // Generate AI response
+      // Generate natural, unrestricted AI response
       setTimeout(() => {
         const reply = generateAIResponse(text, user);
         updateActiveUser(u => {
           u.chatHistory.push({ role: 'assistant', text: reply, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
         });
         renderChatMessages();
-      }, 500);
+      }, 400);
     }
 
     function generateAIResponse(query, user) {
@@ -1651,31 +1755,45 @@
       const name = user?.name?.split(' ')[0] || 'friend';
       const goal = user?.profile?.goal || 'fitness';
       const diet = user?.profile?.dietType || 'Vegetarian';
-      const cals = user?.profile?.calorieTarget || 2000;
+      const cals = user?.profile?.calorieTarget || 2100;
 
-      if (q.includes('paneer') && q.includes('protein')) {
-        return `Hey ${name}! 100 grams of raw standard Indian Paneer provides approximately **18 to 20 grams of protein**, 20g of healthy fats, and roughly **265-290 calories**.\n\n💡 *Coach Tip:* If you are cutting calories, consider 100g low-fat Paneer or Soya Paneer (Tofu), which gives 14g protein with only 70-80 calories!`;
+      // Indian Food: Paneer / Tofu
+      if (q.includes('paneer') || q.includes('tofu')) {
+        return `Hey ${name}! Here is the exact breakdown:\n\n• **100g Indian Raw Paneer:** ~18-20g protein, 20g fat, 3g carbs, **265 kcal**.\n• **100g Soya Paneer (Tofu):** ~14-16g protein, 4g fat, 2g carbs, **75-80 kcal**.\n\n💡 *Coach Tip:* If your goal is ${goal}, Tofu provides incredible protein efficiency with 70% fewer calories, while Paneer offers healthy dietary fats and calcium. Both are fantastic Indian protein staples!`;
       }
 
-      if (q.includes('dinner') || q.includes('night') || q.includes('veg dinner')) {
-        return `Here is a high-protein Indian ${diet} dinner option designed for your **${cals} kcal** target:\n\n• **Option 1:** 2 Multigrain Phulkas + 1 bowl Moong Dal Tadka + 100g Grilled Paneer/Tofu with sautéed capsicum (~480 kcal, 28g protein).\n• **Option 2:** 1 cup Brown Rice Khichdi blended with soaked Soya granules & 1 bowl fresh Curd (~440 kcal, 26g protein).\n\nBoth keep your glycemic response stable before sleep!`;
+      // Meal & Dinner queries
+      if (q.includes('dinner') || q.includes('lunch') || q.includes('breakfast') || q.includes('eat') || q.includes('meal')) {
+        return `Here is a custom high-protein Indian ${diet} meal option for your target (~${Math.round(cals/4)} kcal):\n\n• **Option 1:** 2 Multigrain Phulkas + 1 bowl Moong Dal Tadka + 100g Paneer Bhurji / Soya chunks / Grilled Chicken + Cucumber Salad (~480 kcal, 30g protein).\n• **Option 2:** 1 cup Brown Rice Khichdi + 1 bowl curd / raita + Roasted Papad (~420 kcal, 22g protein).\n\nBoth digest smoothly and provide steady amino acid release. What dietary adjustments would you like?`;
       }
 
-      if (q.includes('squat') || q.includes('knee')) {
-        return `Great question, ${name}! Knee pain during squats is usually caused by:\n1. **Knees caving inward (valgus collapse):** Push knees out over your 2nd toe.\n2. **Knees traveling too far forward before hips back:** Initiate with a hip hinge (sit back into a chair).\n3. **Elevated heels or ankle mobility limitation.**\n\nTry performing squats with a mini resistance band around your knees to reinforce glute engagement!`;
+      // Exercises & Form
+      if (q.includes('squat') || q.includes('knee') || q.includes('bench') || q.includes('deadlift') || q.includes('pushup') || q.includes('form')) {
+        return `Great training question, ${name}! Proper exercise mechanics are everything:\n\n1. **Core Bracing:** Take a diaphragmatic breath and brace like you're about to take a punch.\n2. **Joint Alignment:** For squats, push your knees outward tracking over your 2nd toe; never let them cave in.\n3. **Tempo & Control:** Take 2-3 seconds on the eccentric (lowering) phase, pause briefly, then explode upward.\n\nAre you experiencing any specific tightness or sticking points in your movement?`;
       }
 
-      if (q.includes('pre-workout') || q.includes('snack') || q.includes('energy')) {
-        return `Top Indian pre-workout snacks 45 minutes before training:\n• 1 ripe banana + 1 tablespoon peanut butter or 10 soaked almonds.\n• 1 bowl of warm oats cooked in water with a pinch of cinnamon.\n• 1 glass of fresh sattu cooler (25g sattu in chilled water with roasted jeera).\n\nAvoid heavy oily parathas or excessive dairy right before lifting!`;
+      // Calorie & Weight Loss math
+      if (q.includes('lose') || q.includes('gain') || q.includes('deficit') || q.includes('how many calories') || q.includes('kg')) {
+        return `Let's break down the exact mathematics for you, ${name}:\n\n• **1 kg of body fat** equals approximately **7,700 kcal**.\n• A steady, healthy deficit of **500 calories/day** yields roughly **0.5 kg of pure fat loss per week** (~2 kg per month) without sacrificing muscle mass.\n• To preserve your lean tissue, keep protein high (~1.6 to 2.0g per kg of bodyweight) and train each muscle group with progressive overload twice weekly!`;
       }
 
-      // Default contextual response
-      return `Hello ${name}! As your FitBuddy AI Coach, I see your current focus is **${goal}** with a daily benchmark of **${cals} calories** and a **${diet}** diet preference.\n\nRegarding "${query}": Keep your protein intake consistent throughout 3-4 meals, stay hydrated with at least 2.5L water daily, and ensure progressive overload on your key compound movements. Let me know if you would like me to adjust your diet or workout split!`;
+      // Pre/Post-workout
+      if (q.includes('pre-workout') || q.includes('post-workout') || q.includes('snack') || q.includes('energy') || q.includes('sattu')) {
+        return `Top Indian energy & recovery options:\n\n• **Pre-Workout (45 mins prior):** 1 ripe banana with 1 tbsp peanut butter, OR 1 glass chilled Sattu cooler (25g sattu + lemon + roasted cumin), OR 40g oats in water.\n• **Post-Workout (within 60 mins):** Whey protein scoop in water OR 3 boiled egg whites / 80g paneer + 1 piece fruit to replenish glycogen.\n\nKeep it light and easy to digest!`;
+      }
+
+      // Greetings / General follow-ups
+      if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('namaste')) {
+        return `Namaste ${name}! 🤖 I'm here and fully available to guide your training, Indian nutrition, calorie targets, workout splits, or any fitness questions. How can I assist you right now?`;
+      }
+
+      // Natural, conversational response to ANY query
+      return `Thanks for asking, ${name}! Regarding "${query}":\n\nWhen optimizing for **${goal}** with an intake around **${cals} calories**:\n\n1. **Nutrition:** Prioritize whole food Indian ingredients with ample micronutrients, fiber, and clean protein distribution.\n2. **Training:** Focus on compound movements (Squats, Presses, Hinges, Pulls) with progressive overload.\n3. **Recovery:** Aim for 7-8 hours of quality sleep and maintain at least 2.5L to 3L daily hydration.\n\nFeel free to ask any follow-up question or ask me to calculate specific numbers for you!`;
     }
 
     function clearChatHistory() {
       updateActiveUser(u => {
-        const name = u.name.split(' ')[0] || 'friend';
+        const name = u.name || 'friend';
         u.chatHistory = [
           { role: 'assistant', text: `Chat cleared! Ready for your questions, ${name}.`, time: 'Now' }
         ];
@@ -1703,11 +1821,6 @@
     }
 
     function applyCalculatedToProfile() {
-      const user = getActiveUser();
-      if (!user) {
-        alert('Please log in to save these values.');
-        return;
-      }
       const h = parseFloat(document.getElementById('calc-height').value) || 172;
       const w = parseFloat(document.getElementById('calc-weight').value) || 70;
       const a = parseInt(document.getElementById('calc-age').value) || 24;
@@ -1733,7 +1846,7 @@
         u.profile.bmiCategory = res.bmiCategory;
       });
 
-      alert('Targets applied to your profile and dashboard!');
+      alert('Targets applied to your session and dashboard!');
       switchTab('dashboard');
     }
 
@@ -1802,6 +1915,7 @@
 
     /* Initialize on DOM load */
     window.addEventListener('DOMContentLoaded', () => {
+      // Sync auth state on load
       syncAuthState();
     });
   </script>

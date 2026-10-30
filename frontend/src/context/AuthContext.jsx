@@ -208,6 +208,38 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
+  /* ── Guest Login (Instant 100% Unrestricted Access) ── */
+  const loginAsGuest = useCallback(() => {
+    const guestUser = {
+      id: 'guest_user',
+      name: 'Guest Athlete',
+      email: 'guest@fitbuddy.local',
+      isGuest: true,
+      avatar: null,
+      memberSince: new Date().toISOString(),
+      profile: {
+        age: 24,
+        gender: 'male',
+        height: 172,
+        weight: 70,
+        targetWeight: 68,
+        activityLevel: 'moderate',
+        goal: 'maintain',
+        dietType: 'vegetarian',
+        cuisine: 'indian',
+        allergies: [],
+        equipment: 'both',
+        dailyCalorieGoal: 2100,
+        dailyWaterGoal: 2500,
+      },
+      token: `guest_token_${Date.now()}`,
+      isNewUser: false,
+      onboardingCompleted: true,
+    };
+    persist(guestUser);
+    return guestUser;
+  }, [persist]);
+
   const value = {
     user,
     loading,
@@ -215,6 +247,7 @@ export const AuthProvider = ({ children }) => {
     hasCompletedOnboarding: !!(user && (user.onboardingCompleted || !user.isNewUser)),
     login,
     signup,
+    loginAsGuest,
     logout,
     updateProfile,
     updateUser,

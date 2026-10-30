@@ -5,7 +5,12 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, loginAsGuest } = useContext(AuthContext);
+
+  const handleGuest = () => {
+    loginAsGuest();
+    navigate('/dashboard');
+  };
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
@@ -215,12 +220,31 @@ export default function LoginPage() {
         </div>
 
         {/* Sign up link */}
-        <p style={{ textAlign: 'center', marginTop: '1.75rem', color: '#9ca3af', fontSize: '0.875rem' }}>
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.875rem' }}>
           Don't have an account?{' '}
           <Link to="/signup" style={{ color: '#39ff14', fontWeight: 600, textDecoration: 'none' }}>
             Sign Up
           </Link>
         </p>
+
+        {/* Continue as Guest option */}
+        <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1f1f1f' }}>
+          <button
+            type="button"
+            onClick={handleGuest}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#39ff14',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            ⚡ Continue as Guest (No Sign-in Required)
+          </button>
+        </div>
       </div>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

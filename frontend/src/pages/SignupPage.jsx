@@ -18,7 +18,12 @@ const strengthColors = ['#1a1a1a', '#ef4444', '#f97316', '#f59e0b', '#39ff14'];
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const { signup } = useContext(AuthContext);
+  const { signup, loginAsGuest } = useContext(AuthContext);
+
+  const handleGuest = () => {
+    loginAsGuest();
+    navigate('/dashboard');
+  };
 
   const [form, setForm] = useState({
     fullName: '', email: '', password: '', confirmPassword: '', terms: false,
@@ -278,6 +283,24 @@ export default function SignupPage() {
             Sign In
           </Link>
         </p>
+
+        <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1f1f1f' }}>
+          <button
+            type="button"
+            onClick={handleGuest}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#39ff14',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            ⚡ Continue as Guest without creating an account
+          </button>
+        </div>
       </div>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

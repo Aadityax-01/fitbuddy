@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Brain,
   Dumbbell,
@@ -142,6 +143,14 @@ const steps = [
 ];
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const { loginAsGuest } = useAuth();
+
+  const handleContinueAsGuest = () => {
+    loginAsGuest();
+    navigate('/dashboard');
+  };
+
   return (
     <>
       <style>{styleSheet}</style>
@@ -161,15 +170,15 @@ export default function LandingPage() {
               FitBuddy <span style={{ color: '#39ff14' }}>AI</span>
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <a href="#features" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.875rem' }}>Features</a>
             <a href="#how-it-works" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.875rem' }}>How it Works</a>
-            <a href="#stats" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.875rem' }}>Stats</a>
             <Link to="/login" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.875rem' }}>Log In</Link>
-            <Link to="/signup" style={{
-              background: '#39ff14', color: '#000', fontWeight: 700,
-              padding: '8px 18px', borderRadius: '8px', textDecoration: 'none', fontSize: '0.875rem',
-            }}>Start Free</Link>
+            <Link to="/signup" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.875rem' }}>Register</Link>
+            <button onClick={handleContinueAsGuest} style={{
+              background: '#39ff14', color: '#000', fontWeight: 800,
+              padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.875rem',
+            }}>⚡ Continue as Guest</button>
           </div>
         </nav>
 
@@ -216,25 +225,29 @@ export default function LandingPage() {
           </p>
 
           <div className="animate-slideUp-delay3" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link to="/signup" className="neon-btn-pulse" style={{
+            <button onClick={handleContinueAsGuest} className="neon-btn-pulse" style={{
               background: '#39ff14', color: '#000', fontWeight: 800,
-              padding: '14px 32px', borderRadius: '10px', textDecoration: 'none',
+              padding: '14px 32px', borderRadius: '10px', border: 'none', cursor: 'pointer',
               fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px',
               transition: 'background 0.2s',
             }}>
-              Start Free <ArrowRight size={18} />
-            </Link>
-            <Link to="/dashboard" style={{
-              background: 'transparent', color: '#fff', fontWeight: 700,
-              padding: '14px 32px', borderRadius: '10px', textDecoration: 'none',
+              ⚡ Continue as Guest (Full Access) <ArrowRight size={18} />
+            </button>
+            <Link to="/signup" style={{
+              background: '#181818', color: '#fff', fontWeight: 700,
+              padding: '14px 28px', borderRadius: '10px', textDecoration: 'none',
               fontSize: '1rem', border: '1px solid #333',
               display: 'flex', alignItems: 'center', gap: '8px',
-              transition: 'border-color 0.2s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = '#39ff14'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = '#333'}
-            >
-              See Demo <ChevronRight size={18} />
+            }}>
+              Register
+            </Link>
+            <Link to="/login" style={{
+              background: '#141414', color: '#9ca3af', fontWeight: 700,
+              padding: '14px 28px', borderRadius: '10px', textDecoration: 'none',
+              fontSize: '1rem', border: '1px solid #282828',
+              display: 'flex', alignItems: 'center', gap: '8px',
+            }}>
+              Log In
             </Link>
           </div>
 
