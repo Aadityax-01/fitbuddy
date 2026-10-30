@@ -33,12 +33,12 @@ export default function ProfilePage() {
   const [isSaved, setIsSaved] = useState(false);
 
   // Form state
-  const [name, setName] = useState(user?.name || 'Alex Hunter');
-  const [email, setEmail] = useState(user?.email || 'alex@fitbuddy.ai');
-  const [age, setAge] = useState(profile.age || 25);
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [age, setAge] = useState(profile.age || '');
   const [gender, setGender] = useState(profile.gender || 'male');
-  const [height, setHeight] = useState(profile.height || 172);
-  const [weight, setWeight] = useState(profile.weight || 72.5);
+  const [height, setHeight] = useState(profile.height || '');
+  const [weight, setWeight] = useState(profile.weight || '');
   const [activityLevel, setActivityLevel] = useState(profile.activityLevel || 'moderate');
   const [goal, setGoal] = useState(profile.goal || 'maintain');
   const [dietType, setDietType] = useState(profile.dietType || 'non-vegetarian');

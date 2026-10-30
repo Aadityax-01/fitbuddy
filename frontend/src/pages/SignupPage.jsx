@@ -52,7 +52,7 @@ export default function SignupPage() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
     try {
-      await signup({ name: form.fullName, email: form.email, password: form.password });
+      await signup(form.fullName, form.email, form.password);
       navigate('/onboarding');
     } catch (err) {
       setErrors({ general: err?.message || 'Signup failed. Please try again.' });

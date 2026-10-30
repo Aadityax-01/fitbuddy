@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, ChevronDown, User, Settings, LogOut, Menu, Check } from 'lucide-react';
+import { Bell, ChevronDown, User, LogOut, Menu, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const NOTIFICATIONS = [
@@ -10,10 +10,6 @@ const NOTIFICATIONS = [
   { id: 4, text: 'Workout reminder: Leg Day 🏋️', time: 'Yesterday', read: true },
 ];
 
-/**
- * Returns the appropriate greeting based on the current hour.
- * @returns {'Good morning' | 'Good afternoon' | 'Good evening'}
- */
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return 'Good morning';
@@ -21,10 +17,6 @@ function getGreeting() {
   return 'Good evening';
 }
 
-/**
- * Formats today's date as a long human-readable string.
- * @returns {string}
- */
 function getTodayLabel() {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -34,10 +26,7 @@ function getTodayLabel() {
   });
 }
 
-/**
- * @param {{ onMenuClick: () => void, userName?: string }} props
- */
-export default function TopBar({ onMenuClick, userName = 'Alex' }) {
+export default function TopBar({ onMenuClick }) {
   const { user, logout } = useAuth();
   const [notifOpen, setNotifOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -47,10 +36,11 @@ export default function TopBar({ onMenuClick, userName = 'Alex' }) {
   const avatarRef = useRef(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const displayName = user?.name || userName;
-  const displayEmail = user?.email || 'alex@fitbuddy.ai';
+  // Use real user name — never fall back to a hardcoded name
+  const displayName = user?.name || 'User';
+  const displayEmail = user?.email || '';
+  const firstNameOnly = displayName.split(' ')[0];
 
-  // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
@@ -82,7 +72,7 @@ export default function TopBar({ onMenuClick, userName = 'Alex' }) {
         <div>
           <p className="text-white font-semibold text-base leading-tight">
             {getGreeting()},{' '}
-            <span style={{ color: '#39ff14' }}>{userName}!</span> 👋
+            <span style={{ color: '#39ff14' }}>{firstNameOnly}!</span> 💪
           </p>
           <p className="text-xs mt-0.5" style={{ color: '#9ca3af' }}>
             {getTodayLabel()}
@@ -111,7 +101,6 @@ export default function TopBar({ onMenuClick, userName = 'Alex' }) {
             )}
           </button>
 
-          {/* Notification dropdown */}
           {notifOpen && (
             <div
               className="absolute right-0 mt-2 w-80 rounded-xl shadow-2xl border overflow-hidden"
@@ -176,16 +165,15 @@ export default function TopBar({ onMenuClick, userName = 'Alex' }) {
             className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-white/5 transition-colors"
             aria-label="User menu"
           >
-            {/* Avatar */}
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-black flex-shrink-0"
               style={{ backgroundColor: '#39ff14' }}
             >
-              {userName.charAt(0).toUpperCase()}
+              {firstNameOnly.charAt(0).toUpperCase()}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-white text-sm font-medium leading-tight">{userName}</p>
-              <p className="text-gray-500 text-xs leading-tight">Premium</p>
+              <p className="text-white text-sm font-medium leading-tight">{firstNameOnly}</p>
+              <p className="text-gray-500 text-xs leading-tight">Member</p>
             </div>
             <ChevronDown
               size={14}
@@ -194,32 +182,27 @@ export default function TopBar({ onMenuClick, userName = 'Alex' }) {
             />
           </button>
 
-          {/* Avatar dropdown */}
           {avatarOpen && (
             <div
-              className="absolute right-0 mt-2 w-48 rounded-xl shadow-2xl border overflow-hidden"
+              className="absolute right-0 mt-2 w-52 rounded-xl shadow-2xl border overflow-hidden"
               style={{ backgroundColor: '#111111', borderColor: '#1a1a1a' }}
             >
               <div className="px-4 py-3 border-b" style={{ borderColor: '#1a1a1a' }}>
                 <p className="text-white text-sm font-medium">{displayName}</p>
-                <p className="text-gray-500 text-xs mt-0.5">{displayEmail}</p>
+                {displayEmail && <p className="text-gray-500 text-xs mt-0.5 truncate">{displayEmail}</p>}
               </div>
 
               <ul className="py-1">
-                {[
-                  { label: 'Profile & Settings', icon: User, path: '/profile' },
-                ].map(({ label, icon: Icon, path }) => (
-                  <li key={path}>
-                    <Link
-                      to={path}
-                      onClick={() => setAvatarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      <Icon size={15} />
-                      {label}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link
+                    to="/profile"
+                    onClick={() => setAvatarOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    <User size={15} />
+                    Profile &amp; Settings
+                  </Link>
+                </li>
               </ul>
 
               <div className="border-t py-1" style={{ borderColor: '#1a1a1a' }}>
