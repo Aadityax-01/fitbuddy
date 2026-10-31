@@ -157,20 +157,20 @@ export default function WorkoutPlannerPage() {
   const progressPercent = Math.round((completedCount / totalExercises) * 100);
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 animate-fade-in bg-[#000000]">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-[#111111] via-[#141414] to-[#111111] p-6 rounded-2xl border border-[#1a1a1a] shadow-card">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#171717] p-6 rounded-2xl border border-[#404040]">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs uppercase tracking-wider font-bold text-[#39ff14] bg-[#39ff1415] px-2.5 py-0.5 rounded-full border border-[#39ff1430] flex items-center gap-1">
+            <span className="text-xs uppercase tracking-wider font-bold text-white bg-[#262626] px-2.5 py-0.5 rounded-full border border-[#404040] flex items-center gap-1">
               <Sparkles size={12} /> AI Workout Architect
             </span>
-            <span className="text-xs text-[#9ca3af]">Science-backed hypertrophy & fat loss</span>
+            <span className="text-xs text-[#A3A3A3]">Science-backed hypertrophy & fat loss</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            Personalized <span className="text-[#39ff14]">Workout Generator</span>
+            Personalized <span className="text-white">Workout Generator</span>
           </h1>
-          <p className="text-sm text-[#9ca3af] mt-1">
+          <p className="text-sm text-[#A3A3A3] mt-1">
             Dynamic, equipment-tailored routines generated with optimal rest periods, rep ranges, and form cues.
           </p>
         </div>
@@ -191,18 +191,18 @@ export default function WorkoutPlannerPage() {
       {/* ── Main Layout: Controls on Left, Routine on Right ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Settings Panel (4 Cols) */}
-        <div className="lg:col-span-4 bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card space-y-5 h-fit">
-          <div className="flex items-center justify-between border-b border-[#1a1a1a] pb-3">
+        <div className="lg:col-span-4 bg-[#171717] border border-[#404040] rounded-2xl p-6 space-y-5 h-fit">
+          <div className="flex items-center justify-between border-b border-[#404040] pb-3">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Sliders size={18} className="text-[#39ff14]" />
+              <Sliders size={18} className="text-white" />
               Workout Preferences
             </h3>
-            <span className="text-xs text-[#9ca3af]">Custom Fit</span>
+            <span className="text-xs text-[#A3A3A3]">Custom Fit</span>
           </div>
 
           {/* Fitness Level */}
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Experience Level
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -213,8 +213,8 @@ export default function WorkoutPlannerPage() {
                   onClick={() => setLevel(lvl)}
                   className={`py-2 text-xs font-bold rounded-xl border transition-all ${
                     level === lvl
-                      ? 'bg-[#39ff14] text-black border-[#39ff14]'
-                      : 'bg-[#161616] text-[#9ca3af] border-[#222222] hover:border-[#333]'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white'
                   }`}
                 >
                   {lvl}
@@ -225,7 +225,7 @@ export default function WorkoutPlannerPage() {
 
           {/* Location / Environment */}
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Workout Setting
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -236,8 +236,8 @@ export default function WorkoutPlannerPage() {
                   onClick={() => setType(t)}
                   className={`py-2 text-xs font-bold rounded-xl border transition-all ${
                     type === t
-                      ? 'bg-[#39ff14] text-black border-[#39ff14]'
-                      : 'bg-[#161616] text-[#9ca3af] border-[#222222] hover:border-[#333]'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white'
                   }`}
                 >
                   {t}
@@ -249,10 +249,10 @@ export default function WorkoutPlannerPage() {
           {/* Duration Selector */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">
+              <label className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider">
                 Session Duration
               </label>
-              <span className="text-xs font-bold text-[#39ff14]">{duration} Minutes</span>
+              <span className="text-xs font-bold text-white">{duration} Minutes</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
               {[20, 30, 45, 60].map((mins) => (
@@ -262,8 +262,8 @@ export default function WorkoutPlannerPage() {
                   onClick={() => setDuration(mins)}
                   className={`py-2 text-xs font-bold rounded-xl border transition-all ${
                     duration === mins
-                      ? 'bg-[#39ff1420] text-[#39ff14] border-[#39ff14]'
-                      : 'bg-[#161616] text-[#9ca3af] border-[#222222] hover:border-[#333]'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white'
                   }`}
                 >
                   {mins}m
@@ -274,13 +274,13 @@ export default function WorkoutPlannerPage() {
 
           {/* Goal Selector */}
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Primary Goal
             </label>
             <select
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
-              className="w-full bg-[#161616] border border-[#222222] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#39ff14]"
+              className="w-full bg-[#262626] border border-[#404040] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white"
             >
               <option value="Fat Loss & Tone">Fat Loss & Conditioning</option>
               <option value="Muscle Building">Hypertrophy (Muscle Building)</option>
@@ -292,7 +292,7 @@ export default function WorkoutPlannerPage() {
 
           {/* Equipment Available */}
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Equipment On Hand
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -312,8 +312,8 @@ export default function WorkoutPlannerPage() {
                     onClick={() => toggleEquipment(item)}
                     className={`px-2.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all ${
                       active
-                        ? 'bg-[#39ff1415] text-[#39ff14] border-[#39ff1450]'
-                        : 'bg-[#161616] text-[#9ca3af] border-[#222222] hover:border-[#333]'
+                        ? 'bg-white text-black border-white'
+                        : 'bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white'
                     }`}
                   >
                     {active ? '✓ ' : '+ '} {item}
@@ -337,76 +337,76 @@ export default function WorkoutPlannerPage() {
         {/* Generated Workout Routine (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
           {/* Workout Overview Header Card */}
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+          <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Badge variant="success">{workoutPlan.level}</Badge>
-                  <Badge variant="default">{workoutPlan.type}</Badge>
-                  <span className="text-xs text-[#9ca3af] flex items-center gap-1">
-                    <Clock size={12} className="text-[#39ff14]" /> {workoutPlan.duration} mins
+                  <Badge variant="default">{workoutPlan.level}</Badge>
+                  <Badge variant="outline">{workoutPlan.type}</Badge>
+                  <span className="text-xs text-[#A3A3A3] flex items-center gap-1">
+                    <Clock size={12} className="text-white" /> {workoutPlan.duration} mins
                   </span>
-                  <span className="text-xs text-[#9ca3af] flex items-center gap-1">
-                    <Flame size={12} className="text-orange-500" /> ~{workoutPlan.caloriesBurn} kcal
+                  <span className="text-xs text-[#A3A3A3] flex items-center gap-1">
+                    <Flame size={12} className="text-white" /> ~{workoutPlan.caloriesBurn} kcal
                   </span>
                 </div>
                 <h2 className="text-xl md:text-2xl font-black text-white">{workoutPlan.title}</h2>
               </div>
 
               {/* Progress counter */}
-              <div className="bg-[#161616] border border-[#222222] px-4 py-3 rounded-xl flex items-center gap-4">
+              <div className="bg-[#262626] border border-[#404040] px-4 py-3 rounded-xl flex items-center gap-4">
                 <div>
-                  <p className="text-[11px] text-[#9ca3af] uppercase font-bold">Progress</p>
+                  <p className="text-[11px] text-[#A3A3A3] uppercase font-bold">Progress</p>
                   <p className="text-lg font-black text-white">
-                    {completedCount} <span className="text-xs text-[#9ca3af]">/ {totalExercises} Done</span>
+                    {completedCount} <span className="text-xs text-[#A3A3A3]">/ {totalExercises} Done</span>
                   </p>
                 </div>
                 <div className="w-12 h-12 relative flex items-center justify-center">
-                  <span className="text-xs font-bold text-[#39ff14]">{progressPercent}%</span>
+                  <span className="text-xs font-bold text-white">{progressPercent}%</span>
                 </div>
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-[#1a1a1a] h-1.5 rounded-full mt-5 overflow-hidden">
+            <div className="w-full bg-[#262626] h-1.5 rounded-full mt-5 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-[#39ff14] to-[#22c55e] h-full rounded-full transition-all duration-500"
+                className="bg-white h-full rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
           {/* ── Section 1: Warm-up ── */}
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+          <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-3">
-              <Heart size={16} className="text-rose-500" />
+              <Heart size={16} className="text-white" />
               1. Dynamic Warm-Up (5 Mins)
             </h3>
-            <p className="text-xs text-[#9ca3af] mb-4">
+            <p className="text-xs text-[#A3A3A3] mb-4">
               Prime your nervous system, lubricate joint capsules, and elevate core body temperature.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {workoutPlan.warmup.map((w, idx) => (
-                <div key={idx} className="p-3.5 bg-[#141414] border border-[#1f1f1f] rounded-xl">
+                <div key={idx} className="p-3.5 bg-[#262626] border border-[#404040] rounded-xl">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-white">{w.name}</span>
-                    <span className="text-[11px] text-[#39ff14] font-semibold">{w.duration}</span>
+                    <span className="text-[11px] text-[#A3A3A3] font-semibold">{w.duration}</span>
                   </div>
-                  <p className="text-[11px] text-[#9ca3af] line-clamp-2">{w.instruction}</p>
+                  <p className="text-[11px] text-[#A3A3A3] line-clamp-2">{w.instruction}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* ── Section 2: Main Working Sets ── */}
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card space-y-4">
+          <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <Dumbbell size={16} className="text-[#39ff14]" />
+                <Dumbbell size={16} className="text-white" />
                 2. Working Compound & Isolation Exercises
               </h3>
-              <span className="text-xs text-[#9ca3af]">Click checkmark when completed</span>
+              <span className="text-xs text-[#A3A3A3]">Click checkmark when completed</span>
             </div>
 
             <div className="space-y-3">
@@ -419,8 +419,8 @@ export default function WorkoutPlannerPage() {
                     key={ex.id}
                     className={`border rounded-xl transition-all ${
                       isDone
-                        ? 'bg-[#122012] border-[#39ff1450]'
-                        : 'bg-[#141414] border-[#1f1f1f] hover:border-[#2a2a2a]'
+                        ? 'bg-[#262626] border-white'
+                        : 'bg-[#171717] border-[#404040] hover:border-[#737373]'
                     }`}
                   >
                     <div className="p-4 flex items-center justify-between gap-3">
@@ -431,31 +431,31 @@ export default function WorkoutPlannerPage() {
                           className="shrink-0 transition-transform active:scale-90"
                         >
                           {isDone ? (
-                            <CheckCircle2 size={24} className="text-[#39ff14]" />
+                            <CheckCircle2 size={24} className="text-white" />
                           ) : (
-                            <Circle size={24} className="text-[#6b7280] hover:text-[#9ca3af]" />
+                            <Circle size={24} className="text-[#737373] hover:text-white" />
                           )}
                         </button>
 
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-bold text-[#9ca3af]">#{index + 1}</span>
-                            <h4 className={`text-sm md:text-base font-bold ${isDone ? 'line-through text-[#9ca3af]' : 'text-white'}`}>
+                            <span className="text-xs font-bold text-[#A3A3A3]">#{index + 1}</span>
+                            <h4 className={`text-sm md:text-base font-bold ${isDone ? 'line-through text-[#737373]' : 'text-white'}`}>
                               {ex.name}
                             </h4>
-                            <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-[#1f1f1f] text-[#39ff14]">
+                            <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-[#262626] border border-[#404040] text-white">
                               {ex.target}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-4 text-xs text-[#9ca3af] mt-1">
+                          <div className="flex items-center gap-4 text-xs text-[#A3A3A3] mt-1">
                             <span>
                               Sets: <strong className="text-white">{ex.sets}</strong>
                             </span>
                             <span>
                               Reps: <strong className="text-white">{ex.reps}</strong>
                             </span>
-                            <span className="flex items-center gap-1 text-[#38bdf8]">
+                            <span className="flex items-center gap-1 text-[#A3A3A3]">
                               <Timer size={12} /> Rest: {ex.rest}
                             </span>
                           </div>
@@ -465,7 +465,7 @@ export default function WorkoutPlannerPage() {
                       <button
                         type="button"
                         onClick={() => setExpandedExercise(isExpanded ? null : ex.id)}
-                        className="p-1.5 rounded-lg bg-[#1f1f1f] text-[#9ca3af] hover:text-white"
+                        className="p-1.5 rounded-lg bg-[#262626] border border-[#404040] text-[#A3A3A3] hover:text-white"
                       >
                         {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </button>
@@ -473,14 +473,14 @@ export default function WorkoutPlannerPage() {
 
                     {/* Expandable Form & Coaching Cues */}
                     {isExpanded && (
-                      <div className="px-4 pb-4 pt-2 border-t border-[#1f1f1f] text-xs text-[#9ca3af] space-y-2 bg-[#0e0e0e] rounded-b-xl">
+                      <div className="px-4 pb-4 pt-2 border-t border-[#404040] text-xs text-[#A3A3A3] space-y-2 bg-[#171717] rounded-b-xl">
                         <div>
                           <strong className="text-white block mb-0.5 font-semibold">How to perform:</strong>
                           <p className="leading-relaxed">{ex.instructions}</p>
                         </div>
                         {ex.tips && (
-                          <div className="p-2.5 rounded-lg bg-[#39ff1410] border border-[#39ff1430] text-[#86efac] flex items-start gap-2">
-                            <Info size={14} className="shrink-0 mt-0.5 text-[#39ff14]" />
+                          <div className="p-2.5 rounded-lg bg-[#262626] border border-[#404040] text-white flex items-start gap-2">
+                            <Info size={14} className="shrink-0 mt-0.5 text-white" />
                             <span>
                               <strong>Coach's Pro Tip:</strong> {ex.tips}
                             </span>
@@ -495,19 +495,19 @@ export default function WorkoutPlannerPage() {
           </div>
 
           {/* ── Section 3: Cool-down ── */}
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+          <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-3">
-              <Award size={16} className="text-[#38bdf8]" />
+              <Award size={16} className="text-white" />
               3. Cool-Down & Parasympathetic Reset (5 Mins)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {workoutPlan.cooldown.map((c, idx) => (
-                <div key={idx} className="p-3.5 bg-[#141414] border border-[#1f1f1f] rounded-xl">
+                <div key={idx} className="p-3.5 bg-[#262626] border border-[#404040] rounded-xl">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-white">{c.name}</span>
-                    <span className="text-[11px] text-[#38bdf8] font-semibold">{c.duration}</span>
+                    <span className="text-[11px] text-[#A3A3A3] font-semibold">{c.duration}</span>
                   </div>
-                  <p className="text-[11px] text-[#9ca3af]">{c.instruction}</p>
+                  <p className="text-[11px] text-[#A3A3A3]">{c.instruction}</p>
                 </div>
               ))}
             </div>

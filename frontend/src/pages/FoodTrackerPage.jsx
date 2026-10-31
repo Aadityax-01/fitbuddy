@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import {
   Search, Plus, Trash2, ChevronLeft, ChevronRight, X,
   Flame, Beef, Wheat, Droplets, Coffee, Sun, Moon, Sunset,
@@ -68,10 +68,10 @@ const QUICK_ITEMS = [1, 3, 6, 7, 5, 9, 10, 33];
 
 /* ─── Meal definitions ──────────────────────────────────────────────────── */
 const MEAL_DEFS = [
-  { id: 'breakfast', label: 'Breakfast',     icon: Coffee,   color: '#f59e0b' },
-  { id: 'lunch',     label: 'Lunch',          icon: Sun,      color: '#3b82f6' },
-  { id: 'snack',     label: 'Evening Snack',  icon: Sunset,   color: '#a78bfa' },
-  { id: 'dinner',    label: 'Dinner',          icon: Moon,     color: '#39ff14' },
+  { id: 'breakfast', label: 'Breakfast',     icon: Coffee,   color: '#FFFFFF' },
+  { id: 'lunch',     label: 'Lunch',          icon: Sun,      color: '#FFFFFF' },
+  { id: 'snack',     label: 'Evening Snack',  icon: Sunset,   color: '#FFFFFF' },
+  { id: 'dinner',    label: 'Dinner',          icon: Moon,     color: '#FFFFFF' },
 ];
 
 /* ─── Demo seed for today ───────────────────────────────────────────────── */
@@ -93,19 +93,15 @@ const TODAY_SEED = {
   dinner: [],
 };
 
-/* ─── Weekly history ────────────────────────────────────────────────────── */
 const WEEKLY = [
   { day: 'Mon', cal: 1850 },
   { day: 'Tue', cal: 2100 },
   { day: 'Wed', cal: 1950 },
-  { day: 'Thu', cal: 2200 },
-  { day: 'Fri', cal: 1780 },
-  { day: 'Sat', cal: 2350 },
-  { day: 'Sun', cal: 1980 },
+  { day: 'Thu', cal: 2050 },
+  { day: 'Fri', cal: 2200 },
+  { day: 'Sat', cal: 1900 },
+  { day: 'Sun', cal: 2000 },
 ];
-
-/* ─── Utility ───────────────────────────────────────────────────────────── */
-const uid = () => `entry_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
 
 const formatDate = (d) =>
   d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
@@ -115,39 +111,34 @@ const PROTEIN_TARGET = 150;
 const CARBS_TARGET   = 250;
 const FAT_TARGET     = 65;
 
-/* ─── MacroBar ──────────────────────────────────────────────────────────── */
-function MacroBar({ label, current, target, color, unit = 'g' }) {
+function MacroBar({ label, current, target, color = '#FFFFFF', unit = 'g' }) {
   const pct = Math.min((current / target) * 100, 100);
   return (
     <div className="flex-1">
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-xs font-semibold" style={{ color }}>{label}</span>
-        <span className="text-xs text-gray-400">{Math.round(current)}/{target}{unit}</span>
+        <span className="text-xs font-semibold text-white">{label}</span>
+        <span className="text-xs text-[#A3A3A3]">{Math.round(current)}/{target}{unit}</span>
       </div>
-      <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#1a1a1a' }}>
+      <div className="h-2 rounded-full overflow-hidden bg-[#262626]">
         <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${pct}%`, backgroundColor: color, boxShadow: `0 0 8px ${color}66` }}
+          className="h-full rounded-full transition-all duration-700 bg-white"
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>
   );
 }
 
-/* ─── Custom tooltip ────────────────────────────────────────────────────── */
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl px-3 py-2 text-sm" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
-      <p className="text-gray-400 mb-1">{label}</p>
-      <p className="font-bold" style={{ color: '#39ff14' }}>{payload[0].value} kcal</p>
+    <div className="rounded-xl px-3 py-2 text-sm bg-[#262626] border border-[#404040]">
+      <p className="text-[#A3A3A3] mb-1">{label}</p>
+      <p className="font-bold text-white">{payload[0].value} kcal</p>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   FoodTrackerPage
-   ═══════════════════════════════════════════════════════════════════════════ */
 export default function FoodTrackerPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [meals, setMeals] = useState(TODAY_SEED);
@@ -163,7 +154,6 @@ export default function FoodTrackerPage() {
     return currentDate.toDateString() === t.toDateString();
   }, [currentDate]);
 
-  /* ─ totals ─ */
   const totals = useMemo(() => {
     let cal = 0, p = 0, c = 0, f = 0;
     Object.values(meals).forEach((list) =>
@@ -174,18 +164,15 @@ export default function FoodTrackerPage() {
 
   const calPct = Math.round((totals.cal / CALORIE_TARGET) * 100);
 
-  /* ─ search results ─ */
   const results = useMemo(() => {
     if (!searchQuery.trim()) return FOOD_DB.filter((f) => QUICK_ITEMS.includes(f.id));
     const q = searchQuery.toLowerCase();
     return FOOD_DB.filter((f) => f.name.toLowerCase().includes(q)).slice(0, 10);
   }, [searchQuery]);
 
-  /* ─ nav ─ */
   const shiftDate = (days) =>
     setCurrentDate((d) => { const n = new Date(d); n.setDate(n.getDate() + days); return n; });
 
-  /* ─ add food ─ */
   const openPanel = (mealId) => {
     setActiveMeal(mealId);
     setSelectedFood(null);
@@ -199,7 +186,7 @@ export default function FoodTrackerPage() {
     if (!selectedFood) return;
     const entry = {
       ...selectedFood,
-      entryId: uid(),
+      entryId: `e_${Date.now()}`,
       qty,
       totalCal: Math.round(selectedFood.cal * qty),
       totalP:   Math.round(selectedFood.p * qty * 10) / 10,
@@ -213,45 +200,42 @@ export default function FoodTrackerPage() {
   const removeFood = (mealId, entryId) =>
     setMeals((prev) => ({ ...prev, [mealId]: prev[mealId].filter((e) => e.entryId !== entryId) }));
 
-  /* ─ meal totals ─ */
   const mealTotals = (list) => ({
     cal: Math.round(list.reduce((s, e) => s + e.totalCal, 0)),
   });
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: '#0a0a0a', color: '#fff' }}>
+    <div className="min-h-screen p-6 bg-[#000000] text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <UtensilsCrossed size={26} style={{ color: '#39ff14' }} />
+          <h1 className="text-2xl font-black flex items-center gap-2">
+            <UtensilsCrossed size={26} className="text-white" />
             Food Tracker
           </h1>
-          <p className="text-sm text-gray-400 mt-1">Log meals and track your nutrition</p>
+          <p className="text-sm text-[#A3A3A3] mt-1">Log meals and track your nutrition</p>
         </div>
-        {/* Date nav */}
-        <div className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
-          <button onClick={() => shiftDate(-1)} className="p-1 rounded-lg hover:bg-white/5 transition-colors">
-            <ChevronLeft size={18} className="text-gray-400" />
+        <div className="flex items-center gap-2 rounded-xl px-3 py-2 bg-[#171717] border border-[#404040]">
+          <button onClick={() => shiftDate(-1)} className="p-1 rounded-lg hover:bg-[#262626] transition-colors">
+            <ChevronLeft size={18} className="text-[#A3A3A3]" />
           </button>
-          <span className="text-sm font-medium px-2 min-w-[170px] text-center">
+          <span className="text-sm font-semibold px-2 min-w-[170px] text-center">
             {isToday ? 'Today — ' : ''}{formatDate(currentDate)}
           </span>
           <button
             onClick={() => shiftDate(1)}
             disabled={isToday}
-            className="p-1 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-30"
+            className="p-1 rounded-lg hover:bg-[#262626] transition-colors disabled:opacity-30"
           >
-            <ChevronRight size={18} className="text-gray-400" />
+            <ChevronRight size={18} className="text-[#A3A3A3]" />
           </button>
         </div>
       </div>
 
       {/* Nutrition Summary */}
-      <div className="rounded-2xl p-6 mb-6" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
-        <h2 className="text-base font-semibold mb-5 text-gray-300">Daily Nutrition Summary</h2>
+      <div className="rounded-2xl p-6 mb-6 bg-[#171717] border border-[#404040]">
+        <h2 className="text-base font-bold mb-5 text-white">Daily Nutrition Summary</h2>
         <div className="flex flex-col md:flex-row gap-8 items-center">
-          {/* Calorie ring */}
           <div className="flex flex-col items-center gap-2">
             <ProgressRing
               percentage={calPct}
@@ -259,35 +243,35 @@ export default function FoodTrackerPage() {
               strokeWidth={12}
               value={`${totals.cal}`}
               label={`/ ${CALORIE_TARGET} kcal`}
+              color="#FFFFFF"
+              trackColor="#262626"
             />
             <div className="text-center">
-              <p className="text-xs text-gray-400">Remaining</p>
-              <p className="font-bold text-lg" style={{ color: '#39ff14' }}>
+              <p className="text-xs text-[#A3A3A3]">Remaining</p>
+              <p className="font-black text-lg text-white">
                 {Math.max(CALORIE_TARGET - totals.cal, 0)} kcal
               </p>
             </div>
           </div>
 
-          {/* Macro bars */}
           <div className="flex-1 flex flex-col gap-5 w-full">
-            <MacroBar label="Protein"       current={totals.p} target={PROTEIN_TARGET} color="#3b82f6" />
-            <MacroBar label="Carbohydrates" current={totals.c} target={CARBS_TARGET}   color="#f59e0b" />
-            <MacroBar label="Fats"          current={totals.f} target={FAT_TARGET}     color="#a78bfa" />
+            <MacroBar label="Protein"       current={totals.p} target={PROTEIN_TARGET} color="#FFFFFF" />
+            <MacroBar label="Carbohydrates" current={totals.c} target={CARBS_TARGET}   color="#D4D4D4" />
+            <MacroBar label="Fats"          current={totals.f} target={FAT_TARGET}     color="#A3A3A3" />
           </div>
 
-          {/* Quick stats */}
           <div className="flex flex-col gap-3 min-w-[130px]">
             {[
-              { label: 'Calories',  val: `${totals.cal}`, unit: 'kcal', color: '#39ff14', Icon: Flame },
-              { label: 'Protein',   val: `${totals.p}`,   unit: 'g',    color: '#3b82f6', Icon: Beef },
-              { label: 'Carbs',     val: `${totals.c}`,   unit: 'g',    color: '#f59e0b', Icon: Wheat },
-              { label: 'Fats',      val: `${totals.f}`,   unit: 'g',    color: '#a78bfa', Icon: Droplets },
-            ].map(({ label, val, unit, color, Icon }) => (
-              <div key={label} className="flex items-center gap-2.5 rounded-xl px-3 py-2" style={{ background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
-                <Icon size={16} style={{ color }} />
+              { label: 'Calories',  val: `${totals.cal}`, unit: 'kcal', Icon: Flame },
+              { label: 'Protein',   val: `${totals.p}`,   unit: 'g',    Icon: Beef },
+              { label: 'Carbs',     val: `${totals.c}`,   unit: 'g',    Icon: Wheat },
+              { label: 'Fats',      val: `${totals.f}`,   unit: 'g',    Icon: Droplets },
+            ].map(({ label, val, unit, Icon }) => (
+              <div key={label} className="flex items-center gap-2.5 rounded-xl px-3 py-2 bg-[#262626] border border-[#404040]">
+                <Icon size={16} className="text-white" />
                 <div>
-                  <p className="text-xs text-gray-500">{label}</p>
-                  <p className="text-sm font-bold text-white">{val}<span className="text-xs text-gray-400 ml-0.5">{unit}</span></p>
+                  <p className="text-xs text-[#A3A3A3]">{label}</p>
+                  <p className="text-sm font-bold text-white">{val}<span className="text-xs text-[#A3A3A3] ml-0.5">{unit}</span></p>
                 </div>
               </div>
             ))}
@@ -297,39 +281,36 @@ export default function FoodTrackerPage() {
 
       {/* Meal Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        {MEAL_DEFS.map(({ id, label, icon: MealIcon, color }) => {
+        {MEAL_DEFS.map(({ id, label, icon: MealIcon }) => {
           const list = meals[id] || [];
           const mt = mealTotals(list);
           return (
-            <div key={id} className="rounded-2xl overflow-hidden" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
-              {/* Meal header */}
-              <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
+            <div key={id} className="rounded-2xl overflow-hidden bg-[#171717] border border-[#404040]">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-[#404040]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${color}18` }}>
-                    <MealIcon size={18} style={{ color }} />
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#262626] border border-[#404040]">
+                    <MealIcon size={18} className="text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">{label}</p>
-                    <p className="text-xs text-gray-500">{mt.cal} kcal</p>
+                    <p className="font-bold text-sm text-white">{label}</p>
+                    <p className="text-xs text-[#A3A3A3]">{mt.cal} kcal</p>
                   </div>
                 </div>
                 <button
                   onClick={() => openPanel(id)}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
-                  style={{ background: `${color}18`, color }}
+                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all bg-[#262626] text-white border border-[#404040] hover:bg-[#333333]"
                 >
                   <Plus size={14} /> Add Food
                 </button>
               </div>
 
-              {/* Food list */}
               <div className="p-2">
                 {list.length === 0 ? (
-                  <div className="py-6 text-center text-sm text-gray-600">No items logged yet</div>
+                  <div className="py-6 text-center text-sm text-[#737373]">No items logged yet</div>
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-xs text-gray-600">
+                      <tr className="text-xs text-[#A3A3A3]">
                         <th className="text-left px-3 py-2">Food</th>
                         <th className="text-center px-2 py-2">Cal</th>
                         <th className="text-center px-2 py-2 hidden sm:table-cell">P</th>
@@ -342,25 +323,24 @@ export default function FoodTrackerPage() {
                       {list.map((item) => (
                         <tr
                           key={item.entryId}
-                          className="border-t hover:bg-white/[0.02] transition-colors"
-                          style={{ borderColor: '#1a1a1a' }}
+                          className="border-t border-[#404040] hover:bg-[#262626] transition-colors"
                         >
                           <td className="px-3 py-2.5">
                             <p className="font-medium text-white text-xs">{item.name}</p>
-                            <p className="text-gray-500 text-[11px]">
+                            <p className="text-[#A3A3A3] text-[11px]">
                               {item.qty > 1 ? `${item.qty}×` : ''} {item.unit}
                             </p>
                           </td>
-                          <td className="text-center px-2 py-2.5 font-semibold text-xs" style={{ color }}>
+                          <td className="text-center px-2 py-2.5 font-bold text-xs text-white">
                             {item.totalCal}
                           </td>
-                          <td className="text-center px-2 py-2.5 text-gray-400 text-xs hidden sm:table-cell">{item.totalP}g</td>
-                          <td className="text-center px-2 py-2.5 text-gray-400 text-xs hidden sm:table-cell">{item.totalC}g</td>
-                          <td className="text-center px-2 py-2.5 text-gray-400 text-xs hidden sm:table-cell">{item.totalF}g</td>
+                          <td className="text-center px-2 py-2.5 text-[#A3A3A3] text-xs hidden sm:table-cell">{item.totalP}g</td>
+                          <td className="text-center px-2 py-2.5 text-[#A3A3A3] text-xs hidden sm:table-cell">{item.totalC}g</td>
+                          <td className="text-center px-2 py-2.5 text-[#A3A3A3] text-xs hidden sm:table-cell">{item.totalF}g</td>
                           <td className="px-2 py-2.5">
                             <button
                               onClick={() => removeFood(id, item.entryId)}
-                              className="p-1.5 rounded-lg hover:bg-red-500/10 text-gray-600 hover:text-red-400 transition-colors"
+                              className="p-1.5 rounded-lg hover:bg-[#262626] text-[#A3A3A3] hover:text-white transition-colors"
                             >
                               <Trash2 size={13} />
                             </button>
@@ -377,127 +357,115 @@ export default function FoodTrackerPage() {
       </div>
 
       {/* Weekly Chart */}
-      <div className="rounded-2xl p-6" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
+      <div className="rounded-2xl p-6 bg-[#171717] border border-[#404040]">
         <div className="flex items-center gap-2 mb-5">
-          <TrendingUp size={18} style={{ color: '#39ff14' }} />
-          <h2 className="font-semibold text-base">Weekly Calorie History</h2>
+          <TrendingUp size={18} className="text-white" />
+          <h2 className="font-bold text-base text-white">Weekly Calorie History</h2>
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={WEEKLY} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
-            <XAxis dataKey="day" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} />
-            <YAxis stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} domain={[1500, 2500]} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#404040" />
+            <XAxis dataKey="day" stroke="#404040" tick={{ fill: '#A3A3A3', fontSize: 12 }} />
+            <YAxis stroke="#404040" tick={{ fill: '#A3A3A3', fontSize: 12 }} domain={[1500, 2500]} />
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"
               dataKey="cal"
-              stroke="#39ff14"
+              stroke="#FFFFFF"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#39ff14', strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: '#39ff14', strokeWidth: 0 }}
+              dot={{ r: 4, fill: '#FFFFFF', strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: '#FFFFFF', strokeWidth: 0 }}
             />
-            {/* Target line */}
             <Line
               type="monotone"
               dataKey={() => CALORIE_TARGET}
-              stroke="#9ca3af"
+              stroke="#737373"
               strokeWidth={1}
               strokeDasharray="6 4"
               dot={false}
             />
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-600 mt-2 text-center">Dashed line = daily target ({CALORIE_TARGET} kcal)</p>
+        <p className="text-xs text-[#737373] mt-2 text-center">Dashed line = daily target ({CALORIE_TARGET} kcal)</p>
       </div>
 
       {/* Search Panel (slide-in overlay) */}
       {panelOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setPanelOpen(false)}
           />
-          {/* Panel */}
           <div
-            className="relative w-full max-w-md h-full flex flex-col overflow-hidden"
-            style={{ background: '#111', borderLeft: '1px solid #1a1a1a' }}
+            className="relative w-full max-w-md h-full flex flex-col overflow-hidden bg-[#171717] border-l border-[#404040]"
           >
-            {/* Panel header */}
-            <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid #1a1a1a' }}>
+            <div className="flex items-center justify-between p-5 border-b border-[#404040]">
               <div>
-                <h3 className="font-semibold text-base">Add Food</h3>
-                <p className="text-xs text-gray-400 mt-0.5 capitalize">
+                <h3 className="font-bold text-base text-white">Add Food</h3>
+                <p className="text-xs text-[#A3A3A3] mt-0.5 capitalize">
                   → {MEAL_DEFS.find((m) => m.id === activeMeal)?.label}
                 </p>
               </div>
-              <button onClick={() => setPanelOpen(false)} className="p-2 rounded-xl hover:bg-white/5 transition-colors">
-                <X size={20} className="text-gray-400" />
+              <button onClick={() => setPanelOpen(false)} className="p-2 rounded-xl hover:bg-[#262626] transition-colors">
+                <X size={20} className="text-[#A3A3A3]" />
               </button>
             </div>
 
-            {/* Search */}
-            <div className="p-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
+            <div className="p-4 border-b border-[#404040]">
               <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737373]" />
                 <input
                   ref={searchRef}
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setSelectedFood(null); }}
                   placeholder="Search foods..."
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none placeholder-gray-600 text-white"
-                  style={{ background: '#0a0a0a', border: '1px solid #1a1a1a' }}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none placeholder-[#737373] text-white bg-[#262626] border border-[#404040] focus:border-white"
                 />
               </div>
             </div>
 
-            {/* Results list */}
             <div className="flex-1 overflow-y-auto p-4 space-y-1">
-              <p className="text-xs text-gray-500 mb-3">
+              <p className="text-xs text-[#A3A3A3] mb-3">
                 {searchQuery ? `${results.length} results` : 'Quick Add — Popular Items'}
               </p>
               {results.map((food) => (
                 <button
                   key={food.id}
                   onClick={() => { setSelectedFood(food); setQty(1); }}
-                  className="w-full flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all hover:bg-white/5"
-                  style={{
-                    background: selectedFood?.id === food.id ? '#39ff1415' : 'transparent',
-                    border: `1px solid ${selectedFood?.id === food.id ? '#39ff1430' : '#1a1a1a'}`,
-                  }}
+                  className={`w-full flex items-center justify-between rounded-xl px-4 py-3 text-left transition-all hover:bg-[#262626] border ${
+                    selectedFood?.id === food.id ? 'bg-[#262626] border-white' : 'border-[#404040]'
+                  }`}
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">{food.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{food.unit} · P:{food.p}g C:{food.c}g F:{food.f}g</p>
+                    <p className="text-sm font-semibold text-white">{food.name}</p>
+                    <p className="text-xs text-[#A3A3A3] mt-0.5">{food.unit} · P:{food.p}g C:{food.c}g F:{food.f}g</p>
                   </div>
-                  <span className="text-sm font-bold ml-3 shrink-0" style={{ color: '#39ff14' }}>{food.cal}<span className="text-xs font-normal text-gray-500"> kcal</span></span>
+                  <span className="text-sm font-bold ml-3 shrink-0 text-white">{food.cal}<span className="text-xs font-normal text-[#A3A3A3]"> kcal</span></span>
                 </button>
               ))}
             </div>
 
-            {/* Selected food + qty */}
             {selectedFood && (
-              <div className="p-4 space-y-4" style={{ borderTop: '1px solid #1a1a1a', background: '#0a0a0a' }}>
-                <div className="rounded-xl p-3" style={{ background: '#111', border: '1px solid #1a1a1a' }}>
-                  <p className="font-semibold text-sm mb-1">{selectedFood.name}</p>
-                  <p className="text-xs text-gray-400">Per {selectedFood.unit}: {selectedFood.cal} kcal | P:{selectedFood.p}g C:{selectedFood.c}g F:{selectedFood.f}g</p>
+              <div className="p-4 space-y-4 border-t border-[#404040] bg-[#171717]">
+                <div className="rounded-xl p-3 bg-[#262626] border border-[#404040]">
+                  <p className="font-bold text-sm mb-1 text-white">{selectedFood.name}</p>
+                  <p className="text-xs text-[#A3A3A3]">Per {selectedFood.unit}: {selectedFood.cal} kcal | P:{selectedFood.p}g C:{selectedFood.c}g F:{selectedFood.f}g</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <label className="text-sm text-gray-400 shrink-0">Quantity</label>
+                  <label className="text-sm text-[#A3A3A3] shrink-0 font-medium">Quantity</label>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setQty((q) => Math.max(0.5, q - 0.5))} className="w-8 h-8 rounded-lg font-bold text-lg flex items-center justify-center hover:bg-white/5 transition-colors" style={{ background: '#1a1a1a' }}>−</button>
-                    <span className="w-10 text-center font-bold text-lg">{qty}</span>
-                    <button onClick={() => setQty((q) => q + 0.5)} className="w-8 h-8 rounded-lg font-bold text-lg flex items-center justify-center hover:bg-white/5 transition-colors" style={{ background: '#1a1a1a' }}>+</button>
+                    <button onClick={() => setQty((q) => Math.max(0.5, q - 0.5))} className="w-8 h-8 rounded-lg font-bold text-lg flex items-center justify-center bg-[#262626] border border-[#404040] text-white hover:bg-[#333333] transition-colors">−</button>
+                    <span className="w-10 text-center font-bold text-lg text-white">{qty}</span>
+                    <button onClick={() => setQty((q) => q + 0.5)} className="w-8 h-8 rounded-lg font-bold text-lg flex items-center justify-center bg-[#262626] border border-[#404040] text-white hover:bg-[#333333] transition-colors">+</button>
                   </div>
-                  <span className="text-xs text-gray-500">× {selectedFood.unit}</span>
-                  <span className="ml-auto text-sm font-bold" style={{ color: '#39ff14' }}>
+                  <span className="text-xs text-[#A3A3A3]">× {selectedFood.unit}</span>
+                  <span className="ml-auto text-sm font-bold text-white">
                     {Math.round(selectedFood.cal * qty)} kcal
                   </span>
                 </div>
                 <button
                   onClick={addFood}
-                  className="w-full py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-[0.98]"
-                  style={{ background: '#39ff14', color: '#0a0a0a' }}
+                  className="w-full py-3 rounded-xl font-bold text-sm transition-all bg-white text-black hover:bg-[#E5E5E5]"
                 >
                   Add to {MEAL_DEFS.find((m) => m.id === activeMeal)?.label}
                 </button>

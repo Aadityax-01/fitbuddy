@@ -29,14 +29,13 @@ const NAV_ITEMS = [
 ];
 
 /**
- * @param {{ isOpen: boolean, onClose: () => void }} props
+ * Strict monochrome Sidebar component for FitBuddy AI.
  */
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
   const { logout } = useAuth();
   const [hoveredPath, setHoveredPath] = useState(null);
 
-  // Close sidebar on route change (mobile)
   useEffect(() => {
     onClose?.();
   }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -48,7 +47,7 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Mobile backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -58,27 +57,20 @@ export default function Sidebar({ isOpen, onClose }) {
       <aside
         className={[
           'fixed top-0 left-0 z-50 h-full w-64 flex flex-col',
-          'border-r transition-transform duration-300 ease-in-out',
+          'border-r border-[#404040] transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         ].join(' ')}
         style={{
-          backgroundColor: '#111111',
-          borderColor: '#1a1a1a',
+          backgroundColor: '#171717',
         }}
       >
         {/* Header / Logo */}
         <div
-          className="flex items-center justify-between px-5 h-[65px] border-b"
-          style={{ borderColor: '#1a1a1a' }}
+          className="flex items-center justify-between px-5 h-[65px] border-b border-[#404040]"
         >
           <Link to="/dashboard" className="flex items-center gap-2.5 group">
-            {/* Inline SVG lightning bolt mark */}
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-              style={{
-                backgroundColor: 'rgba(57, 255, 20, 0.12)',
-                border: '1px solid rgba(57, 255, 20, 0.3)',
-              }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-105 bg-[#262626] border border-[#404040]"
             >
               <svg
                 width="16"
@@ -89,8 +81,8 @@ export default function Sidebar({ isOpen, onClose }) {
               >
                 <path
                   d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
-                  fill="#39ff14"
-                  stroke="#39ff14"
+                  fill="#FFFFFF"
+                  stroke="#FFFFFF"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -99,9 +91,9 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
             <div className="flex flex-col">
               <span className="font-black text-white text-base tracking-tight leading-none">
-                FitBuddy <span style={{ color: '#39ff14' }}>AI</span>
+                FitBuddy <span className="text-white">AI</span>
               </span>
-              <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-0.5">
+              <span className="text-[10px] text-[#A3A3A3] font-semibold tracking-wider uppercase mt-0.5">
                 Fitness & Nutrition
               </span>
             </div>
@@ -110,7 +102,7 @@ export default function Sidebar({ isOpen, onClose }) {
           {/* Close button (mobile only) */}
           <button
             onClick={onClose}
-            className="lg:hidden p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="lg:hidden p-1.5 rounded-md text-[#A3A3A3] hover:text-white hover:bg-[#262626] transition-colors"
             aria-label="Close menu"
           >
             <X size={18} />
@@ -132,23 +124,22 @@ export default function Sidebar({ isOpen, onClose }) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 group"
                 style={{
                   backgroundColor: active
-                    ? '#39ff14'
+                    ? '#FFFFFF'
                     : hovered
-                    ? 'rgba(57, 255, 20, 0.08)'
+                    ? '#262626'
                     : 'transparent',
-                  color: active ? '#0a0a0a' : hovered ? '#ffffff' : '#9ca3af',
-                  boxShadow: active ? '0 0 15px rgba(57, 255, 20, 0.4)' : 'none',
+                  color: active ? '#000000' : hovered ? '#FFFFFF' : '#A3A3A3',
                 }}
                 aria-current={active ? 'page' : undefined}
               >
                 <Icon
                   size={18}
                   className="flex-shrink-0 transition-colors"
-                  style={{ color: active ? '#0a0a0a' : hovered ? '#39ff14' : '#9ca3af' }}
+                  style={{ color: active ? '#000000' : hovered ? '#FFFFFF' : '#A3A3A3' }}
                 />
                 <span className="flex-1">{label}</span>
                 {active && (
-                  <ChevronRight size={14} style={{ color: '#0a0a0a' }} />
+                  <ChevronRight size={14} style={{ color: '#000000' }} />
                 )}
               </Link>
             );
@@ -156,12 +147,12 @@ export default function Sidebar({ isOpen, onClose }) {
         </nav>
 
         {/* Divider */}
-        <div className="mx-4 border-t" style={{ borderColor: '#1a1a1a' }} />
+        <div className="mx-4 border-t border-[#404040]" />
 
         {/* Logout */}
         <div className="p-3">
           <button
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[#A3A3A3] hover:text-white hover:bg-[#262626] transition-all duration-150"
             onClick={logout}
           >
             <LogOut size={18} className="flex-shrink-0" />
@@ -171,7 +162,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* Version badge */}
         <div className="px-5 py-3">
-          <p className="text-xs text-gray-600">v1.0.0 · FitBuddy AI</p>
+          <p className="text-xs text-[#737373]">v1.0.0 · FitBuddy AI</p>
         </div>
       </aside>
     </>

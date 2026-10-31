@@ -2,17 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 
 /**
- * Dark overlay modal with animated entrance.
- *
- * @param {{
- *   isOpen: boolean,
- *   onClose: () => void,
- *   title?: string,
- *   children: React.ReactNode,
- *   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full',
- *   showClose?: boolean,
- *   closeOnBackdrop?: boolean,
- * }} props
+ * Strict monochrome modal dialog.
  */
 export default function Modal({
   isOpen,
@@ -25,7 +15,6 @@ export default function Modal({
 }) {
   const dialogRef = useRef(null);
 
-  // Handle Escape key
   const handleKey = useCallback(
     (e) => {
       if (e.key === 'Escape') onClose?.();
@@ -47,7 +36,6 @@ export default function Modal({
     };
   }, [isOpen, handleKey]);
 
-  // Focus trap on open
   useEffect(() => {
     if (isOpen) dialogRef.current?.focus();
   }, [isOpen]);
@@ -67,15 +55,12 @@ export default function Modal({
   }
 
   return (
-    /* Backdrop */
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
       onClick={handleBackdrop}
       aria-modal="true"
       role="dialog"
     >
-      {/* Panel */}
       <div
         ref={dialogRef}
         tabIndex={-1}
@@ -85,24 +70,22 @@ export default function Modal({
           SIZE_CLASSES[size] || SIZE_CLASSES.md,
         ].join(' ')}
         style={{
-          backgroundColor: '#111111',
-          border: '1px solid #1a1a1a',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.7)',
+          backgroundColor: '#171717',
+          border: '1px solid #404040',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.8)',
         }}
       >
-        {/* Header */}
         {(title || showClose) && (
           <div
-            className="flex items-center justify-between px-6 py-4 border-b"
-            style={{ borderColor: '#1a1a1a' }}
+            className="flex items-center justify-between px-6 py-4 border-b border-[#404040]"
           >
             {title && (
-              <h2 className="text-white font-semibold text-lg leading-snug">{title}</h2>
+              <h2 className="text-white font-black text-lg leading-snug">{title}</h2>
             )}
             {showClose && (
               <button
                 onClick={onClose}
-                className="rounded-lg p-1.5 text-gray-500 hover:text-white hover:bg-white/5 transition-colors ml-auto"
+                className="rounded-lg p-1.5 text-[#A3A3A3] hover:text-white hover:bg-[#262626] transition-colors ml-auto"
                 aria-label="Close modal"
               >
                 <X size={18} />
@@ -111,11 +94,9 @@ export default function Modal({
           </div>
         )}
 
-        {/* Body */}
         <div className="px-6 py-5">{children}</div>
       </div>
 
-      {/* Keyframe animation injected via style tag */}
       <style>{`
         @keyframes modalIn {
           from { opacity: 0; transform: scale(0.94) translateY(-8px); }

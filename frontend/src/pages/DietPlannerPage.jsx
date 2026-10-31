@@ -98,9 +98,8 @@ const DEMO_PLANS = {
       time: "7:00 – 8:00 AM",
       items: [
         { name: "Overnight Oats (almond milk)", portion: "1 bowl (300ml)", calories: 290, protein: 9, carbs: 47, fats: 8 },
-        { name: "Chia Seeds", portion: "1 tbsp", calories: 58, protein: 2, carbs: 5, fats: 4 },
-        { name: "Blueberries", portion: "½ cup", calories: 42, protein: 1, carbs: 11, fats: 0 },
-        { name: "Walnuts", portion: "5 halves", calories: 93, protein: 2, carbs: 2, fats: 9 },
+        { name: "Chia Seeds", portion: "1 tbsp (12g)", calories: 60, protein: 2, carbs: 5, fats: 4 },
+        { name: "Blueberries / Berries", portion: "1/2 cup (75g)", calories: 42, protein: 1, carbs: 10, fats: 0 },
       ],
     },
     lunch: {
@@ -108,9 +107,10 @@ const DEMO_PLANS = {
       icon: "☀️",
       time: "12:30 – 1:30 PM",
       items: [
-        { name: "Rajma (kidney bean curry)", portion: "1.5 katori", calories: 240, protein: 14, carbs: 40, fats: 3 },
-        { name: "Quinoa / Brown Rice", portion: "1 cup cooked", calories: 220, protein: 8, carbs: 39, fats: 4 },
-        { name: "Roasted Veggies", portion: "1 bowl", calories: 110, protein: 3, carbs: 18, fats: 3 },
+        { name: "Chole (Chickpea Curry)", portion: "1 large bowl (250g)", calories: 280, protein: 14, carbs: 42, fats: 6 },
+        { name: "Jeera Rice", portion: "1 cup cooked (150g)", calories: 210, protein: 4, carbs: 45, fats: 1 },
+        { name: "Bhindi Masala (Okra)", portion: "1 katori (120g)", calories: 95, protein: 2, carbs: 12, fats: 4 },
+        { name: "Green Salad", portion: "1 bowl", calories: 30, protein: 1, carbs: 6, fats: 0 },
       ],
     },
     snack: {
@@ -118,9 +118,8 @@ const DEMO_PLANS = {
       icon: "🌤️",
       time: "4:00 – 5:00 PM",
       items: [
-        { name: "Hummus", portion: "3 tbsp (60g)", calories: 108, protein: 4, carbs: 10, fats: 6 },
-        { name: "Carrot & Celery Sticks", portion: "1 cup", calories: 50, protein: 1, carbs: 11, fats: 0 },
-        { name: "Coconut Water", portion: "1 glass (250ml)", calories: 45, protein: 0, carbs: 9, fats: 0 },
+        { name: "Roasted Chana", portion: "50g", calories: 180, protein: 10, carbs: 29, fats: 3 },
+        { name: "Green Tea", portion: "1 cup", calories: 2, protein: 0, carbs: 0, fats: 0 },
       ],
     },
     dinner: {
@@ -128,9 +127,9 @@ const DEMO_PLANS = {
       icon: "🌙",
       time: "7:30 – 8:30 PM",
       items: [
-        { name: "Tofu Bhurji", portion: "150g", calories: 170, protein: 16, carbs: 6, fats: 9 },
-        { name: "Whole Wheat Roti", portion: "3 rotis", calories: 255, protein: 9, carbs: 48, fats: 3 },
-        { name: "Chana Dal", portion: "1 katori", calories: 190, protein: 11, carbs: 32, fats: 3 },
+        { name: "Tofu Bhurji", portion: "150g", calories: 190, protein: 18, carbs: 6, fats: 11 },
+        { name: "Multigrain Roti", portion: "2 rotis", calories: 180, protein: 7, carbs: 34, fats: 2 },
+        { name: "Yellow Dal", portion: "1 katori (150g)", calories: 140, protein: 8, carbs: 22, fats: 2 },
       ],
     },
   },
@@ -138,18 +137,17 @@ const DEMO_PLANS = {
 
 // ─── Macro Mini Bar ───────────────────────────────────────────────────────────
 function MealMacroBar({ protein, carbs, fats }) {
-  const total = protein * 4 + carbs * 4 + fats * 9 || 1;
   return (
     <div className="mt-3">
       <div className="flex gap-1 mb-1">
-        <div style={{ flex: protein * 4, background: "#39ff14", borderRadius: "3px 0 0 3px" }} className="h-2" />
-        <div style={{ flex: carbs   * 4, background: "#facc15" }} className="h-2" />
-        <div style={{ flex: fats    * 9, background: "#f97316", borderRadius: "0 3px 3px 0" }} className="h-2" />
+        <div style={{ flex: protein * 4, background: "#FFFFFF", borderRadius: "3px 0 0 3px" }} className="h-2" />
+        <div style={{ flex: carbs   * 4, background: "#D4D4D4" }} className="h-2" />
+        <div style={{ flex: fats    * 9, background: "#A3A3A3", borderRadius: "0 3px 3px 0" }} className="h-2" />
       </div>
-      <div className="flex gap-3 text-xs text-gray-500">
-        <span><span className="text-[#39ff14]">P</span> {protein}g</span>
-        <span><span className="text-[#facc15]">C</span> {carbs}g</span>
-        <span><span className="text-[#f97316]">F</span> {fats}g</span>
+      <div className="flex gap-3 text-xs text-[#A3A3A3]">
+        <span><span className="text-white font-bold">P</span> {protein}g</span>
+        <span><span className="text-[#D4D4D4] font-bold">C</span> {carbs}g</span>
+        <span><span className="text-[#A3A3A3] font-bold">F</span> {fats}g</span>
       </div>
     </div>
   );
@@ -158,21 +156,21 @@ function MealMacroBar({ protein, carbs, fats }) {
 // ─── Skeleton Card ────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
-    <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-5 animate-pulse">
+    <div className="bg-[#171717] border border-[#404040] rounded-2xl p-5 animate-pulse">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-[#1a1a1a] rounded-xl" />
+        <div className="w-10 h-10 bg-[#262626] rounded-xl" />
         <div>
-          <div className="w-24 h-4 bg-[#1a1a1a] rounded mb-1" />
-          <div className="w-32 h-3 bg-[#1a1a1a] rounded" />
+          <div className="w-24 h-4 bg-[#262626] rounded mb-1" />
+          <div className="w-32 h-3 bg-[#262626] rounded" />
         </div>
       </div>
       {[1, 2, 3].map((i) => (
-        <div key={i} className="flex justify-between py-2 border-b border-[#1a1a1a]">
-          <div className="w-36 h-3 bg-[#1a1a1a] rounded" />
-          <div className="w-16 h-3 bg-[#1a1a1a] rounded" />
+        <div key={i} className="flex justify-between py-2 border-b border-[#404040]">
+          <div className="w-36 h-3 bg-[#262626] rounded" />
+          <div className="w-16 h-3 bg-[#262626] rounded" />
         </div>
       ))}
-      <div className="mt-3 w-full h-2 bg-[#1a1a1a] rounded" />
+      <div className="mt-3 w-full h-2 bg-[#262626] rounded" />
     </div>
   );
 }
@@ -185,44 +183,40 @@ function MealCard({ meal, onSwap }) {
   const totalFats    = meal.items.reduce((s, i) => s + i.fats,     0);
 
   return (
-    <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-5 hover:border-[#39ff14]/30 transition-colors">
-      {/* Header */}
+    <div className="bg-[#171717] border border-[#404040] rounded-2xl p-5 hover:border-white transition-colors">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-[#1a1a1a] rounded-xl flex items-center justify-center text-2xl">
+          <div className="w-11 h-11 bg-[#262626] border border-[#404040] rounded-xl flex items-center justify-center text-2xl">
             {meal.icon}
           </div>
           <div>
-            <h3 className="font-semibold text-white">{meal.name}</h3>
-            <p className="text-xs text-gray-500">{meal.time}</p>
+            <h3 className="font-bold text-white">{meal.name}</h3>
+            <p className="text-xs text-[#A3A3A3]">{meal.time}</p>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xl font-bold text-[#39ff14]">{totalCals}</div>
-          <div className="text-xs text-gray-500">kcal</div>
+          <div className="text-xl font-black text-white">{totalCals}</div>
+          <div className="text-xs text-[#A3A3A3]">kcal</div>
         </div>
       </div>
 
-      {/* Items */}
-      <div className="space-y-0 divide-y divide-[#1a1a1a]">
+      <div className="space-y-0 divide-y divide-[#404040]">
         {meal.items.map((item) => (
           <div key={item.name} className="flex items-center justify-between py-2.5">
             <div>
-              <p className="text-sm text-gray-200">{item.name}</p>
-              <p className="text-xs text-gray-500">{item.portion}</p>
+              <p className="text-sm text-white font-medium">{item.name}</p>
+              <p className="text-xs text-[#A3A3A3]">{item.portion}</p>
             </div>
-            <span className="text-sm text-gray-400 font-medium">{item.calories} kcal</span>
+            <span className="text-sm text-white font-bold">{item.calories} kcal</span>
           </div>
         ))}
       </div>
 
-      {/* Macros */}
       <MealMacroBar protein={totalProtein} carbs={totalCarbs} fats={totalFats} />
 
-      {/* Swap button */}
       <button
         onClick={onSwap}
-        className="mt-4 w-full py-2 rounded-lg text-sm text-gray-400 border border-[#2a2a2a] hover:border-[#39ff14] hover:text-[#39ff14] transition-all flex items-center justify-center gap-2"
+        className="mt-4 w-full py-2 rounded-lg text-sm text-[#A3A3A3] border border-[#404040] hover:border-white hover:text-white transition-all flex items-center justify-center gap-2"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -233,7 +227,6 @@ function MealCard({ meal, onSwap }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function DietPlannerPage() {
   const [calories, setCalories]     = useState(2000);
   const [dietType, setDietType]     = useState("vegetarian");
@@ -247,36 +240,24 @@ export default function DietPlannerPage() {
 
   const allergyOptions = ["Dairy", "Gluten", "Nuts", "Soy", "Eggs", "Shellfish"];
 
-  const toggleAllergy = (a) =>
-    setAllergies((prev) => prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]);
+  const toggleAllergy = (a) => {
+    setAllergies((prev) =>
+      prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]
+    );
+  };
 
-  const generatePlan = async () => {
+  const generatePlan = () => {
     setLoading(true);
-    setPlan(null);
     setSaved(false);
-    try {
-      const res = await fetch("/api/diet/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ calories, dietType, cuisine, budget, goal, allergies }),
-      });
-      if (!res.ok) throw new Error("API error");
-      const data = await res.json();
-      setPlan(data);
-    } catch {
-      // Fallback to demo data
-      const key = dietType === "non_vegetarian" ? "non_veg" : dietType === "vegan" ? "vegan" : "vegetarian";
-      await new Promise((r) => setTimeout(r, 1800));
-      setPlan(DEMO_PLANS[key] || DEMO_PLANS.vegetarian);
-    }
-    setLoading(false);
+    setTimeout(() => {
+      const base = DEMO_PLANS[dietType] || DEMO_PLANS.vegetarian;
+      setPlan({ ...base });
+      setLoading(false);
+    }, 700);
   };
 
   const swapMeal = (mealKey) => {
-    if (!plan) return;
-    // Cycle within the same diet type
-    const key = dietType === "non_vegetarian" ? "non_veg" : dietType === "vegan" ? "vegan" : "vegetarian";
-    const pool = DEMO_PLANS[key];
+    const pool = DEMO_PLANS[dietType] || DEMO_PLANS.vegetarian;
     setPlan((prev) => ({ ...prev, [mealKey]: pool[mealKey] }));
   };
 
@@ -286,40 +267,40 @@ export default function DietPlannerPage() {
   const totalFats    = plan ? Object.values(plan).reduce((s, m) => s + m.items.reduce((ss, i) => ss + i.fats,     0), 0) : 0;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-4 py-8 lg:px-8">
+    <div className="min-h-screen bg-[#000000] text-white px-4 py-8 lg:px-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">
-          Diet <span className="text-[#39ff14]">Planner</span>
+        <h1 className="text-3xl font-black">
+          Diet <span className="text-white">Planner</span>
         </h1>
-        <p className="text-gray-400 mt-1">Get a personalised daily meal plan based on your preferences and goals.</p>
+        <p className="text-[#A3A3A3] mt-1">Get a personalised daily meal plan based on your preferences and goals.</p>
       </div>
 
       <div className="grid lg:grid-cols-[380px_1fr] gap-8 items-start">
         {/* ─── Left: Preferences ──────────────────────────────────────────── */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 space-y-6 sticky top-8">
-          <h2 className="font-semibold text-white text-lg">Preferences</h2>
+        <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6 space-y-6 sticky top-8">
+          <h2 className="font-bold text-white text-lg">Preferences</h2>
 
           {/* Calorie Target */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <label className="text-gray-300">Calorie Target</label>
-              <span className="text-[#39ff14] font-semibold">{calories} kcal</span>
+              <label className="text-[#A3A3A3] font-medium">Calorie Target</label>
+              <span className="text-white font-bold">{calories} kcal</span>
             </div>
             <input
               type="range" min={1200} max={3500} step={50} value={calories}
               onChange={(e) => setCalories(Number(e.target.value))}
-              className="w-full h-2 rounded-full appearance-none cursor-pointer"
-              style={{ accentColor: "#39ff14" }}
+              className="w-full h-2 rounded-full appearance-none cursor-pointer bg-[#262626]"
+              style={{ accentColor: "#FFFFFF" }}
             />
-            <div className="flex justify-between text-xs text-gray-600">
+            <div className="flex justify-between text-xs text-[#737373]">
               <span>1200</span><span>3500</span>
             </div>
           </div>
 
           {/* Diet Type */}
           <div className="space-y-2">
-            <label className="text-sm text-gray-300">Diet Type</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Diet Type</label>
             <div className="flex gap-2">
               {[
                 { value: "vegetarian",     label: "Veg 🥦" },
@@ -329,10 +310,10 @@ export default function DietPlannerPage() {
                 <button
                   key={d.value}
                   onClick={() => setDietType(d.value)}
-                  className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all border ${
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     dietType === d.value
-                      ? "bg-[#39ff14] text-black border-[#39ff14]"
-                      : "bg-[#1a1a1a] text-gray-400 border-[#2a2a2a] hover:border-[#39ff14]/50"
+                      ? "bg-[#FFFFFF] text-black border-[#FFFFFF]"
+                      : "bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white"
                   }`}
                 >
                   {d.label}
@@ -343,16 +324,16 @@ export default function DietPlannerPage() {
 
           {/* Cuisine */}
           <div className="space-y-2">
-            <label className="text-sm text-gray-300">Cuisine</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Cuisine</label>
             <div className="flex gap-2">
               {["Indian", "Continental", "Mixed"].map((c) => (
                 <button
                   key={c}
                   onClick={() => setCuisine(c)}
-                  className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all border ${
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     cuisine === c
-                      ? "bg-[#39ff14] text-black border-[#39ff14]"
-                      : "bg-[#1a1a1a] text-gray-400 border-[#2a2a2a] hover:border-[#39ff14]/50"
+                      ? "bg-[#FFFFFF] text-black border-[#FFFFFF]"
+                      : "bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white"
                   }`}
                 >
                   {c}
@@ -363,7 +344,7 @@ export default function DietPlannerPage() {
 
           {/* Budget */}
           <div className="space-y-2">
-            <label className="text-sm text-gray-300">Budget</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Budget</label>
             <div className="flex gap-2">
               {[
                 { value: "low", label: "Low 💰" },
@@ -373,10 +354,10 @@ export default function DietPlannerPage() {
                 <button
                   key={b.value}
                   onClick={() => setBudget(b.value)}
-                  className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all border ${
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
                     budget === b.value
-                      ? "bg-[#39ff14] text-black border-[#39ff14]"
-                      : "bg-[#1a1a1a] text-gray-400 border-[#2a2a2a] hover:border-[#39ff14]/50"
+                      ? "bg-[#FFFFFF] text-black border-[#FFFFFF]"
+                      : "bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white"
                   }`}
                 >
                   {b.label}
@@ -387,7 +368,7 @@ export default function DietPlannerPage() {
 
           {/* Goal */}
           <div className="space-y-2">
-            <label className="text-sm text-gray-300">Goal</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Goal</label>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { value: "lose",     label: "Lose Weight" },
@@ -397,10 +378,10 @@ export default function DietPlannerPage() {
                 <button
                   key={g.value}
                   onClick={() => setGoal(g.value)}
-                  className={`py-2 rounded-lg text-xs font-medium transition-all border ${
+                  className={`py-2 rounded-lg text-xs font-bold transition-all border ${
                     goal === g.value
-                      ? "bg-[#39ff14] text-black border-[#39ff14]"
-                      : "bg-[#1a1a1a] text-gray-400 border-[#2a2a2a] hover:border-[#39ff14]/50"
+                      ? "bg-[#FFFFFF] text-black border-[#FFFFFF]"
+                      : "bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white hover:text-white"
                   }`}
                 >
                   {g.label}
@@ -411,7 +392,7 @@ export default function DietPlannerPage() {
 
           {/* Allergies */}
           <div className="space-y-2">
-            <label className="text-sm text-gray-300">Allergies / Exclude</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Allergies / Exclude</label>
             <div className="grid grid-cols-2 gap-2">
               {allergyOptions.map((a) => (
                 <label key={a} className="flex items-center gap-2 cursor-pointer group">
@@ -419,8 +400,8 @@ export default function DietPlannerPage() {
                     onClick={() => toggleAllergy(a)}
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-all cursor-pointer ${
                       allergies.includes(a)
-                        ? "bg-[#39ff14] border-[#39ff14]"
-                        : "border-[#2a2a2a] group-hover:border-[#39ff14]/50"
+                        ? "bg-[#FFFFFF] border-[#FFFFFF]"
+                        : "border-[#404040] group-hover:border-white"
                     }`}
                   >
                     {allergies.includes(a) && (
@@ -431,7 +412,7 @@ export default function DietPlannerPage() {
                   </div>
                   <span
                     onClick={() => toggleAllergy(a)}
-                    className="text-sm text-gray-400 group-hover:text-gray-200 transition-colors"
+                    className="text-sm text-[#A3A3A3] group-hover:text-white transition-colors"
                   >
                     {a}
                   </span>
@@ -444,7 +425,7 @@ export default function DietPlannerPage() {
           <button
             onClick={generatePlan}
             disabled={loading}
-            className="w-full py-3 rounded-xl font-bold text-black bg-[#39ff14] hover:bg-[#2fd10f] transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] disabled:opacity-60 disabled:cursor-not-allowed active:scale-95"
+            className="w-full py-3 rounded-xl font-black text-black bg-[#FFFFFF] hover:bg-[#E5E5E5] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -464,9 +445,9 @@ export default function DietPlannerPage() {
         <div>
           {!plan && !loading && (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-20 h-20 bg-[#111111] border border-[#1a1a1a] rounded-2xl flex items-center justify-center text-4xl mb-4">🥗</div>
-              <h3 className="text-xl font-semibold text-white mb-2">No plan generated yet</h3>
-              <p className="text-gray-500 text-sm max-w-xs">Configure your preferences on the left and click "Generate My Diet Plan" to get started.</p>
+              <div className="w-20 h-20 bg-[#171717] border border-[#404040] rounded-2xl flex items-center justify-center text-4xl mb-4">🥗</div>
+              <h3 className="text-xl font-bold text-white mb-2">No plan generated yet</h3>
+              <p className="text-[#A3A3A3] text-sm max-w-xs">Configure your preferences on the left and click "Generate My Diet Plan" to get started.</p>
             </div>
           )}
 
@@ -485,30 +466,30 @@ export default function DietPlannerPage() {
               </div>
 
               {/* Daily Totals */}
-              <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-5 mb-5">
-                <h3 className="font-semibold text-white mb-4">Daily Totals</h3>
+              <div className="bg-[#171717] border border-[#404040] rounded-2xl p-5 mb-5">
+                <h3 className="font-bold text-white mb-4">Daily Totals</h3>
                 <div className="grid grid-cols-4 gap-4">
                   {[
-                    { label: "Calories", value: totalCals,    unit: "kcal", color: "#39ff14" },
-                    { label: "Protein",  value: totalProtein, unit: "g",    color: "#3b82f6" },
-                    { label: "Carbs",    value: totalCarbs,   unit: "g",    color: "#facc15" },
-                    { label: "Fats",     value: totalFats,    unit: "g",    color: "#f97316" },
+                    { label: "Calories", value: totalCals,    unit: "kcal" },
+                    { label: "Protein",  value: totalProtein, unit: "g" },
+                    { label: "Carbs",    value: totalCarbs,   unit: "g" },
+                    { label: "Fats",     value: totalFats,    unit: "g" },
                   ].map((t) => (
                     <div key={t.label} className="text-center">
-                      <div className="text-2xl font-bold" style={{ color: t.color }}>{t.value}</div>
-                      <div className="text-xs text-gray-500">{t.unit} {t.label}</div>
+                      <div className="text-2xl font-black text-white">{t.value}</div>
+                      <div className="text-xs text-[#A3A3A3]">{t.unit} {t.label}</div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 bg-[#1a1a1a] rounded-full h-2 flex overflow-hidden">
-                  <div style={{ flex: totalProtein * 4, background: "#3b82f6" }} />
-                  <div style={{ flex: totalCarbs   * 4, background: "#facc15" }} />
-                  <div style={{ flex: totalFats    * 9, background: "#f97316" }} />
+                <div className="mt-4 bg-[#262626] rounded-full h-2 flex overflow-hidden">
+                  <div style={{ flex: totalProtein * 4, background: "#FFFFFF" }} />
+                  <div style={{ flex: totalCarbs   * 4, background: "#D4D4D4" }} />
+                  <div style={{ flex: totalFats    * 9, background: "#A3A3A3" }} />
                 </div>
-                <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                  <span><span className="text-blue-400">■</span> Protein {Math.round((totalProtein * 4 / (totalCals || 1)) * 100)}%</span>
-                  <span><span className="text-yellow-400">■</span> Carbs {Math.round((totalCarbs   * 4 / (totalCals || 1)) * 100)}%</span>
-                  <span><span className="text-orange-400">■</span> Fats {Math.round((totalFats    * 9 / (totalCals || 1)) * 100)}%</span>
+                <div className="flex gap-4 mt-2 text-xs text-[#A3A3A3]">
+                  <span><span className="text-white">■</span> Protein {Math.round((totalProtein * 4 / (totalCals || 1)) * 100)}%</span>
+                  <span><span className="text-[#D4D4D4]">■</span> Carbs {Math.round((totalCarbs   * 4 / (totalCals || 1)) * 100)}%</span>
+                  <span><span className="text-[#A3A3A3]">■</span> Fats {Math.round((totalFats    * 9 / (totalCals || 1)) * 100)}%</span>
                 </div>
               </div>
 
@@ -516,7 +497,7 @@ export default function DietPlannerPage() {
               <div className="flex gap-3">
                 <button
                   onClick={generatePlan}
-                  className="flex-1 py-3 rounded-xl font-semibold text-gray-300 border border-[#2a2a2a] hover:border-[#39ff14] hover:text-[#39ff14] transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-3 rounded-xl font-semibold text-white border border-[#404040] bg-[#262626] hover:bg-[#333333] transition-all flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -527,8 +508,8 @@ export default function DietPlannerPage() {
                   onClick={() => setSaved(true)}
                   className={`flex-1 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                     saved
-                      ? "bg-[#1a1a1a] text-[#39ff14] border border-[#39ff14]"
-                      : "bg-[#39ff14] text-black hover:bg-[#2fd10f] shadow-[0_0_20px_rgba(57,255,20,0.3)]"
+                      ? "bg-[#262626] text-white border border-[#404040]"
+                      : "bg-[#FFFFFF] text-black hover:bg-[#E5E5E5]"
                   }`}
                 >
                   {saved ? (

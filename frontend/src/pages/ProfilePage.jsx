@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import {
-  User,
-  Activity,
-  Target,
-  Utensils,
-  Dumbbell,
-  Scale,
   Save,
-  CheckCircle2,
-  Shield,
   LogOut,
-  Sparkles,
-  Zap,
+  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
@@ -26,36 +17,35 @@ import {
 } from '../utils/calculations';
 
 export default function ProfilePage() {
-  const { user, updateProfile, updateUser, logout } = useAuth();
+  const { user, updateProfile, logout } = useAuth();
   const profile = user?.profile || {};
+
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [age, setAge] = useState(profile.age || 25);
+  const [gender, setGender] = useState(profile.gender || 'male');
+  const [height, setHeight] = useState(profile.height || 172);
+  const [weight, setWeight] = useState(profile.weight || 70);
+  const [activityLevel, setActivityLevel] = useState(profile.activityLevel || 'moderate');
+  const [goal, setGoal] = useState(profile.goal || 'lose');
+  const [dietType, setDietType] = useState(profile.dietType || 'vegetarian');
+  const [equipment, setEquipment] = useState(profile.equipment || 'gym');
 
   const [activeTab, setActiveTab] = useState('personal');
   const [isSaved, setIsSaved] = useState(false);
 
-  // Form state
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [age, setAge] = useState(profile.age || '');
-  const [gender, setGender] = useState(profile.gender || 'male');
-  const [height, setHeight] = useState(profile.height || '');
-  const [weight, setWeight] = useState(profile.weight || '');
-  const [activityLevel, setActivityLevel] = useState(profile.activityLevel || 'moderate');
-  const [goal, setGoal] = useState(profile.goal || 'maintain');
-  const [dietType, setDietType] = useState(profile.dietType || 'non-vegetarian');
-  const [equipment, setEquipment] = useState(profile.equipment || 'both');
-
-  // Real-time calculations
   const bmi = calculateBMI(weight, height);
   const bmr = calculateBMR(weight, height, age, gender);
   const tdee = calculateTDEE(bmr, activityLevel);
   const calorieGoal = getCalorieGoal(tdee, goal);
   const waterGoal = getWaterIntakeGoal(weight);
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    updateUser({ name, email });
-    updateProfile({
-      age: parseInt(age),
+  const handleSave = async (e) => {
+    e?.preventDefault();
+    await updateProfile({
+      name,
+      email,
+      age: parseInt(age, 10),
       gender,
       height: parseFloat(height),
       weight: parseFloat(weight),
@@ -72,19 +62,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-6xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 lg:p-8 max-w-6xl mx-auto space-y-6 animate-fade-in bg-[#000000] text-white">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-[#111111] via-[#141414] to-[#111111] p-6 rounded-2xl border border-[#1a1a1a] shadow-card">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#171717] p-6 rounded-2xl border border-[#404040]">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#39ff14] to-[#22c55e] text-black font-black text-2xl flex items-center justify-center shadow-neon">
+          <div className="w-16 h-16 rounded-2xl bg-white text-black font-black text-2xl flex items-center justify-center">
             {name ? name[0].toUpperCase() : 'U'}
           </div>
           <div>
             <h1 className="text-xl md:text-2xl font-black text-white">{name}</h1>
-            <p className="text-xs text-[#9ca3af]">{email}</p>
+            <p className="text-xs text-[#A3A3A3]">{email}</p>
             <div className="flex items-center gap-2 mt-2">
-              <Badge variant="success">FitBuddy Member</Badge>
-              <span className="text-xs text-[#9ca3af]">
+              <Badge variant="default">FitBuddy Member</Badge>
+              <span className="text-xs text-[#A3A3A3]">
                 Goal: <strong className="text-white capitalize">{goal}</strong>
               </span>
             </div>
@@ -96,7 +86,7 @@ export default function ProfilePage() {
             variant="outline"
             size="sm"
             onClick={logout}
-            className="text-xs text-rose-400 hover:text-rose-300 border-rose-500/30 gap-1.5"
+            className="text-xs text-white border-[#404040] hover:bg-[#262626] gap-1.5"
           >
             <LogOut size={14} /> Log Out
           </Button>
@@ -113,14 +103,14 @@ export default function ProfilePage() {
       </div>
 
       {/* ── Navigation Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-[#1a1a1a] pb-2">
+      <div className="flex items-center gap-2 border-b border-[#404040] pb-2">
         <button
           type="button"
           onClick={() => setActiveTab('personal')}
           className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'personal'
-              ? 'bg-[#39ff14] text-black'
-              : 'text-[#9ca3af] hover:text-white bg-[#141414]'
+              ? 'bg-white text-black'
+              : 'text-[#A3A3A3] hover:text-white bg-[#262626]'
           }`}
         >
           Personal & Body Stats
@@ -130,8 +120,8 @@ export default function ProfilePage() {
           onClick={() => setActiveTab('fitness')}
           className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'fitness'
-              ? 'bg-[#39ff14] text-black'
-              : 'text-[#9ca3af] hover:text-white bg-[#141414]'
+              ? 'bg-white text-black'
+              : 'text-[#A3A3A3] hover:text-white bg-[#262626]'
           }`}
         >
           Fitness & Diet Profile
@@ -141,8 +131,8 @@ export default function ProfilePage() {
           onClick={() => setActiveTab('metrics')}
           className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'metrics'
-              ? 'bg-[#39ff14] text-black'
-              : 'text-[#9ca3af] hover:text-white bg-[#141414]'
+              ? 'bg-white text-black'
+              : 'text-[#A3A3A3] hover:text-white bg-[#262626]'
           }`}
         >
           Calculated Baselines
@@ -151,7 +141,7 @@ export default function ProfilePage() {
 
       {/* ── Tab 1: Personal & Body Stats ── */}
       {activeTab === 'personal' && (
-        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#171717] border border-[#404040] rounded-2xl p-6">
           <Input
             label="Full Name"
             value={name}
@@ -168,7 +158,7 @@ export default function ProfilePage() {
           />
 
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-bold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Gender
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -179,8 +169,8 @@ export default function ProfilePage() {
                   onClick={() => setGender(g)}
                   className={`py-2.5 text-xs font-bold capitalize rounded-xl border transition-all ${
                     gender === g
-                      ? 'bg-[#39ff14] text-black border-[#39ff14]'
-                      : 'bg-[#161616] text-[#9ca3af] border-[#222222]'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white'
                   }`}
                 >
                   {g}
@@ -224,15 +214,15 @@ export default function ProfilePage() {
 
       {/* ── Tab 2: Fitness & Diet Profile ── */}
       {activeTab === 'fitness' && (
-        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#171717] border border-[#404040] rounded-2xl p-6">
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-bold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Activity Level
             </label>
             <select
               value={activityLevel}
               onChange={(e) => setActivityLevel(e.target.value)}
-              className="w-full bg-[#161616] border border-[#222222] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#39ff14]"
+              className="w-full bg-[#262626] border border-[#404040] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-white"
             >
               <option value="sedentary">Sedentary (desk job, little activity)</option>
               <option value="light">Lightly Active (light workouts 1-3 days/wk)</option>
@@ -243,13 +233,13 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-bold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Fitness Goal
             </label>
             <select
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
-              className="w-full bg-[#161616] border border-[#222222] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#39ff14]"
+              className="w-full bg-[#262626] border border-[#404040] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-white"
             >
               <option value="lose">Weight Loss (Moderate Caloric Deficit)</option>
               <option value="cut">Aggressive Fat Loss (Cut)</option>
@@ -260,13 +250,13 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-bold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Dietary Preference
             </label>
             <select
               value={dietType}
               onChange={(e) => setDietType(e.target.value)}
-              className="w-full bg-[#161616] border border-[#222222] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#39ff14]"
+              className="w-full bg-[#262626] border border-[#404040] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-white"
             >
               <option value="vegetarian">Vegetarian (Lacto-Vegetarian / Indian)</option>
               <option value="non-vegetarian">Non-Vegetarian (Eggs, Poultry, Fish)</option>
@@ -275,13 +265,13 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider block mb-2">
+            <label className="text-xs font-bold text-[#A3A3A3] uppercase tracking-wider block mb-2">
               Workout Setting & Equipment
             </label>
             <select
               value={equipment}
               onChange={(e) => setEquipment(e.target.value)}
-              className="w-full bg-[#161616] border border-[#222222] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#39ff14]"
+              className="w-full bg-[#262626] border border-[#404040] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-white"
             >
               <option value="home">Home (Bodyweight & Resistance Bands)</option>
               <option value="gym">Full Commercial Gym</option>
@@ -300,46 +290,46 @@ export default function ProfilePage() {
       {/* ── Tab 3: Calculated Baselines ── */}
       {activeTab === 'metrics' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">Body Mass Index (BMI)</span>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">Body Mass Index (BMI)</span>
             <h3 className="text-2xl font-black text-white mt-1">{bmi?.value || '—'}</h3>
-            <span className="text-xs font-semibold text-[#39ff14]">{bmi?.category}</span>
-            <p className="text-xs text-[#9ca3af] mt-2">{bmi?.description}</p>
+            <span className="text-xs font-bold text-white">{bmi?.category}</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">{bmi?.description}</p>
           </div>
 
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">Basal Metabolic Rate (BMR)</span>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">Basal Metabolic Rate (BMR)</span>
             <h3 className="text-2xl font-black text-white mt-1">{bmr || '—'} kcal</h3>
-            <span className="text-xs text-[#38bdf8] font-semibold">Mifflin-St Jeor Formula</span>
-            <p className="text-xs text-[#9ca3af] mt-2">Base calories burned at complete rest per 24 hours.</p>
+            <span className="text-xs text-[#A3A3A3] font-medium">Mifflin-St Jeor Formula</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">Base calories burned at complete rest per 24 hours.</p>
           </div>
 
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">Total Daily Energy (TDEE)</span>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">Total Daily Energy (TDEE)</span>
             <h3 className="text-2xl font-black text-white mt-1">{tdee || '—'} kcal</h3>
-            <span className="text-xs text-[#f59e0b] font-semibold">Includes Daily Physical Activity</span>
-            <p className="text-xs text-[#9ca3af] mt-2">Maintenance calories burned with your current lifestyle.</p>
+            <span className="text-xs text-[#A3A3A3] font-medium">Includes Daily Physical Activity</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">Maintenance calories burned with your current lifestyle.</p>
           </div>
 
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">Daily Calorie Target</span>
-            <h3 className="text-2xl font-black text-[#39ff14] mt-1">{calorieGoal} kcal</h3>
-            <span className="text-xs text-[#39ff14] font-semibold">Adjusted for {goal}</span>
-            <p className="text-xs text-[#9ca3af] mt-2">Optimal intake to hit your target physique timeline.</p>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">Daily Calorie Target</span>
+            <h3 className="text-2xl font-black text-white mt-1">{calorieGoal} kcal</h3>
+            <span className="text-xs text-white font-bold">Adjusted for {goal}</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">Optimal intake to hit your target physique timeline.</p>
           </div>
 
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">Recommended Hydration</span>
-            <h3 className="text-2xl font-black text-[#06b6d4] mt-1">{(waterGoal / 1000).toFixed(1)} Liters</h3>
-            <span className="text-xs text-[#06b6d4] font-semibold">{waterGoal} ml / day</span>
-            <p className="text-xs text-[#9ca3af] mt-2">35ml per kg body weight benchmark.</p>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">Recommended Hydration</span>
+            <h3 className="text-2xl font-black text-white mt-1">{(waterGoal / 1000).toFixed(1)} Liters</h3>
+            <span className="text-xs text-white font-bold">{waterGoal} ml / day</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">35ml per kg body weight benchmark.</p>
           </div>
 
-          <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5">
-            <span className="text-xs text-[#9ca3af] uppercase font-bold">System Status</span>
+          <div className="bg-[#171717] border border-[#404040] rounded-xl p-5">
+            <span className="text-xs text-[#A3A3A3] uppercase font-bold">System Status</span>
             <h3 className="text-2xl font-black text-white mt-1">Synced</h3>
-            <span className="text-xs text-[#39ff14] font-semibold">AI Assistant Context Active</span>
-            <p className="text-xs text-[#9ca3af] mt-2">FitBuddy Coach uses these metrics to personalize answers.</p>
+            <span className="text-xs text-white font-bold">AI Assistant Context Active</span>
+            <p className="text-xs text-[#A3A3A3] mt-2">FitBuddy Coach uses these metrics to personalize answers.</p>
           </div>
         </div>
       )}

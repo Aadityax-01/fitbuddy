@@ -1,33 +1,33 @@
 const VARIANT_MAP = {
   success: {
-    bg: 'rgba(57,255,20,0.12)',
-    border: 'rgba(57,255,20,0.25)',
-    color: '#39ff14',
-    dot: '#39ff14',
+    bg: '#262626',
+    border: '#404040',
+    color: '#FFFFFF',
+    dot: '#FFFFFF',
   },
   warning: {
-    bg: 'rgba(234,179,8,0.12)',
-    border: 'rgba(234,179,8,0.25)',
-    color: '#eab308',
-    dot: '#eab308',
+    bg: '#262626',
+    border: '#404040',
+    color: '#D4D4D4',
+    dot: '#D4D4D4',
   },
   danger: {
-    bg: 'rgba(239,68,68,0.12)',
-    border: 'rgba(239,68,68,0.25)',
-    color: '#ef4444',
-    dot: '#ef4444',
+    bg: '#262626',
+    border: '#404040',
+    color: '#A3A3A3',
+    dot: '#A3A3A3',
   },
   info: {
-    bg: 'rgba(59,130,246,0.12)',
-    border: 'rgba(59,130,246,0.25)',
-    color: '#3b82f6',
-    dot: '#3b82f6',
+    bg: '#262626',
+    border: '#404040',
+    color: '#E5E5E5',
+    dot: '#E5E5E5',
   },
   default: {
-    bg: 'rgba(156,163,175,0.1)',
-    border: 'rgba(156,163,175,0.2)',
-    color: '#9ca3af',
-    dot: '#9ca3af',
+    bg: '#171717',
+    border: '#404040',
+    color: '#A3A3A3',
+    dot: '#A3A3A3',
   },
 };
 
@@ -38,7 +38,7 @@ const SIZE_MAP = {
 };
 
 /**
- * Small status badge component.
+ * Small status badge component in strict monochrome styling.
  *
  * @param {{
  *   children: React.ReactNode,
@@ -74,7 +74,6 @@ export default function Badge({
             width: size === 'sm' ? 5 : size === 'lg' ? 8 : 6,
             height: size === 'sm' ? 5 : size === 'lg' ? 8 : 6,
             backgroundColor: v.dot,
-            boxShadow: `0 0 6px ${v.dot}88`,
           }}
         />
       )}

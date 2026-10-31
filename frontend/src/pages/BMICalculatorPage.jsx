@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   calculateBMI,
   calculateBMR,
@@ -6,7 +6,6 @@ import {
   getCalorieGoal,
   calculateMacros,
   getWaterIntakeGoal,
-  activityLevels,
 } from "../utils/calculations";
 
 const ACTIVITY_LEVELS = [
@@ -17,10 +16,8 @@ const ACTIVITY_LEVELS = [
   { value: "extra_active", label: "Extra Active (physical job & hard training)", mult: 1.9 },
 ];
 
-// ─── SVG Arc Gauge ────────────────────────────────────────────────────────────
 function BMIGauge({ bmi }) {
   const clampedBMI = Math.min(Math.max(bmi, 10), 40);
-  // Map 10-40 → 0-180 degrees
   const angle = ((clampedBMI - 10) / 30) * 180;
   const cx = 120, cy = 110, r = 90;
 
@@ -34,10 +31,10 @@ function BMIGauge({ bmi }) {
   const needle = polarToXY(angle);
 
   const zones = [
-    { from: 0, to: 50,  color: "#3b82f6" }, // underweight
-    { from: 50, to: 95, color: "#39ff14" }, // normal
-    { from: 95, to: 130, color: "#facc15" }, // overweight
-    { from: 130, to: 180, color: "#ef4444" }, // obese
+    { from: 0, to: 50,  color: "#737373" },
+    { from: 50, to: 95, color: "#FFFFFF" },
+    { from: 95, to: 130, color: "#D4D4D4" },
+    { from: 130, to: 180, color: "#A3A3A3" },
   ];
 
   const arcPath = (fromDeg, toDeg, color) => {
@@ -52,7 +49,6 @@ function BMIGauge({ bmi }) {
         strokeWidth="14"
         fill="none"
         strokeLinecap="round"
-        opacity="0.85"
       />
     );
   };
@@ -62,7 +58,7 @@ function BMIGauge({ bmi }) {
       {/* Track */}
       <path
         d={`M ${start.x} ${start.y} A ${r} ${r} 0 1 1 ${end.x} ${end.y}`}
-        stroke="#1a1a1a"
+        stroke="#262626"
         strokeWidth="14"
         fill="none"
       />
@@ -73,21 +69,20 @@ function BMIGauge({ bmi }) {
         y1={cy}
         x2={needle.x}
         y2={needle.y}
-        stroke="#fff"
+        stroke="#FFFFFF"
         strokeWidth="3"
         strokeLinecap="round"
       />
-      <circle cx={cx} cy={cy} r="6" fill="#fff" />
+      <circle cx={cx} cy={cy} r="6" fill="#FFFFFF" />
       {/* Labels */}
-      <text x="12"  y="125" fontSize="9" fill="#3b82f6">Under</text>
-      <text x="68"  y="30"  fontSize="9" fill="#39ff14">Normal</text>
-      <text x="145" y="30"  fontSize="9" fill="#facc15">Over</text>
-      <text x="192" y="125" fontSize="9" fill="#ef4444">Obese</text>
+      <text x="12"  y="125" fontSize="9" fill="#A3A3A3">Under</text>
+      <text x="68"  y="30"  fontSize="9" fill="#FFFFFF">Normal</text>
+      <text x="145" y="30"  fontSize="9" fill="#D4D4D4">Over</text>
+      <text x="192" y="125" fontSize="9" fill="#A3A3A3">Obese</text>
     </svg>
   );
 }
 
-// ─── Macro Bar ────────────────────────────────────────────────────────────────
 function MacroBar({ protein, carbs, fats }) {
   const total = protein * 4 + carbs * 4 + fats * 9;
   const pPct  = total ? ((protein * 4) / total) * 100 : 0;
@@ -96,27 +91,26 @@ function MacroBar({ protein, carbs, fats }) {
 
   return (
     <div>
-      <div className="flex rounded-full overflow-hidden h-3 mb-2">
-        <div style={{ width: `${pPct}%`, background: "#39ff14" }} />
-        <div style={{ width: `${cPct}%`, background: "#facc15" }} />
-        <div style={{ width: `${fPct}%`, background: "#f97316" }} />
+      <div className="flex rounded-full overflow-hidden h-3 mb-2 bg-[#262626]">
+        <div style={{ width: `${pPct}%`, background: "#FFFFFF" }} />
+        <div style={{ width: `${cPct}%`, background: "#D4D4D4" }} />
+        <div style={{ width: `${fPct}%`, background: "#A3A3A3" }} />
       </div>
-      <div className="flex gap-4 text-xs text-gray-400">
-        <span><span className="text-[#39ff14]">■</span> Protein {protein}g</span>
-        <span><span className="text-[#facc15]">■</span> Carbs {carbs}g</span>
-        <span><span className="text-[#f97316]">■</span> Fats {fats}g</span>
+      <div className="flex gap-4 text-xs text-[#A3A3A3]">
+        <span><span className="text-white">■</span> Protein {protein}g</span>
+        <span><span className="text-[#D4D4D4]">■</span> Carbs {carbs}g</span>
+        <span><span className="text-[#A3A3A3]">■</span> Fats {fats}g</span>
       </div>
     </div>
   );
 }
 
-// ─── Slider + Number combo ────────────────────────────────────────────────────
 function SliderInput({ label, value, onChange, min, max, unit, step = 1 }) {
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-sm">
-        <label className="text-gray-300">{label}</label>
-        <span className="text-[#39ff14] font-semibold">{value} <span className="text-gray-400 text-xs">{unit}</span></span>
+        <label className="text-[#A3A3A3] font-medium">{label}</label>
+        <span className="text-white font-bold">{value} <span className="text-[#737373] text-xs">{unit}</span></span>
       </div>
       <div className="flex items-center gap-3">
         <input
@@ -126,8 +120,8 @@ function SliderInput({ label, value, onChange, min, max, unit, step = 1 }) {
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
-          style={{ accentColor: "#39ff14" }}
+          className="flex-1 h-2 rounded-full appearance-none cursor-pointer bg-[#262626]"
+          style={{ accentColor: "#FFFFFF" }}
         />
         <input
           type="number"
@@ -135,20 +129,19 @@ function SliderInput({ label, value, onChange, min, max, unit, step = 1 }) {
           max={max}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-16 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-2 py-1 text-sm text-white text-center focus:outline-none focus:border-[#39ff14]"
+          className="w-16 bg-[#262626] border border-[#404040] rounded-lg px-2 py-1 text-sm text-white text-center focus:outline-none focus:border-white"
         />
       </div>
     </div>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function BMICalculatorPage() {
   const [height, setHeight]   = useState(170);
   const [weight, setWeight]   = useState(70);
   const [age, setAge]         = useState(25);
   const [gender, setGender]   = useState("male");
-  const [activity, setActivity] = useState("moderate");
+  const [activity, setActivity] = useState("moderately_active");
   const [goal, setGoal]       = useState("maintain");
   const [results, setResults] = useState(null);
   const [animating, setAnimating] = useState(false);
@@ -159,7 +152,7 @@ export default function BMICalculatorPage() {
     const bmiVal    = bmiResult.value;
     const cat       = {
       label: bmiResult.category,
-      color: bmiResult.color,
+      color: "#FFFFFF",
       range: bmiVal < 18.5 ? "< 18.5" : bmiVal < 25 ? "18.5 – 24.9" : bmiVal < 30 ? "25.0 – 29.9" : "≥ 30.0",
     };
     const bmr   = calculateBMR(weight, height, age, gender);
@@ -178,28 +171,28 @@ export default function BMICalculatorPage() {
   };
 
   const bmiCategories = [
-    { range: "< 18.5",     label: "Underweight", color: "#3b82f6" },
-    { range: "18.5 – 24.9",label: "Normal",      color: "#39ff14" },
-    { range: "25.0 – 29.9",label: "Overweight",  color: "#facc15" },
-    { range: "≥ 30.0",     label: "Obese",       color: "#ef4444" },
+    { range: "< 18.5",     label: "Underweight", color: "#A3A3A3" },
+    { range: "18.5 – 24.9",label: "Normal",      color: "#FFFFFF" },
+    { range: "25.0 – 29.9",label: "Overweight",  color: "#D4D4D4" },
+    { range: "≥ 30.0",     label: "Obese",       color: "#737373" },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-4 py-8 lg:px-8">
+    <div className="min-h-screen bg-[#000000] text-white px-4 py-8 lg:px-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">
-          BMI <span className="text-[#39ff14]">Calculator</span>
+        <h1 className="text-3xl font-black">
+          BMI <span className="text-white">Calculator</span>
         </h1>
-        <p className="text-gray-400 mt-1">
+        <p className="text-[#A3A3A3] mt-1">
           Calculate your Body Mass Index, BMR, TDEE, and get personalised macro targets.
         </p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         {/* ─── Left: Form ─────────────────────────────────────────────────── */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white">Your Details</h2>
+        <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6 space-y-6">
+          <h2 className="text-lg font-bold text-white">Your Details</h2>
 
           {/* Height */}
           <SliderInput label="Height" value={height} onChange={setHeight} min={100} max={220} unit="cm" />
@@ -209,29 +202,29 @@ export default function BMICalculatorPage() {
 
           {/* Age */}
           <div className="space-y-1">
-            <label className="text-sm text-gray-300">Age</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Age</label>
             <input
               type="number"
               min={10}
               max={100}
               value={age}
               onChange={(e) => setAge(Number(e.target.value))}
-              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#39ff14] transition-colors"
+              className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-white transition-colors"
             />
           </div>
 
           {/* Gender */}
           <div className="space-y-1">
-            <label className="text-sm text-gray-300">Gender</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Gender</label>
             <div className="flex gap-3">
               {["male", "female"].map((g) => (
                 <button
                   key={g}
                   onClick={() => setGender(g)}
-                  className={`flex-1 py-2.5 rounded-lg font-medium text-sm transition-all border ${
+                  className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all border ${
                     gender === g
-                      ? "bg-[#39ff14] text-black border-[#39ff14]"
-                      : "bg-[#1a1a1a] text-gray-400 border-[#2a2a2a] hover:border-[#39ff14]"
+                      ? "bg-[#FFFFFF] text-black border-[#FFFFFF]"
+                      : "bg-[#262626] text-[#A3A3A3] border-[#404040] hover:border-white"
                   }`}
                 >
                   {g.charAt(0).toUpperCase() + g.slice(1)}
@@ -242,12 +235,11 @@ export default function BMICalculatorPage() {
 
           {/* Activity Level */}
           <div className="space-y-1">
-            <label className="text-sm text-gray-300">Activity Level</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Activity Level</label>
             <select
               value={activity}
               onChange={(e) => setActivity(e.target.value)}
-              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#39ff14] transition-colors appearance-none"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%239ca3af' viewBox='0 0 20 20'%3E%3Cpath d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", backgroundSize: "16px" }}
+              className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-white transition-colors"
             >
               {ACTIVITY_LEVELS.map((l) => (
                 <option key={l.value} value={l.value}>{l.label}</option>
@@ -257,12 +249,11 @@ export default function BMICalculatorPage() {
 
           {/* Goal */}
           <div className="space-y-1">
-            <label className="text-sm text-gray-300">Goal</label>
+            <label className="text-sm text-[#A3A3A3] font-medium">Goal</label>
             <select
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
-              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#39ff14] transition-colors appearance-none"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%239ca3af' viewBox='0 0 20 20'%3E%3Cpath d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", backgroundSize: "16px" }}
+              className="w-full bg-[#262626] border border-[#404040] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-white transition-colors"
             >
               <option value="lose_weight">Lose Weight</option>
               <option value="maintain">Maintain Weight</option>
@@ -273,27 +264,27 @@ export default function BMICalculatorPage() {
           {/* Calculate button */}
           <button
             onClick={handleCalculate}
-            className="w-full py-3 rounded-xl font-bold text-black bg-[#39ff14] hover:bg-[#2fd10f] transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] active:scale-95"
+            className="w-full py-3 rounded-xl font-black text-black bg-[#FFFFFF] hover:bg-[#E5E5E5] transition-all"
           >
             Calculate My Stats
           </button>
 
           {/* BMI Table */}
           <div className="pt-2">
-            <h3 className="text-sm font-semibold text-gray-300 mb-3">BMI Categories</h3>
-            <div className="rounded-xl overflow-hidden border border-[#1a1a1a]">
+            <h3 className="text-sm font-bold text-white mb-3">BMI Categories</h3>
+            <div className="rounded-xl overflow-hidden border border-[#404040]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#1a1a1a]">
-                    <th className="text-left px-4 py-2 text-gray-400 font-medium">BMI Range</th>
-                    <th className="text-left px-4 py-2 text-gray-400 font-medium">Category</th>
+                  <tr className="bg-[#262626]">
+                    <th className="text-left px-4 py-2 text-[#A3A3A3] font-medium">BMI Range</th>
+                    <th className="text-left px-4 py-2 text-[#A3A3A3] font-medium">Category</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bmiCategories.map((c, i) => (
-                    <tr key={c.label} className={i % 2 === 0 ? "bg-[#0f0f0f]" : "bg-[#111111]"}>
-                      <td className="px-4 py-2 text-gray-300">{c.range}</td>
-                      <td className="px-4 py-2 font-medium" style={{ color: c.color }}>{c.label}</td>
+                    <tr key={c.label} className={i % 2 === 0 ? "bg-[#171717]" : "bg-[#262626]"}>
+                      <td className="px-4 py-2 text-[#A3A3A3]">{c.range}</td>
+                      <td className="px-4 py-2 font-bold" style={{ color: c.color }}>{c.label}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -305,34 +296,31 @@ export default function BMICalculatorPage() {
         {/* ─── Right: Results ──────────────────────────────────────────────── */}
         <div ref={resultsRef}>
           {!results ? (
-            <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-12 flex flex-col items-center justify-center text-center h-full min-h-[400px]">
-              <div className="w-20 h-20 rounded-full bg-[#1a1a1a] flex items-center justify-center mb-4">
-                <svg className="w-10 h-10 text-[#39ff14]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-[#171717] border border-[#404040] rounded-2xl p-12 flex flex-col items-center justify-center text-center h-full min-h-[400px]">
+              <div className="w-20 h-20 rounded-full bg-[#262626] border border-[#404040] flex items-center justify-center mb-4">
+                <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Fill in your details</h3>
-              <p className="text-gray-500 text-sm max-w-xs">Enter your height, weight, age, and other info on the left, then hit "Calculate My Stats" to see your results.</p>
+              <h3 className="text-lg font-bold text-white mb-2">Fill in your details</h3>
+              <p className="text-[#A3A3A3] text-sm max-w-xs">Enter your height, weight, age, and other info on the left, then hit "Calculate My Stats" to see your results.</p>
             </div>
           ) : (
             <div
               className={`space-y-5 transition-all duration-500 ${animating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}
             >
               {/* BMI Score Card */}
-              <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Your BMI Result</h2>
+              <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
+                <h2 className="text-lg font-bold text-white mb-4">Your BMI Result</h2>
                 <BMIGauge bmi={results.bmi} />
                 <div className="text-center mt-4">
-                  <div
-                    className="text-6xl font-black"
-                    style={{ color: results.cat.color }}
-                  >
+                  <div className="text-6xl font-black text-white">
                     {results.bmi.toFixed(1)}
                   </div>
-                  <div className="mt-1 text-lg font-semibold" style={{ color: results.cat.color }}>
+                  <div className="mt-1 text-lg font-bold text-white">
                     {results.cat.label}
                   </div>
-                  <div className="text-gray-500 text-sm mt-1">BMI Range: {results.cat.range}</div>
+                  <div className="text-[#A3A3A3] text-sm mt-1">BMI Range: {results.cat.range}</div>
                 </div>
               </div>
 
@@ -343,12 +331,11 @@ export default function BMICalculatorPage() {
                   { label: "TDEE", value: `${Math.round(results.tdee)}`, unit: "kcal/day", tip: "Total Daily Energy Expenditure" },
                   { label: "Water", value: `${results.water}`, unit: "litres/day", tip: "Recommended daily water intake" },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-4 text-center group relative cursor-default">
-                    <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
-                    <div className="text-2xl font-bold text-[#39ff14]">{stat.value}</div>
-                    <div className="text-xs text-gray-600">{stat.unit}</div>
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black border border-[#2a2a2a] text-gray-300 text-xs rounded-lg px-3 py-2 w-40 text-center opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+                  <div key={stat.label} className="bg-[#171717] border border-[#404040] rounded-xl p-4 text-center group relative cursor-default">
+                    <div className="text-xs text-[#A3A3A3] mb-1">{stat.label}</div>
+                    <div className="text-2xl font-black text-white">{stat.value}</div>
+                    <div className="text-xs text-[#737373]">{stat.unit}</div>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-[#262626] border border-[#404040] text-white text-xs rounded-lg px-3 py-2 w-40 text-center opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
                       {stat.tip}
                     </div>
                   </div>
@@ -356,18 +343,18 @@ export default function BMICalculatorPage() {
               </div>
 
               {/* Recommended Calories */}
-              <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6">
+              <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-white">Recommended Daily Intake</h3>
-                  <span className="bg-[#39ff14]/10 text-[#39ff14] text-sm px-3 py-1 rounded-full font-medium border border-[#39ff14]/20">
+                  <h3 className="font-bold text-white">Recommended Daily Intake</h3>
+                  <span className="bg-[#262626] text-white text-sm px-3 py-1 rounded-full font-bold border border-[#404040]">
                     {goal === "lose_weight" ? "Deficit" : goal === "gain_muscle" ? "Surplus" : "Maintenance"}
                   </span>
                 </div>
                 <div className="text-5xl font-black text-white mb-1">
                   {results.cal.toLocaleString()}
-                  <span className="text-xl font-normal text-gray-400 ml-2">kcal</span>
+                  <span className="text-xl font-normal text-[#A3A3A3] ml-2">kcal</span>
                 </div>
-                <p className="text-gray-500 text-sm mt-2">
+                <p className="text-[#A3A3A3] text-sm mt-2">
                   {goal === "lose_weight"
                     ? "A 500 kcal deficit from your TDEE to lose ~0.5 kg/week."
                     : goal === "gain_muscle"
@@ -377,18 +364,18 @@ export default function BMICalculatorPage() {
               </div>
 
               {/* Macros */}
-              <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6">
-                <h3 className="font-semibold text-white mb-4">Macro Breakdown</h3>
+              <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
+                <h3 className="font-bold text-white mb-4">Macro Breakdown</h3>
                 <div className="grid grid-cols-3 gap-4 mb-5">
                   {[
-                    { label: "Protein", value: results.macros.protein, unit: "g", color: "#39ff14", kcal: results.macros.protein * 4 },
-                    { label: "Carbs",   value: results.macros.carbs,   unit: "g", color: "#facc15", kcal: results.macros.carbs   * 4 },
-                    { label: "Fats",    value: results.macros.fats,    unit: "g", color: "#f97316", kcal: results.macros.fats    * 9 },
+                    { label: "Protein", value: results.macros.protein, unit: "g", color: "#FFFFFF", kcal: results.macros.protein * 4 },
+                    { label: "Carbs",   value: results.macros.carbs,   unit: "g", color: "#D4D4D4", kcal: results.macros.carbs   * 4 },
+                    { label: "Fats",    value: results.macros.fats,    unit: "g", color: "#A3A3A3", kcal: results.macros.fats    * 9 },
                   ].map((m) => (
-                    <div key={m.label} className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-3 text-center">
-                      <div className="text-xs text-gray-500 mb-1">{m.label}</div>
-                      <div className="text-2xl font-bold" style={{ color: m.color }}>{m.value}g</div>
-                      <div className="text-xs text-gray-600 mt-1">{m.kcal} kcal</div>
+                    <div key={m.label} className="bg-[#262626] border border-[#404040] rounded-xl p-3 text-center">
+                      <div className="text-xs text-[#A3A3A3] mb-1">{m.label}</div>
+                      <div className="text-2xl font-black" style={{ color: m.color }}>{m.value}g</div>
+                      <div className="text-xs text-[#737373] mt-1">{m.kcal} kcal</div>
                     </div>
                   ))}
                 </div>
@@ -396,12 +383,12 @@ export default function BMICalculatorPage() {
               </div>
 
               {/* Disclaimer */}
-              <div className="flex gap-3 bg-[#1a1a0a] border border-[#2a2a0a] rounded-xl p-4">
-                <svg className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex gap-3 bg-[#262626] border border-[#404040] rounded-xl p-4">
+                <svg className="w-5 h-5 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-sm text-gray-400">
-                  <span className="text-yellow-400 font-medium">Disclaimer:</span> These are estimates based on standard formulas. Individual results may vary. Please consult a qualified healthcare professional or registered dietitian for personalised advice.
+                <p className="text-sm text-[#A3A3A3]">
+                  <span className="text-white font-bold">Disclaimer:</span> These are estimates based on standard formulas. Individual results may vary. Please consult a qualified healthcare professional or registered dietitian for personalised advice.
                 </p>
               </div>
             </div>

@@ -1,25 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * SVG circular progress ring with animated stroke-dashoffset on mount.
- *
- * @param {{
- *   percentage: number,
- *   size?: number,
- *   strokeWidth?: number,
- *   color?: string,
- *   trackColor?: string,
- *   label?: string,
- *   value?: string | number,
- *   className?: string,
- * }} props
+ * Strict monochrome circular progress ring.
  */
 export default function ProgressRing({
   percentage = 0,
   size = 120,
   strokeWidth = 10,
-  color = '#39ff14',
-  trackColor = '#1a1a1a',
+  color = '#FFFFFF',
+  trackColor = '#262626',
   label = '',
   value,
   className = '',
@@ -41,7 +30,6 @@ export default function ProgressRing({
     function tick(now) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setAnimatedPct(from + (to - from) * eased);
       if (progress < 1) rafRef.current = requestAnimationFrame(tick);
@@ -63,17 +51,6 @@ export default function ProgressRing({
           aria-label={`${label || 'Progress'}: ${Math.round(animatedPct)}%`}
           role="img"
         >
-          {/* Glow filter */}
-          <defs>
-            <filter id={`glow-${color.replace('#', '')}`} x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
           {/* Track */}
           <circle
             cx={center}
@@ -97,7 +74,6 @@ export default function ProgressRing({
             strokeDashoffset={offset}
             transform={`rotate(-90 ${center} ${center})`}
             style={{
-              filter: `drop-shadow(0 0 6px ${color}99)`,
               transition: 'stroke-dashoffset 0.05s linear',
             }}
           />
@@ -107,13 +83,13 @@ export default function ProgressRing({
         <div
           className="absolute inset-0 flex flex-col items-center justify-center select-none"
         >
-          <span className="text-white font-bold leading-none" style={{ fontSize: size * 0.18 }}>
+          <span className="text-white font-black leading-none" style={{ fontSize: size * 0.18 }}>
             {value !== undefined ? value : `${Math.round(animatedPct)}%`}
           </span>
           {value !== undefined && (
             <span
-              className="font-medium leading-tight"
-              style={{ fontSize: size * 0.11, color: '#9ca3af' }}
+              className="font-medium leading-tight text-[#A3A3A3]"
+              style={{ fontSize: size * 0.11 }}
             >
               {Math.round(animatedPct)}%
             </span>
@@ -122,7 +98,7 @@ export default function ProgressRing({
       </div>
 
       {label && (
-        <p className="text-sm font-medium text-center" style={{ color: '#9ca3af' }}>
+        <p className="text-sm font-medium text-center text-[#A3A3A3]">
           {label}
         </p>
       )}

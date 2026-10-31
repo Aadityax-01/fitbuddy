@@ -85,20 +85,20 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 animate-fade-in bg-[#000000]">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-[#111111] via-[#141414] to-[#111111] p-6 rounded-2xl border border-[#1a1a1a] shadow-card">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#171717] p-6 rounded-2xl border border-[#404040]">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs uppercase tracking-wider font-bold text-[#39ff14] bg-[#39ff1415] px-2.5 py-0.5 rounded-full border border-[#39ff1430] flex items-center gap-1">
+            <span className="text-xs uppercase tracking-wider font-bold text-white bg-[#262626] px-2.5 py-0.5 rounded-full border border-[#404040] flex items-center gap-1">
               <Sparkles size={12} /> Analytics & Milestones
             </span>
-            <span className="text-xs text-[#9ca3af]">Continuous Performance Tracking</span>
+            <span className="text-xs text-[#A3A3A3]">Continuous Performance Tracking</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            Fitness <span className="text-[#39ff14]">Progress Report</span>
+            Fitness <span className="text-white">Progress Report</span>
           </h1>
-          <p className="text-sm text-[#9ca3af] mt-1">
+          <p className="text-sm text-[#A3A3A3] mt-1">
             Analyze weight evolution, caloric adherence, and workout frequency trends over time.
           </p>
         </div>
@@ -117,87 +117,87 @@ export default function ProgressPage() {
       {/* ── Key Metrics Summary Row ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Net Weight Change */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5 relative overflow-hidden">
+        <div className="bg-[#171717] border border-[#404040] rounded-xl p-5 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">Total Progress</span>
-            <span className="w-8 h-8 rounded-lg bg-[#39ff1415] text-[#39ff14] flex items-center justify-center">
+            <span className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider">Total Progress</span>
+            <span className="w-8 h-8 rounded-lg bg-[#262626] border border-[#404040] text-white flex items-center justify-center">
               <Scale size={16} />
             </span>
           </div>
           <div className="flex items-baseline gap-2 mt-2">
             <h3 className="text-2xl font-black text-white">{weightDiff > 0 ? `+${weightDiff}` : weightDiff} kg</h3>
-            <span className="text-xs font-semibold text-[#39ff14] flex items-center">
+            <span className="text-xs font-semibold text-white flex items-center">
               <ArrowDownRight size={14} /> Fat Loss Phase
             </span>
           </div>
-          <p className="text-xs text-[#9ca3af] mt-1">Starting: {initialWeight} kg → Current: {currentWeight} kg</p>
+          <p className="text-xs text-[#A3A3A3] mt-1">Starting: {initialWeight} kg → Current: {currentWeight} kg</p>
         </div>
 
         {/* BMI Status */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5 relative overflow-hidden">
+        <div className="bg-[#171717] border border-[#404040] rounded-xl p-5 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">Current BMI</span>
-            <span className="w-8 h-8 rounded-lg bg-[#38bdf815] text-[#38bdf8] flex items-center justify-center">
+            <span className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider">Current BMI</span>
+            <span className="w-8 h-8 rounded-lg bg-[#262626] border border-[#404040] text-white flex items-center justify-center">
               <TrendingUp size={16} />
             </span>
           </div>
           <div className="flex items-baseline gap-2 mt-2">
             <h3 className="text-2xl font-black text-white">{bmiInfo.value}</h3>
-            <Badge variant="success">{bmiInfo.category}</Badge>
+            <Badge variant="default">{bmiInfo.category}</Badge>
           </div>
-          <p className="text-xs text-[#9ca3af] mt-1">Healthy metric range for your height</p>
+          <p className="text-xs text-[#A3A3A3] mt-1">Healthy metric range for your height</p>
         </div>
 
         {/* Workout Adherence */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5 relative overflow-hidden">
+        <div className="bg-[#171717] border border-[#404040] rounded-xl p-5 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">Workout Adherence</span>
-            <span className="w-8 h-8 rounded-lg bg-[#f59e0b15] text-[#f59e0b] flex items-center justify-center">
+            <span className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider">Workout Adherence</span>
+            <span className="w-8 h-8 rounded-lg bg-[#262626] border border-[#404040] text-white flex items-center justify-center">
               <Award size={16} />
             </span>
           </div>
           <div className="flex items-baseline gap-2 mt-2">
             <h3 className="text-2xl font-black text-white">92%</h3>
-            <span className="text-xs font-semibold text-[#39ff14]">+4% vs last month</span>
+            <span className="text-xs font-semibold text-white">+4% vs last month</span>
           </div>
-          <p className="text-xs text-[#9ca3af] mt-1">20 of 22 planned sessions logged</p>
+          <p className="text-xs text-[#A3A3A3] mt-1">20 of 22 planned sessions logged</p>
         </div>
 
         {/* Caloric Deficit Consistency */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-xl p-5 relative overflow-hidden">
+        <div className="bg-[#171717] border border-[#404040] rounded-xl p-5 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">Active Streak</span>
-            <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
+            <span className="text-xs font-semibold text-[#A3A3A3] uppercase tracking-wider">Active Streak</span>
+            <span className="w-8 h-8 rounded-lg bg-[#262626] border border-[#404040] text-white flex items-center justify-center">
               <Flame size={16} />
             </span>
           </div>
           <div className="flex items-baseline gap-2 mt-2">
             <h3 className="text-2xl font-black text-white">18 Days</h3>
-            <span className="text-xs text-[#39ff14] font-semibold">Personal Best!</span>
+            <span className="text-xs text-white font-semibold">Personal Best!</span>
           </div>
-          <p className="text-xs text-[#9ca3af] mt-1">Daily logging & macro discipline</p>
+          <p className="text-xs text-[#A3A3A3] mt-1">Daily logging & macro discipline</p>
         </div>
       </div>
 
       {/* ── Main Weight Chart ── */}
-      <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+      <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Scale size={18} className="text-[#39ff14]" />
+              <Scale size={18} className="text-white" />
               Body Weight Trendline (kg)
             </h2>
-            <p className="text-xs text-[#9ca3af]">Consistent downward trend indicating steady fat reduction</p>
+            <p className="text-xs text-[#A3A3A3]">Consistent downward trend indicating steady fat reduction</p>
           </div>
 
-          <div className="flex items-center gap-1 bg-[#161616] border border-[#222222] p-1 rounded-xl">
+          <div className="flex items-center gap-1 bg-[#262626] border border-[#404040] p-1 rounded-xl">
             {['7d', '30d', '90d', 'All'].map((r) => (
               <button
                 key={r}
                 type="button"
                 onClick={() => setTimeRange(r)}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
-                  timeRange === r ? 'bg-[#39ff14] text-black' : 'text-[#9ca3af] hover:text-white'
+                  timeRange === r ? 'bg-white text-black' : 'text-[#A3A3A3] hover:text-white'
                 }`}
               >
                 {r.toUpperCase()}
@@ -211,26 +211,26 @@ export default function ProgressPage() {
             <AreaChart data={weightRecords} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#39ff14" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#39ff14" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#1f1f1f" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" stroke="#6b7280" fontSize={12} tickLine={false} />
-              <YAxis stroke="#6b7280" fontSize={12} tickLine={false} domain={['dataMin - 1', 'dataMax + 1']} />
+              <CartesianGrid stroke="#404040" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="date" stroke="#A3A3A3" fontSize={12} tickLine={false} />
+              <YAxis stroke="#A3A3A3" fontSize={12} tickLine={false} domain={['dataMin - 1', 'dataMax + 1']} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#111111',
-                  borderColor: '#2a2a2a',
+                  backgroundColor: '#171717',
+                  borderColor: '#404040',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: '#FFFFFF',
                 }}
               />
               <Area
                 type="monotone"
                 dataKey="weight"
-                stroke="#39ff14"
-                strokeWidth={3}
+                stroke="#FFFFFF"
+                strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#weightGrad)"
               />
@@ -242,56 +242,56 @@ export default function ProgressPage() {
       {/* ── Sub Charts: Weekly Calories & Weekly Workouts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Caloric Intake Consistency */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+        <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
           <h2 className="text-base font-bold text-white flex items-center gap-2 mb-1">
-            <Flame size={18} className="text-[#39ff14]" />
+            <Flame size={18} className="text-white" />
             Monthly Calorie Trajectory (Avg Daily kcal)
           </h2>
-          <p className="text-xs text-[#9ca3af] mb-4">Target: {profile.dailyCalorieGoal || 2100} kcal/day</p>
+          <p className="text-xs text-[#A3A3A3] mb-4">Target: {profile.dailyCalorieGoal || 2100} kcal/day</p>
 
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={calorieTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid stroke="#1f1f1f" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="day" stroke="#6b7280" fontSize={12} tickLine={false} />
-                <YAxis stroke="#6b7280" fontSize={12} tickLine={false} domain={[1600, 2400]} />
+                <CartesianGrid stroke="#404040" strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="day" stroke="#A3A3A3" fontSize={12} tickLine={false} />
+                <YAxis stroke="#A3A3A3" fontSize={12} tickLine={false} domain={[1600, 2400]} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111111',
-                    borderColor: '#2a2a2a',
+                    backgroundColor: '#171717',
+                    borderColor: '#404040',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: '#FFFFFF',
                   }}
                 />
-                <Bar dataKey="consumed" fill="#38bdf8" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="consumed" fill="#A3A3A3" radius={[6, 6, 0, 0]} maxBarSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Workout Volume Consistency */}
-        <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-6 shadow-card">
+        <div className="bg-[#171717] border border-[#404040] rounded-2xl p-6">
           <h2 className="text-base font-bold text-white flex items-center gap-2 mb-1">
-            <Award size={18} className="text-[#f59e0b]" />
+            <Award size={18} className="text-white" />
             Workout Frequency (Sessions per Week)
           </h2>
-          <p className="text-xs text-[#9ca3af] mb-4">Target: 5 sessions/week</p>
+          <p className="text-xs text-[#A3A3A3] mb-4">Target: 5 sessions/week</p>
 
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={workoutConsistency} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid stroke="#1f1f1f" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="week" stroke="#6b7280" fontSize={12} tickLine={false} />
-                <YAxis stroke="#6b7280" fontSize={12} tickLine={false} domain={[0, 7]} />
+                <CartesianGrid stroke="#404040" strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="week" stroke="#A3A3A3" fontSize={12} tickLine={false} />
+                <YAxis stroke="#A3A3A3" fontSize={12} tickLine={false} domain={[0, 7]} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111111',
-                    borderColor: '#2a2a2a',
+                    backgroundColor: '#171717',
+                    borderColor: '#404040',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: '#FFFFFF',
                   }}
                 />
-                <Bar dataKey="completed" fill="#39ff14" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="completed" fill="#FFFFFF" radius={[6, 6, 0, 0]} maxBarSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -305,7 +305,7 @@ export default function ProgressPage() {
         title="Log New Body Weight"
       >
         <form onSubmit={handleLogWeight} className="space-y-4">
-          <p className="text-xs text-[#9ca3af]">
+          <p className="text-xs text-[#A3A3A3]">
             Weigh yourself first thing in the morning after using the restroom for maximum accuracy.
           </p>
           <Input

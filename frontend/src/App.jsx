@@ -22,31 +22,31 @@ const ProfilePage        = lazy(() => import('./pages/ProfilePage'));
 const FullPageLoader = () => (
   <div
     className="fixed inset-0 flex flex-col items-center justify-center gap-4 z-50"
-    style={{ backgroundColor: '#0a0a0a' }}
+    style={{ backgroundColor: '#000000' }}
   >
     <div className="relative w-16 h-16">
       <div
         className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
         style={{
-          borderTopColor: '#39ff14',
-          borderRightColor: 'rgba(57, 255, 20, 0.3)',
+          borderTopColor: '#FFFFFF',
+          borderRightColor: 'rgba(255, 255, 255, 0.3)',
           animationDuration: '0.8s',
         }}
       />
       <div
         className="absolute inset-3 rounded-full"
-        style={{ backgroundColor: 'rgba(57, 255, 20, 0.08)' }}
+        style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
       />
       <div
         className="absolute inset-0 flex items-center justify-center text-xl font-black"
-        style={{ color: '#39ff14' }}
+        style={{ color: '#FFFFFF' }}
       >
         ⚡
       </div>
     </div>
     <p
       className="text-xs font-semibold tracking-widest uppercase"
-      style={{ color: '#9ca3af' }}
+      style={{ color: '#A3A3A3' }}
     >
       FitBuddy AI Loading…
     </p>

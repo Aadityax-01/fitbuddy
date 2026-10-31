@@ -122,31 +122,31 @@ export const calculateBMI = (weight, height) => {
 
   if (value < 16) {
     category    = 'Severely Underweight';
-    color       = '#3b82f6';
+    color       = '#A3A3A3';
     description = 'Severely underweight. Immediate medical attention is advised.';
   } else if (value < 18.5) {
     category    = 'Underweight';
-    color       = '#60a5fa';
+    color       = '#A3A3A3';
     description = 'Below healthy range. Consider a calorie surplus and strength training.';
   } else if (value < 25) {
     category    = 'Normal Weight';
-    color       = '#39ff14';
+    color       = '#FFFFFF';
     description = 'You are within the healthy weight range. Keep it up!';
   } else if (value < 30) {
     category    = 'Overweight';
-    color       = '#fbbf24';
+    color       = '#D4D4D4';
     description = 'Slightly above the healthy range. A mild calorie deficit can help.';
   } else if (value < 35) {
     category    = 'Obese Class I';
-    color       = '#f97316';
+    color       = '#A3A3A3';
     description = 'Moderately obese. Diet and regular exercise are recommended.';
   } else if (value < 40) {
     category    = 'Obese Class II';
-    color       = '#ef4444';
+    color       = '#737373';
     description = 'Severely obese. Consulting a healthcare professional is strongly advised.';
   } else {
     category    = 'Obese Class III';
-    color       = '#b91c1c';
+    color       = '#525252';
     description = 'Very severely obese. Please seek medical guidance immediately.';
   }
 
@@ -483,11 +483,11 @@ export const calculateStreak = (dates) => {
  * @returns {string}
  */
 export const progressColor = (percent) => {
-  if (percent >= 100) return '#39ff14';
-  if (percent >= 75)  return '#84cc16';
-  if (percent >= 50)  return '#fbbf24';
-  if (percent >= 25)  return '#f97316';
-  return '#ef4444';
+  if (percent >= 100) return '#FFFFFF';
+  if (percent >= 75)  return '#E5E5E5';
+  if (percent >= 50)  return '#D4D4D4';
+  if (percent >= 25)  return '#A3A3A3';
+  return '#737373';
 };
 
 /**
@@ -496,6 +496,6 @@ export const progressColor = (percent) => {
  * @returns {string}
  */
 export const macroColor = (macro) => {
-  const map = { protein: '#60a5fa', carbs: '#fbbf24', fats: '#f87171' };
-  return map[macro] || '#5a5a5a';
+  const map = { protein: '#FFFFFF', carbs: '#D4D4D4', fats: '#A3A3A3' };
+  return map[macro] || '#737373';
 };

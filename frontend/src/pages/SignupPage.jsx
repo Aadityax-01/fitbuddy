@@ -3,18 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Zap, Mail, Lock, User, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
-/* ── password strength ── */
 function getStrength(pw) {
   let score = 0;
   if (pw.length >= 8) score++;
   if (/[A-Z]/.test(pw)) score++;
   if (/[0-9]/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
-  return score; // 0-4
+  return score;
 }
 
 const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-const strengthColors = ['#1a1a1a', '#ef4444', '#f97316', '#f59e0b', '#39ff14'];
+const strengthColors = ['#262626', '#737373', '#A3A3A3', '#D4D4D4', '#FFFFFF'];
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -69,7 +68,7 @@ export default function SignupPage() {
   const inputWrap = { position: 'relative', marginBottom: '0' };
   const inputStyle = (hasErr) => ({
     width: '100%', padding: '12px 16px 12px 44px',
-    background: '#1a1a1a', border: `1px solid ${hasErr ? '#ef4444' : '#2a2a2a'}`,
+    background: '#262626', border: `1px solid ${hasErr ? '#FFFFFF' : '#404040'}`,
     borderRadius: '10px', color: '#fff', fontSize: '0.95rem',
     outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s',
   });
@@ -78,38 +77,30 @@ export default function SignupPage() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#0a0a0a',
+      minHeight: '100vh', background: '#000000',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '2rem', fontFamily: 'Inter, sans-serif',
       position: 'relative', overflow: 'hidden',
     }}>
-      {/* Background glow */}
-      <div style={{
-        position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,-50%)',
-        width: '500px', height: '500px',
-        background: 'radial-gradient(circle, #39ff1410 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
-
       {/* Card */}
       <div style={{
         width: '100%', maxWidth: '460px',
-        background: '#111', border: '1px solid #1a1a1a',
+        background: '#171717', border: '1px solid #404040',
         borderRadius: '20px', padding: '2.5rem',
         position: 'relative', zIndex: 1,
-        boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+        boxShadow: '0 25px 50px rgba(0,0,0,0.8)',
       }}>
         {/* Step indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: '6px',
-            background: '#39ff1415', borderRadius: '8px', padding: '4px 10px',
+            background: '#262626', borderRadius: '8px', padding: '4px 10px', border: '1px solid #404040',
           }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#39ff14' }} />
-            <span style={{ fontSize: '0.75rem', color: '#39ff14', fontWeight: 600 }}>Step 1 of 2</span>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFFFFF' }} />
+            <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>Step 1 of 2</span>
           </div>
-          <div style={{ flex: 1, height: '3px', background: '#1a1a1a', borderRadius: '2px' }}>
-            <div style={{ width: '50%', height: '100%', background: '#39ff14', borderRadius: '2px' }} />
+          <div style={{ flex: 1, height: '3px', background: '#262626', borderRadius: '2px' }}>
+            <div style={{ width: '50%', height: '100%', background: '#FFFFFF', borderRadius: '2px' }} />
           </div>
         </div>
 
@@ -117,15 +108,15 @@ export default function SignupPage() {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            background: '#39ff1415', border: '1px solid #39ff1430',
+            background: '#262626', border: '1px solid #404040',
             borderRadius: '16px', width: '56px', height: '56px', marginBottom: '1rem',
           }}>
-            <Zap size={28} color="#39ff14" fill="#39ff14" />
+            <Zap size={28} color="#FFFFFF" fill="#FFFFFF" />
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.25rem', color: '#fff' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '0 0 0.25rem', color: '#fff' }}>
             Create your account
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+          <p style={{ color: '#A3A3A3', fontSize: '0.875rem' }}>
             Start your fitness journey today — free forever
           </p>
         </div>
@@ -133,63 +124,63 @@ export default function SignupPage() {
         {/* General error */}
         {errors.general && (
           <div style={{
-            background: '#ef44441a', border: '1px solid #ef444450',
+            background: '#262626', border: '1px solid #404040',
             borderRadius: '10px', padding: '10px 14px', marginBottom: '1.25rem',
             display: 'flex', alignItems: 'center', gap: '8px',
           }}>
-            <AlertCircle size={14} color="#ef4444" />
-            <p style={{ color: '#ef4444', fontSize: '0.85rem', margin: 0 }}>{errors.general}</p>
+            <AlertCircle size={14} color="#FFFFFF" />
+            <p style={{ color: '#FFFFFF', fontSize: '0.85rem', margin: 0 }}>{errors.general}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
           {/* Full Name */}
           <div>
-            <label style={{ display: 'block', color: '#9ca3af', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 500 }}>Full Name</label>
+            <label style={{ display: 'block', color: '#A3A3A3', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 600 }}>Full Name</label>
             <div style={inputWrap}>
-              <User size={15} color="#9ca3af" style={iconStyle} />
+              <User size={15} color="#A3A3A3" style={iconStyle} />
               <input
                 type="text" name="fullName" placeholder="Alex Johnson"
                 value={form.fullName} onChange={handleChange}
                 style={inputStyle(!!errors.fullName)}
-                onFocus={e => e.target.style.borderColor = '#39ff14'}
-                onBlur={e => e.target.style.borderColor = errors.fullName ? '#ef4444' : '#2a2a2a'}
+                onFocus={e => e.target.style.borderColor = '#FFFFFF'}
+                onBlur={e => e.target.style.borderColor = errors.fullName ? '#FFFFFF' : '#404040'}
               />
             </div>
-            {errors.fullName && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{errors.fullName}</p>}
+            {errors.fullName && <p style={{ color: '#FFFFFF', fontSize: '0.75rem', marginTop: '4px' }}>{errors.fullName}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label style={{ display: 'block', color: '#9ca3af', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 500 }}>Email Address</label>
+            <label style={{ display: 'block', color: '#A3A3A3', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 600 }}>Email Address</label>
             <div style={inputWrap}>
-              <Mail size={15} color="#9ca3af" style={iconStyle} />
+              <Mail size={15} color="#A3A3A3" style={iconStyle} />
               <input
                 type="email" name="email" placeholder="you@example.com"
                 value={form.email} onChange={handleChange}
                 style={inputStyle(!!errors.email)}
-                onFocus={e => e.target.style.borderColor = '#39ff14'}
-                onBlur={e => e.target.style.borderColor = errors.email ? '#ef4444' : '#2a2a2a'}
+                onFocus={e => e.target.style.borderColor = '#FFFFFF'}
+                onBlur={e => e.target.style.borderColor = errors.email ? '#FFFFFF' : '#404040'}
               />
             </div>
-            {errors.email && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{errors.email}</p>}
+            {errors.email && <p style={{ color: '#FFFFFF', fontSize: '0.75rem', marginTop: '4px' }}>{errors.email}</p>}
           </div>
 
           {/* Password */}
           <div>
-            <label style={{ display: 'block', color: '#9ca3af', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 500 }}>Password</label>
+            <label style={{ display: 'block', color: '#A3A3A3', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 600 }}>Password</label>
             <div style={{ ...inputWrap, marginBottom: '0.5rem' }}>
-              <Lock size={15} color="#9ca3af" style={iconStyle} />
+              <Lock size={15} color="#A3A3A3" style={iconStyle} />
               <input
                 type={showPass ? 'text' : 'password'} name="password" placeholder="Min. 6 characters"
                 value={form.password} onChange={handleChange}
                 style={{ ...inputStyle(!!errors.password), paddingRight: '44px' }}
-                onFocus={e => e.target.style.borderColor = '#39ff14'}
-                onBlur={e => e.target.style.borderColor = errors.password ? '#ef4444' : '#2a2a2a'}
+                onFocus={e => e.target.style.borderColor = '#FFFFFF'}
+                onBlur={e => e.target.style.borderColor = errors.password ? '#FFFFFF' : '#404040'}
               />
               <button type="button" onClick={() => setShowPass(v => !v)} style={{
                 position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 0,
+                background: 'none', border: 'none', cursor: 'pointer', color: '#A3A3A3', padding: 0,
               }}>
                 {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
@@ -201,45 +192,45 @@ export default function SignupPage() {
                   {[1, 2, 3, 4].map(i => (
                     <div key={i} style={{
                       flex: 1, height: '3px', borderRadius: '2px',
-                      background: i <= strength ? strengthColors[strength] : '#2a2a2a',
+                      background: i <= strength ? strengthColors[strength] : '#404040',
                       transition: 'background 0.3s',
                     }} />
                   ))}
                 </div>
-                <p style={{ fontSize: '0.75rem', color: strengthColors[strength], margin: 0 }}>
+                <p style={{ fontSize: '0.75rem', color: strengthColors[strength], margin: 0, fontWeight: 600 }}>
                   {strengthLabels[strength]}
                 </p>
               </div>
             )}
-            {errors.password && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{errors.password}</p>}
+            {errors.password && <p style={{ color: '#FFFFFF', fontSize: '0.75rem', marginTop: '4px' }}>{errors.password}</p>}
           </div>
 
           {/* Confirm Password */}
           <div>
-            <label style={{ display: 'block', color: '#9ca3af', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 500 }}>Confirm Password</label>
+            <label style={{ display: 'block', color: '#A3A3A3', fontSize: '0.82rem', marginBottom: '5px', fontWeight: 600 }}>Confirm Password</label>
             <div style={inputWrap}>
-              <Lock size={15} color="#9ca3af" style={iconStyle} />
+              <Lock size={15} color="#A3A3A3" style={iconStyle} />
               <input
                 type={showConfirm ? 'text' : 'password'} name="confirmPassword" placeholder="Re-enter password"
                 value={form.confirmPassword} onChange={handleChange}
                 style={{ ...inputStyle(!!errors.confirmPassword), paddingRight: '44px' }}
-                onFocus={e => e.target.style.borderColor = '#39ff14'}
-                onBlur={e => e.target.style.borderColor = errors.confirmPassword ? '#ef4444' : '#2a2a2a'}
+                onFocus={e => e.target.style.borderColor = '#FFFFFF'}
+                onBlur={e => e.target.style.borderColor = errors.confirmPassword ? '#FFFFFF' : '#404040'}
               />
               <button type="button" onClick={() => setShowConfirm(v => !v)} style={{
                 position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 0,
+                background: 'none', border: 'none', cursor: 'pointer', color: '#A3A3A3', padding: 0,
               }}>
                 {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
             {form.confirmPassword && form.password === form.confirmPassword && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
-                <CheckCircle2 size={12} color="#39ff14" />
-                <span style={{ fontSize: '0.75rem', color: '#39ff14' }}>Passwords match</span>
+                <CheckCircle2 size={12} color="#FFFFFF" />
+                <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>Passwords match</span>
               </div>
             )}
-            {errors.confirmPassword && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{errors.confirmPassword}</p>}
+            {errors.confirmPassword && <p style={{ color: '#FFFFFF', fontSize: '0.75rem', marginTop: '4px' }}>{errors.confirmPassword}</p>}
           </div>
 
           {/* Terms */}
@@ -247,16 +238,16 @@ export default function SignupPage() {
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
               <input
                 type="checkbox" name="terms" checked={form.terms} onChange={handleChange}
-                style={{ marginTop: '3px', accentColor: '#39ff14', cursor: 'pointer', width: '15px', height: '15px' }}
+                style={{ marginTop: '3px', accentColor: '#FFFFFF', cursor: 'pointer', width: '15px', height: '15px' }}
               />
-              <span style={{ fontSize: '0.82rem', color: '#9ca3af', lineHeight: 1.5 }}>
+              <span style={{ fontSize: '0.82rem', color: '#A3A3A3', lineHeight: 1.5 }}>
                 I agree to the{' '}
-                <a href="#" style={{ color: '#39ff14', textDecoration: 'none' }}>Terms of Service</a>
+                <a href="#" style={{ color: '#FFFFFF', textDecoration: 'underline' }}>Terms of Service</a>
                 {' '}and{' '}
-                <a href="#" style={{ color: '#39ff14', textDecoration: 'none' }}>Privacy Policy</a>
+                <a href="#" style={{ color: '#FFFFFF', textDecoration: 'underline' }}>Privacy Policy</a>
               </span>
             </label>
-            {errors.terms && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{errors.terms}</p>}
+            {errors.terms && <p style={{ color: '#FFFFFF', fontSize: '0.75rem', marginTop: '4px' }}>{errors.terms}</p>}
           </div>
 
           {/* Submit */}
@@ -264,12 +255,14 @@ export default function SignupPage() {
             type="submit" disabled={loading}
             style={{
               width: '100%', padding: '13px',
-              background: loading ? '#39ff1499' : '#39ff14',
-              color: '#000', fontWeight: 800, fontSize: '1rem',
+              background: loading ? '#737373' : '#FFFFFF',
+              color: '#000000', fontWeight: 800, fontSize: '1rem',
               borderRadius: '10px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               marginTop: '0.5rem',
             }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#E5E5E5'; }}
+            onMouseLeave={e => { if (!loading) e.currentTarget.style.background = '#FFFFFF'; }}
           >
             {loading ? (
               <><Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> Creating account...</>
@@ -277,21 +270,21 @@ export default function SignupPage() {
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.875rem' }}>
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#A3A3A3', fontSize: '0.875rem' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: '#39ff14', fontWeight: 600, textDecoration: 'none' }}>
+          <Link to="/login" style={{ color: '#FFFFFF', fontWeight: 700, textDecoration: 'none' }}>
             Sign In
           </Link>
         </p>
 
-        <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1f1f1f' }}>
+        <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #404040' }}>
           <button
             type="button"
             onClick={handleGuest}
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#39ff14',
+              color: '#FFFFFF',
               fontWeight: 700,
               fontSize: '0.85rem',
               cursor: 'pointer',

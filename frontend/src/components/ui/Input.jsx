@@ -2,23 +2,7 @@ import { forwardRef, useState } from 'react';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 /**
- * Dark-themed input field.
- *
- * @param {{
- *   label?: string,
- *   placeholder?: string,
- *   error?: string,
- *   hint?: string,
- *   leftIcon?: React.ElementType,
- *   rightElement?: React.ReactNode,
- *   variant?: 'default' | 'filled',
- *   type?: string,
- *   id?: string,
- *   disabled?: boolean,
- *   required?: boolean,
- *   className?: string,
- *   wrapperClassName?: string,
- * }} props
+ * Strict monochrome input field.
  */
 const Input = forwardRef(function Input(
   {
@@ -45,10 +29,9 @@ const Input = forwardRef(function Input(
 
   const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
-  const borderColor = error ? '#ef4444' : '#1a1a1a';
-  const focusBorderColor = error ? '#ef4444' : '#39ff14';
-
-  const bgColor = variant === 'filled' ? '#1a1a1a' : '#111111';
+  const borderColor = error ? '#FFFFFF' : '#404040';
+  const focusBorderColor = '#FFFFFF';
+  const bgColor = variant === 'filled' ? '#262626' : '#171717';
 
   return (
     <div className={`flex flex-col gap-1.5 ${wrapperClassName}`}>
@@ -56,12 +39,11 @@ const Input = forwardRef(function Input(
       {label && (
         <label
           htmlFor={inputId}
-          className="text-sm font-medium"
-          style={{ color: error ? '#ef4444' : '#ffffff' }}
+          className="text-sm font-medium text-white flex items-center"
         >
           {label}
           {required && (
-            <span className="ml-1" style={{ color: '#39ff14' }}>*</span>
+            <span className="ml-1 text-white font-bold">*</span>
           )}
         </label>
       )}
@@ -73,7 +55,7 @@ const Input = forwardRef(function Input(
           <div className="absolute left-3 pointer-events-none flex items-center">
             <LeftIcon
               size={16}
-              style={{ color: error ? '#ef4444' : '#9ca3af' }}
+              className="text-[#A3A3A3]"
             />
           </div>
         )}
@@ -88,7 +70,7 @@ const Input = forwardRef(function Input(
           {...rest}
           className={[
             'w-full text-sm text-white rounded-xl py-2.5 outline-none transition-all duration-150',
-            'placeholder:text-gray-600',
+            'placeholder:text-[#737373]',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             LeftIcon ? 'pl-10' : 'pl-4',
             (isPassword || rightElement) ? 'pr-10' : 'pr-4',
@@ -97,11 +79,10 @@ const Input = forwardRef(function Input(
           style={{
             backgroundColor: bgColor,
             border: `1.5px solid ${borderColor}`,
-            // Trick: use :focus in CSS isn't available inline, so we handle via event
           }}
           onFocus={(e) => {
             e.target.style.borderColor = focusBorderColor;
-            e.target.style.boxShadow = `0 0 0 3px ${focusBorderColor}22`;
+            e.target.style.boxShadow = '0 0 0 2px rgba(255, 255, 255, 0.2)';
             rest.onFocus?.(e);
           }}
           onBlur={(e) => {
@@ -119,7 +100,7 @@ const Input = forwardRef(function Input(
                 type="button"
                 tabIndex={-1}
                 onClick={() => setShowPassword((v) => !v)}
-                className="text-gray-500 hover:text-gray-300 transition-colors"
+                className="text-[#A3A3A3] hover:text-white transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -133,12 +114,12 @@ const Input = forwardRef(function Input(
 
       {/* Error or hint */}
       {error ? (
-        <div className="flex items-center gap-1.5 text-xs" style={{ color: '#ef4444' }}>
+        <div className="flex items-center gap-1.5 text-xs text-white">
           <AlertCircle size={12} />
           <span>{error}</span>
         </div>
       ) : hint ? (
-        <p className="text-xs text-gray-600">{hint}</p>
+        <p className="text-xs text-[#A3A3A3]">{hint}</p>
       ) : null}
     </div>
   );

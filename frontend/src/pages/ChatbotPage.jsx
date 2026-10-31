@@ -2,17 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Bot,
   Send,
-  User,
-  Sparkles,
   RotateCcw,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  Zap,
-  Info,
-  Flame,
-  Dumbbell,
-  Apple,
 } from 'lucide-react';
 import { chatApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -80,7 +70,6 @@ export default function ChatbotPage() {
 
       setMessages((prev) => [...prev, aiMsg]);
     } catch (err) {
-      // Graceful fallback response
       let fallbackText = "I'm your FitBuddy AI Coach. For optimal results, aim for 1.6-2g of protein per kg of body weight, drink 2.5-3L of water daily, and combine progressive overload with wholesome nutrition.";
       const lower = text.toLowerCase();
       if (lower.includes('protein')) {
@@ -117,21 +106,21 @@ export default function ChatbotPage() {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-6xl mx-auto h-[calc(100vh-80px)] flex flex-col animate-fade-in">
+    <div className="p-4 md:p-6 lg:p-8 max-w-6xl mx-auto h-[calc(100vh-80px)] flex flex-col animate-fade-in bg-[#000000] text-white">
       {/* ── Top Header ── */}
-      <div className="bg-[#111111] border border-[#1a1a1a] rounded-2xl p-4 md:p-5 flex items-center justify-between mb-4 shadow-card shrink-0">
+      <div className="bg-[#171717] border border-[#404040] rounded-2xl p-4 md:p-5 flex items-center justify-between mb-4 shadow-card shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#39ff1415] border border-[#39ff1440] flex items-center justify-center text-[#39ff14]">
+          <div className="w-10 h-10 rounded-xl bg-[#262626] border border-[#404040] flex items-center justify-center text-white">
             <Bot size={22} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base md:text-lg font-bold text-white">FitBuddy AI Coach</h2>
-              <span className="flex items-center gap-1 text-[11px] font-semibold text-[#39ff14] bg-[#39ff1415] px-2 py-0.5 rounded-full border border-[#39ff1430]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#39ff14] animate-pulse" /> Online
+              <h2 className="text-base md:text-lg font-black text-white">FitBuddy AI Coach</h2>
+              <span className="flex items-center gap-1 text-[11px] font-bold text-white bg-[#262626] px-2 py-0.5 rounded-full border border-[#404040]">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Online
               </span>
             </div>
-            <p className="text-xs text-[#9ca3af]">
+            <p className="text-xs text-[#A3A3A3]">
               Personalized nutritionist & fitness expert
             </p>
           </div>
@@ -142,7 +131,7 @@ export default function ChatbotPage() {
             variant="outline"
             size="sm"
             onClick={handleClearChat}
-            className="text-xs text-[#9ca3af] hover:text-white"
+            className="text-xs text-[#A3A3A3] hover:text-white"
           >
             <RotateCcw size={14} className="mr-1" /> Clear Session
           </Button>
@@ -150,7 +139,7 @@ export default function ChatbotPage() {
       </div>
 
       {/* ── Chat Messages Container ── */}
-      <div className="flex-1 overflow-y-auto bg-[#0d0d0d] border border-[#1a1a1a] rounded-2xl p-4 md:p-6 space-y-4 shadow-inner">
+      <div className="flex-1 overflow-y-auto bg-[#000000] border border-[#404040] rounded-2xl p-4 md:p-6 space-y-4">
         {messages.map((msg) => {
           const isUser = msg.role === 'user';
           return (
@@ -162,8 +151,8 @@ export default function ChatbotPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                   isUser
-                    ? 'bg-[#39ff14] text-black font-bold text-xs'
-                    : 'bg-[#1a1a1a] border border-[#2a2a2a] text-[#39ff14]'
+                    ? 'bg-white text-black font-bold text-xs'
+                    : 'bg-[#262626] border border-[#404040] text-white'
                 }`}
               >
                 {isUser ? user?.name ? user.name[0].toUpperCase() : 'U' : <Bot size={16} />}
@@ -173,8 +162,8 @@ export default function ChatbotPage() {
               <div
                 className={`max-w-[85%] md:max-w-[70%] rounded-2xl p-4 text-sm leading-relaxed ${
                   isUser
-                    ? 'bg-[#39ff14] text-black font-medium shadow-neon'
-                    : 'bg-[#141414] border border-[#1f1f1f] text-white shadow-card'
+                    ? 'bg-white text-black font-medium'
+                    : 'bg-[#171717] border border-[#404040] text-white'
                 }`}
               >
                 <div className="whitespace-pre-wrap">
@@ -191,7 +180,7 @@ export default function ChatbotPage() {
 
                 <div
                   className={`text-[10px] mt-2 text-right ${
-                    isUser ? 'text-black/60' : 'text-[#6b7280]'
+                    isUser ? 'text-black/60' : 'text-[#A3A3A3]'
                   }`}
                 >
                   {msg.time}
@@ -203,13 +192,13 @@ export default function ChatbotPage() {
 
         {loading && (
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#39ff14] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#262626] border border-[#404040] text-white flex items-center justify-center shrink-0">
               <Bot size={16} />
             </div>
-            <div className="bg-[#141414] border border-[#1f1f1f] rounded-2xl p-4 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#39ff14] animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 rounded-full bg-[#39ff14] animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 rounded-full bg-[#39ff14] animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div className="bg-[#171717] border border-[#404040] rounded-2xl p-4 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-2 h-2 rounded-full bg-white animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-2 h-2 rounded-full bg-white animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}
@@ -224,7 +213,7 @@ export default function ChatbotPage() {
             key={i}
             type="button"
             onClick={() => handleSend(prompt)}
-            className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold rounded-full bg-[#161616] hover:bg-[#202020] border border-[#222222] text-[#9ca3af] hover:text-[#39ff14] hover:border-[#39ff1440] transition-all"
+            className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold rounded-full bg-[#262626] hover:bg-[#333333] border border-[#404040] text-[#A3A3A3] hover:text-white transition-all"
           >
             {prompt}
           </button>
@@ -244,7 +233,7 @@ export default function ChatbotPage() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Ask FitBuddy AI Coach anything about food, calories, or training..."
-          className="flex-1 bg-[#111111] border border-[#1f1f1f] focus:border-[#39ff14] rounded-xl px-4 py-3.5 text-sm text-white placeholder-[#6b7280] focus:outline-none transition-all shadow-card"
+          className="flex-1 bg-[#171717] border border-[#404040] focus:border-white rounded-xl px-4 py-3.5 text-sm text-white placeholder-[#737373] focus:outline-none transition-all"
         />
         <Button
           type="submit"
