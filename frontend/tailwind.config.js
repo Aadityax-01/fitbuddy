@@ -6,21 +6,28 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'neon-green': '#FFFFFF',
-        'neon-green-dim': '#E5E5E5',
         'dark-bg': '#000000',
-        'card-bg': '#171717',
-        'card-elevated': '#262626',
-        'card-border': '#404040',
-        'card-hover': '#262626',
+        'midnight-card': '#0b1329',
+        'midnight-surface': '#0f172a',
+        'midnight-border': '#1e293b',
+        'card-bg': '#0b1329',
+        'card-elevated': '#0f172a',
+        'card-border': '#1e293b',
+        'card-hover': '#1e293b',
         'text-primary': '#FFFFFF',
-        'text-secondary': '#A3A3A3',
-        'text-muted': '#737373',
-        'muted': '#A3A3A3',
-        'success': '#FFFFFF',
-        'warning': '#D4D4D4',
-        'danger': '#A3A3A3',
-        'info': '#E5E5E5',
+        'text-secondary': '#C4C4C4',
+        'text-muted': '#94a3b8',
+        'cyan-accent': '#06b6d4',
+        'cyan-light': '#22d3ee',
+        'cyan-dim': 'rgba(6, 182, 212, 0.15)',
+        'blue-accent': '#3b82f6',
+        'blue-dark': '#2563eb',
+        'blue-dim': 'rgba(59, 130, 246, 0.15)',
+      },
+      boxShadow: {
+        'cyan-glow': '0 0 20px rgba(6, 182, 212, 0.2)',
+        'blue-glow': '0 0 20px rgba(59, 130, 246, 0.2)',
+        'midnight': '0 4px 20px rgba(0, 0, 0, 0.6)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -48,8 +55,8 @@ module.exports = {
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 0 1px #404040' },
-          '50%': { boxShadow: '0 0 0 2px #FFFFFF' },
+          '0%, 100%': { boxShadow: '0 0 0 1px #1e293b' },
+          '50%': { boxShadow: '0 0 15px rgba(6, 182, 212, 0.3)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
@@ -60,17 +67,7 @@ module.exports = {
           '100%': { backgroundPosition: '200% 0' },
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'shimmer': 'linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.05) 50%, transparent 75%)',
-      },
-      boxShadow: {
-        'neon': '0 0 0 1px #404040',
-        'neon-lg': '0 0 0 2px #FFFFFF',
-        'card': '0 4px 24px rgba(0, 0, 0, 0.7)',
-        'card-hover': '0 8px 32px rgba(0, 0, 0, 0.9)',
-      },
     },
   },
   plugins: [],
-}
+};

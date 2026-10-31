@@ -32,39 +32,40 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #171717;
+  background: #0b1329;
 }
 ::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: #1e293b;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #737373;
+  background: #06b6d4;
 }
 
 /* ─── Custom CSS Variables ────────────────────────────────────────── */
 :root {
-  --neon-green: #FFFFFF;
-  --neon-green-dim: #E5E5E5;
-  --neon-green-glow: rgba(255, 255, 255, 0.2);
   --dark-bg: #000000;
-  --card-bg: #171717;
-  --card-elevated: #262626;
-  --card-border: #404040;
-  --card-hover: #262626;
+  --midnight-card: #0b1329;
+  --midnight-surface: #0f172a;
+  --midnight-border: #1e293b;
+  --card-bg: #0b1329;
+  --card-elevated: #0f172a;
+  --card-border: #1e293b;
+  --card-hover: #1e293b;
   --text-primary: #FFFFFF;
-  --text-secondary: #A3A3A3;
-  --text-muted: #737373;
-  --text-subtle: #737373;
-  --border-color: #404040;
-  --border-focus: #FFFFFF;
-  --btn-bg: #FFFFFF;
-  --btn-text: #000000;
-  --btn-hover: #E5E5E5;
-  --success: #FFFFFF;
-  --warning: #D4D4D4;
-  --danger: #A3A3A3;
-  --info: #E5E5E5;
+  --text-secondary: #C4C4C4;
+  --text-muted: #94a3b8;
+  --cyan-accent: #06b6d4;
+  --cyan-light: #22d3ee;
+  --cyan-glow: rgba(6, 182, 212, 0.25);
+  --blue-accent: #3b82f6;
+  --blue-dark: #2563eb;
+  --blue-glow: rgba(59, 130, 246, 0.25);
+  --border-color: #1e293b;
+  --border-focus: #06b6d4;
+  --btn-bg: #06b6d4;
+  --btn-text: #FFFFFF;
+  --btn-hover: #22d3ee;
 }
 
 /* ─── Keyframe Animations ─────────────────────────────────────────── */
@@ -89,8 +90,8 @@ body {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 1px #404040; }
-  50% { box-shadow: 0 0 0 2px #FFFFFF; }
+  0%, 100% { box-shadow: 0 0 0 1px #1e293b; }
+  50% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
 }
 
 @keyframes shimmer {
@@ -140,192 +141,94 @@ body {
 
 /* ─── Component Base Styles ───────────────────────────────────────── */
 .card {
-  background-color: #171717;
-  border: 1px solid #404040;
-  border-radius: 12px;
+  background-color: #0b1329;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
   transition: all 0.2s ease;
 }
 
 .card:hover {
-  border-color: #737373;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  border-color: #06b6d4;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
 }
 
 .card-neon {
-  border-left: 3px solid #FFFFFF;
+  border-left: 3px solid #06b6d4;
 }
 
 .btn-neon {
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+  background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 700;
   transition: all 0.2s ease;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #06b6d4;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
 }
 
 .btn-neon:hover {
-  background-color: #E5E5E5 !important;
-  border-color: #E5E5E5 !important;
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%) !important;
+  border-color: #22d3ee !important;
+  box-shadow: 0 0 22px rgba(6, 182, 212, 0.4);
   transform: translateY(-1px);
 }
 
 .input-dark {
-  background-color: #262626;
-  border: 1px solid #404040;
+  background-color: #020617;
+  border: 1px solid #1e293b;
   color: #FFFFFF;
   transition: border-color 0.2s ease;
 }
 
 .input-dark:focus {
   outline: none;
-  border-color: #FFFFFF;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
 }
 
 .input-dark::placeholder {
-  color: #737373;
-}
-
-/* ─── Monochrome Text Effects ─────────────────────────────────────── */
-.text-neon {
-  color: #FFFFFF;
-}
-
-.text-gradient {
-  color: #FFFFFF;
-}
-
-.text-gradient-hero {
-  color: #FFFFFF;
-}
-
-/* ─── Glow Effects ────────────────────────────────────────────────── */
-.glow-neon {
-  box-shadow: 0 0 0 1px #404040;
+  color: #C4C4C4;
 }
 
 /* ─── Progress Bar ────────────────────────────────────────────────── */
 .progress-bar {
-  background: #262626;
+  background: #0f172a;
   border-radius: 100px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
-  background: #FFFFFF;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
   border-radius: 100px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Recharts overrides ──────────────────────────────────────────── */
 .recharts-cartesian-grid line {
-  stroke: #404040;
+  stroke: #1e293b;
 }
 
 .recharts-text {
-  fill: #A3A3A3 !important;
+  fill: #C4C4C4 !important;
 }
 
 /* ─── Chat Bubble Styles ──────────────────────────────────────────── */
 .chat-bubble-user {
-  background: #FFFFFF;
-  color: #000000;
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  color: #FFFFFF;
   border-radius: 18px 18px 4px 18px;
   font-weight: 600;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
 }
 
 .chat-bubble-ai {
-  background: #171717;
+  background: #0b1329;
   color: #FFFFFF;
   border-radius: 18px 18px 18px 4px;
-  border: 1px solid #404040;
-}
-
-/* ─── Typing Indicator ────────────────────────────────────────────── */
-.typing-dot {
-  width: 8px;
-  height: 8px;
-  background: #FFFFFF;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.typing-dot:nth-child(1) { animation: typing 1.2s ease-in-out 0s infinite; }
-.typing-dot:nth-child(2) { animation: typing 1.2s ease-in-out 0.2s infinite; }
-.typing-dot:nth-child(3) { animation: typing 1.2s ease-in-out 0.4s infinite; }
-
-/* ─── Range Input Styles ──────────────────────────────────────────── */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #262626;
-  border-radius: 100px;
-  height: 6px;
-  cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #FFFFFF;
-  cursor: pointer;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #FFFFFF;
-  cursor: pointer;
-  border: none;
-}
-
-/* ─── Select Styles ───────────────────────────────────────────────── */
-select {
-  background-color: #262626;
-  color: #FFFFFF;
-  border: 1px solid #404040;
-}
-
-select option {
-  background-color: #171717;
-  color: #FFFFFF;
-}
-
-/* ─── Skeleton Loading ────────────────────────────────────────────── */
-.skeleton {
-  background: linear-gradient(90deg, #171717 25%, #262626 50%, #171717 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 8px;
-}
-
-/* ─── Stagger animation delays ───────────────────────────────────── */
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-.stagger-5 { animation-delay: 0.5s; }
-
-/* ─── Custom checkbox ─────────────────────────────────────────────── */
-input[type="checkbox"] {
-  accent-color: #FFFFFF;
-  cursor: pointer;
-}
-
-/* ─── Focus outlines ──────────────────────────────────────────────── */
-*:focus-visible {
-  outline: 2px solid #FFFFFF !important;
-  outline-offset: 2px;
-  border-radius: 4px;
+  border: 1px solid #1e293b;
 }
 
 /* ─── Selection color ─────────────────────────────────────────────── */
 ::selection {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(6, 182, 212, 0.3);
   color: #FFFFFF;
 }
