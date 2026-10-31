@@ -24,6 +24,7 @@ export default function ChatbotPage() {
   const messagesEndRef = useRef(null);
 
   const quickPrompts = [
+    'What’s the best time to work out?',
     'What should I eat today?',
     'How much protein do I need?',
     'Suggest a healthy Indian diet',

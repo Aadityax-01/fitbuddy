@@ -70,7 +70,7 @@
         chatHistory: [
           {
             role: 'assistant',
-            text: `Hello and welcome to FitBuddy AI! ðŸ¤– You are in completely free, unrestricted Guest Mode.\n\nYou have FULL access to everything: ask me any fitness or nutrition questions, generate custom Indian diet plans, create workout splits, track water and meals, or calculate your BMI and macros!\n\nWhat can I help you achieve today?`,
+            text: `Hello and welcome to FitBuddy AI! 🤖 You are in completely free, unrestricted Guest Mode.\n\nYou have FULL access to everything: ask me any fitness or nutrition questions, generate custom Indian diet plans, create workout splits, track water and meals, or calculate your BMI and macros!\n\nWhat can I help you achieve today?`,
             time: 'Just now'
           }
         ]
@@ -307,7 +307,7 @@
         chatHistory: currentGuest.chatHistory || [
           {
             role: 'assistant',
-            text: `Namaste ${name.split(' ')[0]}! ðŸ¤– Welcome to your permanently saved FitBuddy AI account. Your data will now be kept safe!`,
+            text: `Namaste ${name.split(' ')[0]}! 🤖 Welcome to your permanently saved FitBuddy AI account. Your data will now be kept safe!`,
             time: 'Just now'
           }
         ]
@@ -432,12 +432,12 @@
 
       const displayName = user.name || (user.isGuest ? 'Guest Athlete' : 'Athlete');
       const firstName = displayName.split(' ')[0] || displayName;
-      document.getElementById('dash-user-name').innerText = displayName;
+      const dashUserEl = document.getElementById('dash-user-name'); if (dashUserEl) dashUserEl.innerText = displayName;
       document.getElementById('dash-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
       const modeBadge = document.getElementById('dash-mode-badge');
       if (modeBadge) {
-        modeBadge.innerText = user.isGuest ? 'âš¡ Unrestricted Guest Mode' : 'Account Synced';
+        modeBadge.innerText = user.isGuest ? '⚡ Unrestricted Guest Mode' : 'Account Synced';
       }
 
       const p = user.profile || {
@@ -485,7 +485,7 @@
       document.getElementById('dash-protein-bar').style.width = protPercent + '%';
 
       // Summary text
-      document.getElementById('dash-summary-text').innerText = `Goal: ${p.goal || 'Fitness'} â€¢ Diet: ${p.dietType || 'Vegetarian'} â€¢ Daily Intake: ${calTarget} kcal`;
+      document.getElementById('dash-summary-text').innerText = `Goal: ${p.goal || 'Fitness'} • Diet: ${p.dietType || 'Vegetarian'} • Daily target: ${calTarget} kcal`;
 
       // Workout Checklist Preview
       renderDashboardWorkouts(user);
@@ -498,10 +498,10 @@
       const container = document.getElementById('dash-workout-list');
       if (!container) return;
       const defaultRoutine = [
-        { id: 'w1', name: 'Barbell / Goblet Squats', sets: '3 sets Ã— 10 reps', target: 'Quads & Glutes' },
-        { id: 'w2', name: 'Push-Ups / Dumbbell Bench', sets: '3 sets Ã— 12 reps', target: 'Chest & Triceps' },
-        { id: 'w3', name: 'Bent-Over Rows / Dumbbell Rows', sets: '3 sets Ã— 10 reps', target: 'Back & Biceps' },
-        { id: 'w4', name: 'Plank Hold & Core Tension', sets: '3 sets Ã— 45 sec', target: 'Core Stability' }
+        { id: 'w1', name: 'Barbell / Goblet Squats', sets: '3 sets × 10 reps', target: 'Quads & Glutes' },
+        { id: 'w2', name: 'Push-Ups / Dumbbell Bench', sets: '3 sets × 12 reps', target: 'Chest & Triceps' },
+        { id: 'w3', name: 'Bent-Over Rows / Dumbbell Rows', sets: '3 sets × 10 reps', target: 'Back & Biceps' },
+        { id: 'w4', name: 'Plank Hold & Core Tension', sets: '3 sets × 45 sec', target: 'Core Stability' }
       ];
 
       const doneList = user.logs?.workoutsDone || [];
@@ -511,10 +511,10 @@
         return `
           <div onclick="toggleWorkoutDone('${item.id}')" class="p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${isDone ? 'bg-[#152515] border-[#39ff1440]' : 'bg-[#161616] border-[#222222] hover:border-[#333]'}">
             <div class="flex items-center gap-3">
-              <span class="text-base font-bold ${isDone ? 'text-[#39ff14]' : 'text-gray-500'}">${isDone ? 'âœ“' : 'â—‹'}</span>
+              <span class="text-base font-bold ${isDone ? 'text-[#39ff14]' : 'text-gray-500'}">${isDone ? '✓' : '○'}</span>
               <div>
                 <p class="text-xs font-bold ${isDone ? 'line-through text-gray-400' : 'text-white'}">${item.name}</p>
-                <p class="text-[10px] text-gray-500">${item.sets} â€¢ ${item.target}</p>
+                <p class="text-[10px] text-gray-500">${item.sets} • ${item.target}</p>
               </div>
             </div>
             <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isDone ? 'bg-[#39ff1420] text-[#39ff14]' : 'bg-[#202020] text-gray-400'}">
@@ -546,7 +546,7 @@
         <div class="p-3 rounded-xl bg-[#161616] border border-[#222222]">
           <span class="text-[9px] font-bold text-[#39ff14] uppercase">${m.timing}</span>
           <p class="text-xs font-bold text-white mt-1 truncate">${m.name}</p>
-          <p class="text-[10px] text-gray-400 mt-0.5">${m.calories} kcal â€¢ ${m.protein}g protein</p>
+          <p class="text-[10px] text-gray-400 mt-0.5">${m.calories} kcal • ${m.protein}g protein</p>
         </div>
       `).join('');
     }
@@ -680,7 +680,7 @@
           </div>
         </div>
         <button onclick="logWholeDayDiet(${totalCals}, ${totalProt})" class="neon-btn px-4 py-2 text-xs font-bold rounded-xl">
-          Log All Meals to Daily Tracker âš¡
+          Log All Meals to Daily Tracker ⚡
         </button>
       `;
     }
@@ -716,29 +716,29 @@
       let exercises = [];
       if (equip === 'bodyweight' || split.includes('Home')) {
         exercises = [
-          { name: 'Decline / Standard Push-ups', sets: '4 sets Ã— 15 reps', rest: '60s', cue: 'Keep core clamped tight, chest touch floor.' },
-          { name: 'Air Squats + Jump Squats Finisher', sets: '4 sets Ã— 20 reps', rest: '45s', cue: 'Break parallel depth, push through heels.' },
-          { name: 'Doorframe Bodyweight Rows / Australian Pulls', sets: '3 sets Ã— 12 reps', rest: '60s', cue: 'Drive elbows back, squeeze upper lats.' },
-          { name: 'Walking Lunges', sets: '3 sets Ã— 15 reps per leg', rest: '45s', cue: 'Upright posture, 90 degree knee bends.' },
-          { name: 'Hollow Body Hold & Mountain Climbers', sets: '3 sets Ã— 45s', rest: '30s', cue: 'Lower back glued to floor.' }
+          { name: 'Decline / Standard Push-ups', sets: '4 sets × 15 reps', rest: '60s', cue: 'Keep core clamped tight, chest touch floor.' },
+          { name: 'Air Squats + Jump Squats Finisher', sets: '4 sets × 20 reps', rest: '45s', cue: 'Break parallel depth, push through heels.' },
+          { name: 'Doorframe Bodyweight Rows / Australian Pulls', sets: '3 sets × 12 reps', rest: '60s', cue: 'Drive elbows back, squeeze upper lats.' },
+          { name: 'Walking Lunges', sets: '3 sets × 15 reps per leg', rest: '45s', cue: 'Upright posture, 90 degree knee bends.' },
+          { name: 'Hollow Body Hold & Mountain Climbers', sets: '3 sets × 45s', rest: '30s', cue: 'Lower back glued to floor.' }
         ];
       } else if (equip === 'home') {
         exercises = [
-          { name: 'Dumbbell Goblet Squats', sets: '4 sets Ã— 12 reps', rest: '60s', cue: 'Hold heavy dumbbell at chest height.' },
-          { name: 'Flat Dumbbell Floor / Bench Press', sets: '4 sets Ã— 10 reps', rest: '75s', cue: 'Tuck elbows 45 degrees, full range press.' },
-          { name: 'Single-Arm Dumbbell Rows', sets: '3 sets Ã— 12 reps/arm', rest: '60s', cue: 'Pull dumbbell toward hip, not shoulder.' },
-          { name: 'Dumbbell Romanian Deadlifts (RDL)', sets: '3 sets Ã— 10 reps', rest: '75s', cue: 'Hinge at hips, stretch hamstrings.' },
-          { name: 'Standing Dumbbell Overhead Press', sets: '3 sets Ã— 10 reps', rest: '60s', cue: 'Lock out overhead with neutral spine.' }
+          { name: 'Dumbbell Goblet Squats', sets: '4 sets × 12 reps', rest: '60s', cue: 'Hold heavy dumbbell at chest height.' },
+          { name: 'Flat Dumbbell Floor / Bench Press', sets: '4 sets × 10 reps', rest: '75s', cue: 'Tuck elbows 45 degrees, full range press.' },
+          { name: 'Single-Arm Dumbbell Rows', sets: '3 sets × 12 reps/arm', rest: '60s', cue: 'Pull dumbbell toward hip, not shoulder.' },
+          { name: 'Dumbbell Romanian Deadlifts (RDL)', sets: '3 sets × 10 reps', rest: '75s', cue: 'Hinge at hips, stretch hamstrings.' },
+          { name: 'Standing Dumbbell Overhead Press', sets: '3 sets × 10 reps', rest: '60s', cue: 'Lock out overhead with neutral spine.' }
         ];
       } else {
         // Gym
         exercises = [
-          { name: 'Barbell Back Squat', sets: '4 sets Ã— 8 reps', rest: '90s', cue: 'Deep hip hinge, brace core with Valsalva.' },
-          { name: 'Barbell Bench Press', sets: '4 sets Ã— 8-10 reps', rest: '90s', cue: 'Arch upper back, retract scapulae.' },
-          { name: 'Lat Pulldowns or Weighted Pull-ups', sets: '3 sets Ã— 10 reps', rest: '60s', cue: 'Pull bar to collarbone, squeeze lats.' },
-          { name: 'Incline Dumbbell Chest Press', sets: '3 sets Ã— 10-12 reps', rest: '60s', cue: '30 degree bench angle, upper chest focus.' },
-          { name: 'Cable Face Pulls', sets: '3 sets Ã— 15 reps', rest: '45s', cue: 'External shoulder rotation for posture.' },
-          { name: 'Hanging Leg Raises', sets: '3 sets Ã— 12 reps', rest: '45s', cue: 'Curl pelvis up without swinging.' }
+          { name: 'Barbell Back Squat', sets: '4 sets × 8 reps', rest: '90s', cue: 'Deep hip hinge, brace core with Valsalva.' },
+          { name: 'Barbell Bench Press', sets: '4 sets × 8-10 reps', rest: '90s', cue: 'Arch upper back, retract scapulae.' },
+          { name: 'Lat Pulldowns or Weighted Pull-ups', sets: '3 sets × 10 reps', rest: '60s', cue: 'Pull bar to collarbone, squeeze lats.' },
+          { name: 'Incline Dumbbell Chest Press', sets: '3 sets × 10-12 reps', rest: '60s', cue: '30 degree bench angle, upper chest focus.' },
+          { name: 'Cable Face Pulls', sets: '3 sets × 15 reps', rest: '45s', cue: 'External shoulder rotation for posture.' },
+          { name: 'Hanging Leg Raises', sets: '3 sets × 12 reps', rest: '45s', cue: 'Curl pelvis up without swinging.' }
         ];
       }
 
@@ -775,7 +775,7 @@
         const isAI = msg.role === 'assistant';
         return `
           <div class="flex gap-3 ${isAI ? '' : 'justify-end'}">
-            ${isAI ? `<div class="w-8 h-8 rounded-xl bg-[#39ff1420] text-[#39ff14] flex items-center justify-center text-sm font-bold flex-shrink-0">ðŸ¤–</div>` : ''}
+            ${isAI ? `<div class="w-8 h-8 rounded-xl bg-[#39ff1420] text-[#39ff14] flex items-center justify-center text-sm font-bold flex-shrink-0">🤖</div>` : ''}
             <div class="max-w-[80%] rounded-2xl p-4 text-xs leading-relaxed ${isAI ? 'bg-[#181818] border border-[#262626] text-gray-200' : 'bg-[#39ff14] text-black font-semibold'}">
               <p class="whitespace-pre-line">${msg.text}</p>
               <span class="block text-[9px] mt-1.5 opacity-60 text-right">${msg.time}</span>
@@ -830,12 +830,12 @@
 
       // Indian Food: Paneer / Tofu
       if (q.includes('paneer') || q.includes('tofu')) {
-        return `Hey ${name}! Here is the exact breakdown:\n\nâ€¢ **100g Indian Raw Paneer:** ~18-20g protein, 20g fat, 3g carbs, **265 kcal**.\nâ€¢ **100g Soya Paneer (Tofu):** ~14-16g protein, 4g fat, 2g carbs, **75-80 kcal**.\n\nðŸ’¡ *Coach Tip:* If your goal is ${goal}, Tofu provides incredible protein efficiency with 70% fewer calories, while Paneer offers healthy dietary fats and calcium. Both are fantastic Indian protein staples!`;
+        return `Hey ${name}! Here is the exact breakdown:\n\n• **100g Indian Raw Paneer:** ~18-20g protein, 20g fat, 3g carbs, **265 kcal**.\n• **100g Soya Paneer (Tofu):** ~14-16g protein, 4g fat, 2g carbs, **75-80 kcal**.\n\n💡 *Coach Tip:* If your goal is ${goal}, Tofu provides incredible protein efficiency with 70% fewer calories, while Paneer offers healthy dietary fats and calcium. Both are fantastic Indian protein staples!`;
       }
 
       // Meal & Dinner queries
       if (q.includes('dinner') || q.includes('lunch') || q.includes('breakfast') || q.includes('eat') || q.includes('meal')) {
-        return `Here is a custom high-protein Indian ${diet} meal option for your target (~${Math.round(cals/4)} kcal):\n\nâ€¢ **Option 1:** 2 Multigrain Phulkas + 1 bowl Moong Dal Tadka + 100g Paneer Bhurji / Soya chunks / Grilled Chicken + Cucumber Salad (~480 kcal, 30g protein).\nâ€¢ **Option 2:** 1 cup Brown Rice Khichdi + 1 bowl curd / raita + Roasted Papad (~420 kcal, 22g protein).\n\nBoth digest smoothly and provide steady amino acid release. What dietary adjustments would you like?`;
+        return `Here is a custom high-protein Indian ${diet} meal option for your target (~${Math.round(cals/4)} kcal):\n\n• **Option 1:** 2 Multigrain Phulkas + 1 bowl Moong Dal Tadka + 100g Paneer Bhurji / Soya chunks / Grilled Chicken + Cucumber Salad (~480 kcal, 30g protein).\n• **Option 2:** 1 cup Brown Rice Khichdi + 1 bowl curd / raita + Roasted Papad (~420 kcal, 22g protein).\n\nBoth digest smoothly and provide steady amino acid release. What dietary adjustments would you like?`;
       }
 
       // Exercises & Form
@@ -845,17 +845,17 @@
 
       // Calorie & Weight Loss math
       if (q.includes('lose') || q.includes('gain') || q.includes('deficit') || q.includes('how many calories') || q.includes('kg')) {
-        return `Let's break down the exact mathematics for you, ${name}:\n\nâ€¢ **1 kg of body fat** equals approximately **7,700 kcal**.\nâ€¢ A steady, healthy deficit of **500 calories/day** yields roughly **0.5 kg of pure fat loss per week** (~2 kg per month) without sacrificing muscle mass.\nâ€¢ To preserve your lean tissue, keep protein high (~1.6 to 2.0g per kg of bodyweight) and train each muscle group with progressive overload twice weekly!`;
+        return `Let's break down the exact mathematics for you, ${name}:\n\n• **1 kg of body fat** equals approximately **7,700 kcal**.\n• A steady, healthy deficit of **500 calories/day** yields roughly **0.5 kg of pure fat loss per week** (~2 kg per month) without sacrificing muscle mass.\n• To preserve your lean tissue, keep protein high (~1.6 to 2.0g per kg of bodyweight) and train each muscle group with progressive overload twice weekly!`;
       }
 
       // Pre/Post-workout
       if (q.includes('pre-workout') || q.includes('post-workout') || q.includes('snack') || q.includes('energy') || q.includes('sattu')) {
-        return `Top Indian energy & recovery options:\n\nâ€¢ **Pre-Workout (45 mins prior):** 1 ripe banana with 1 tbsp peanut butter, OR 1 glass chilled Sattu cooler (25g sattu + lemon + roasted cumin), OR 40g oats in water.\nâ€¢ **Post-Workout (within 60 mins):** Whey protein scoop in water OR 3 boiled egg whites / 80g paneer + 1 piece fruit to replenish glycogen.\n\nKeep it light and easy to digest!`;
+        return `Top Indian energy & recovery options:\n\n• **Pre-Workout (45 mins prior):** 1 ripe banana with 1 tbsp peanut butter, OR 1 glass chilled Sattu cooler (25g sattu + lemon + roasted cumin), OR 40g oats in water.\n• **Post-Workout (within 60 mins):** Whey protein scoop in water OR 3 boiled egg whites / 80g paneer + 1 piece fruit to replenish glycogen.\n\nKeep it light and easy to digest!`;
       }
 
       // Greetings / General follow-ups
       if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('namaste')) {
-        return `Namaste ${name}! ðŸ¤– I'm here and fully available to guide your training, Indian nutrition, calorie targets, workout splits, or any fitness questions. How can I assist you right now?`;
+        return `Namaste ${name}! 🤖 I'm here and fully available to guide your training, Indian nutrition, calorie targets, workout splits, or any fitness questions. How can I assist you right now?`;
       }
 
       // Natural, conversational response to ANY query

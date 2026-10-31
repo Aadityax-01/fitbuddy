@@ -523,6 +523,13 @@ def chat_response(messages: List[Dict[str, str]], system_prompt: str) -> str:
     if not _has_api_key():
         # Fallback for general questions when OpenAI is not configured
         q = latest_query.lower()
+        if "best time" in q and ("workout" in q or "work out" in q or "exercise" in q or "train" in q):
+            return (
+                "The best time to work out is whenever you can stay most consistent! Science shows:\n\n"
+                "• Morning (6:00 AM – 9:00 AM): Great for building habit consistency and elevating daytime alertness. Include a thorough 8–10 minute dynamic warm-up.\n"
+                "• Late Afternoon / Evening (4:00 PM – 7:00 PM): Peak neuromuscular performance and body temperature, allowing for heavier lifts and lower injury risk.\n\n"
+                "Pick the window that fits your personal schedule and stick with it! ⏱️💪"
+            )
         if "workout" in q or "exercise" in q or "training" in q:
             return (
                 "Here is a great full-body foundational workout:\n\n"

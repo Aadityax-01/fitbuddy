@@ -33,7 +33,7 @@ import { chatApi } from '../services/api';
 
 const QUICK_PROMPTS = [
   'How much protein in 4 eggs?',
-  '15-min HIIT core workout',
+  'What’s the best time to work out?',
   'Vegetarian muscle gain diet',
   'How many calories in 2 bananas?',
 ];
@@ -234,7 +234,7 @@ export default function DashboardPage() {
                   onClick={() => navigate('/workout-planner')}
                   className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#2563eb] to-[#06b6d4] hover:from-[#3b82f6] hover:to-[#22d3ee] shadow-[0_0_15px_rgba(37,99,235,0.25)] flex items-center justify-center gap-2 transition-all"
                 >
-                  <span>Generate Workout</span>
+                  <span>Create Workout Plan</span>
                   <ArrowRight size={14} />
                 </button>
               </div>
@@ -253,13 +253,13 @@ export default function DashboardPage() {
               <div>
                 <h3 className="text-sm font-bold text-white leading-tight">AI Fitness Coach</h3>
                 <span className="flex items-center gap-1.5 text-[10px] text-[#22d3ee] font-semibold mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#06b6d4] animate-pulse"></span> Online &amp; Ready
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#06b6d4] animate-pulse"></span> Online and ready
                 </span>
               </div>
             </div>
 
             <Link to="/chatbot" className="text-xs text-[#06b6d4] hover:underline font-semibold">
-              Full View ↗
+              Open Full View ↗
             </Link>
           </div>
 
