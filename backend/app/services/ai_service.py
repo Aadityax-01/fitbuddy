@@ -1,4 +1,4 @@
-"""
+﻿"""
 AI service layer: wraps OpenAI chat completions for diet plans, workout plans,
 and general fitness chat. Provides demo-data fallbacks when no API key is set.
 """
@@ -565,5 +565,14 @@ def chat_response(messages: List[Dict[str, str]], system_prompt: str) -> str:
         )
         return response.choices[0].message.content.strip()
     except Exception as exc:
-        logger.error("OpenAI chat error: %s", exc)
-        return "Sorry, I'm having trouble connecting right now. Please try again in a moment! 💪"
+        err_type = type(exc).__name__
+        logger.error("OpenAI chat error [type=%s]: %s", err_type, exc)
+        if "AuthenticationError" in err_type or "auth" in str(exc).lower():
+            return "Warning: FitBuddy AI Coach is unavailable: OpenAI API key is invalid or expired. Please verify OPENAI_API_KEY in the server configuration."
+        if "RateLimitError" in err_type or "quota" in str(exc).lower() or "429" in str(exc):
+            return "Warning: FitBuddy AI Coach is unavailable: OpenAI rate limit or billing quota exceeded. Please check your OpenAI account usage and credits."
+        if "Timeout" in err_type or "timeout" in str(exc).lower():
+            return "FitBuddy AI request timed out. Please try sending your question again."
+        if "Connection" in err_type or "connect" in str(exc).lower():
+            return "FitBuddy AI could not reach OpenAI servers. Please verify backend internet connectivity."
+        return "Sorry, I am having trouble connecting to the AI Coach service right now. Please try again in a moment!"

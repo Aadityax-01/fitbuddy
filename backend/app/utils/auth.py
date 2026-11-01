@@ -109,3 +109,28 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
+
+
+_optional_bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def get_optional_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_optional_bearer_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """
+    FastAPI dependency for endpoints that allow both guest and authenticated users.
+    Returns the User if a valid Bearer token is provided, or None for guest mode.
+    """
+    if not credentials:
+        return None
+    try:
+        payload = decode_token(credentials.credentials)
+        user_id = payload.get("sub")
+        if user_id:
+            user = db.get(User, int(user_id))
+            if user and user.is_active:
+                return user
+    except Exception:
+        return None
+    return None

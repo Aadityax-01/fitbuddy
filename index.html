@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1498,7 +1498,7 @@
     }
 
         /* Auth State Sync with direct style toggles */
-    function syncAuthState() {
+        function syncAuthState() {
       const user = getActiveUser();
       const guestBtns = document.getElementById('guest-buttons');
       const userBadge = document.getElementById('user-badge');
@@ -1522,10 +1522,10 @@
           }
           if (sideUserName) sideUserName.innerText = 'Guest Mode';
           if (sideAuthActions) {
-            sideAuthActions.innerHTML = `
+            sideAuthActions.innerHTML = \
               <button onclick="openModal('register-modal')" class="flex-1 py-1.5 text-center font-bold rounded-lg bg-gradient-to-r from-[#06b6d4] to-[#2563eb] text-white hover:opacity-90 transition-opacity">Register</button>
               <button onclick="openModal('login-modal')" class="flex-1 py-1.5 text-center font-bold rounded-lg border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-colors">Login</button>
-            `;
+            \;
           }
         } else {
           if (guestPill) { guestPill.classList.add('hidden'); guestPill.style.display = 'none'; }
@@ -1538,12 +1538,12 @@
           }
           if (sideUserName) sideUserName.innerText = user.name || 'Athlete';
           if (sideAuthActions) {
-            sideAuthActions.innerHTML = `
+            sideAuthActions.innerHTML = \
               <button onclick="handleLogout()" class="w-full py-1.5 rounded-lg text-xs font-semibold text-[#C4C4C4] hover:text-white hover:bg-[#1e293b] transition-all flex items-center justify-center gap-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 Sign Out
               </button>
-            `;
+            \;
           }
         }
       } else {
@@ -1552,28 +1552,10 @@
         if (userBadge) { userBadge.classList.add('hidden'); userBadge.style.display = 'none'; }
         if (sideUserName) sideUserName.innerText = 'Guest Visitor';
         if (sideAuthActions) {
-          sideAuthActions.innerHTML = `
-            <button onclick="startGuestSession()" class="w-full py-1.5 text-center font-bold rounded-lg bg-gradient-to-r from-[#06b6d4] to-[#2563eb] text-white hover:opacity-90 transition-opacity">⚡ Instant Guest Access</button>
-          `;
+          sideAuthActions.innerHTML = \
+            <button onclick="startGuestSession()" class="w-full py-1.5 text-center font-bold rounded-lg bg-gradient-to-r from-[#06b6d4] to-[#2563eb] text-white hover:opacity-90 transition-opacity">âš¡ Instant Guest Access</button>
+          \;
         }
-      }
-    } else {
-          if (guestPill) { guestPill.classList.add('hidden'); guestPill.style.display = 'none'; }
-          if (regPill) { regPill.classList.remove('hidden'); regPill.style.display = 'block'; }
-          const firstName = user.name.split(' ')[0] || user.name;
-          const navName = document.getElementById('nav-user-name');
-          if (navName) navName.innerText = user.name;
-          const avatar = document.getElementById('nav-user-avatar');
-          if (avatar) {
-            avatar.innerText = firstName.charAt(0).toUpperCase();
-            avatar.className = 'w-8 h-8 rounded-full bg-white text-black font-black text-xs flex items-center justify-center';
-          }
-        }
-      } else {
-        if (guestBtns) { guestBtns.classList.remove('hidden'); guestBtns.style.display = 'flex'; }
-        if (userBadge) { userBadge.classList.add('hidden'); userBadge.style.display = 'none'; }
-        if (userNav) { userNav.classList.add('hidden'); userNav.style.display = 'none'; }
-        if (mobileNav) { mobileNav.classList.add('hidden'); mobileNav.style.display = 'none'; }
       }
     }
 
@@ -2186,7 +2168,7 @@
       handleSendChat(new Event('submit'));
     }
 
-    function handleSendChat(e) {
+    async function handleSendChat(e) {
       if (e) e.preventDefault();
       const hp = document.getElementById('homepage-coach-input');
       const cp = document.getElementById('coach-input');
@@ -2206,14 +2188,74 @@
       if (cp) cp.value = '';
       renderChatMessages();
 
-      // Generate natural, unrestricted AI response
-      setTimeout(() => {
-        const reply = generateAIResponse(text, user);
-        updateActiveUser(u => {
-          u.chatHistory.push({ role: 'assistant', text: reply, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+      // Show typing indicator in UI
+      const typingId = 'typing_' + Date.now();
+      const chatContainer = document.getElementById('coach-messages');
+      const homeChatContainer = document.getElementById('homepage-coach-messages');
+      const typingHtml = '<div id=\"' + typingId + '\" class=\"flex gap-2 items-center text-xs text-[#A3A3A3] italic animate-pulse py-1\"><div class=\"w-1.5 h-1.5 rounded-full bg-[#06b6d4]\"></div><span>FitBuddy AI is thinking...</span></div>';
+      if (chatContainer) {
+        chatContainer.insertAdjacentHTML('beforeend', typingHtml);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+      if (homeChatContainer) {
+        homeChatContainer.insertAdjacentHTML('beforeend', typingHtml);
+        homeChatContainer.scrollTop = homeChatContainer.scrollHeight;
+      }
+
+      let assistantReply = null;
+
+      // 1. Check if backend API is available
+      const apiUrl = window.FITBUDDY_API_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:8000' : null);
+
+      if (apiUrl) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          const token = localStorage.getItem('fitbuddy_token') || (user && user.token ? user.token : null);
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) headers['Authorization'] = 'Bearer ' + token;
+
+          const res = await fetch(apiUrl + '/chat/message', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              message: text,
+              session_id: user.sessionId || ('session_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : 'guest'))
+            }),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            const data = await res.json();
+            assistantReply = data.assistant_reply || data.reply || data.message || data.content;
+          }
+        } catch (fetchErr) {
+          // Backend API offline or timed out; fallback to client smart engine
+        }
+      }
+
+      // 2. Fallback to client smart nutrition & fitness engine
+      if (!assistantReply) {
+        await new Promise(r => setTimeout(r, 250));
+        assistantReply = generateAIResponse(text, user);
+      }
+
+      // Remove typing indicators
+      const t1 = document.getElementById(typingId);
+      if (t1) t1.remove();
+      const t2 = document.getElementById(typingId);
+      if (t2) t2.remove();
+
+      // Append assistant reply
+      updateActiveUser(u => {
+        u.chatHistory.push({
+          role: 'assistant',
+          text: assistantReply,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
-        renderChatMessages();
-      }, 350);
+      });
+      renderChatMessages();
     }
 
     function toggleMobileSidebar() {

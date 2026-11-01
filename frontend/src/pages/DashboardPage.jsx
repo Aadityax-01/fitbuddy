@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Flame,
@@ -89,8 +89,8 @@ export default function DashboardPage() {
     setIsTyping(true);
 
     try {
-      const res = await chatApi.sendMessage(q, profile);
-      const replyText = res?.reply || res?.message || (
+      const res = await chatApi.sendMessage(q, 'dashboard_session', profile);
+      const replyText = res?.assistant_reply || res?.content || res?.reply || res?.message || (
         q.toLowerCase().includes('protein') && q.toLowerCase().includes('egg')
           ? "4 large whole eggs contain approximately 25–26g of protein.\n• Protein: 25–26g\n• Calories: 288 kcal\n• Fat: 19–20g\n• Carbohydrates: ~1.6g\nValues depend on egg size."
           : `Based on your fitness profile, maintaining progressive overload and aiming for ~${macros.protein}g protein daily will optimize your results!`

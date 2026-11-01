@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   Bot,
   Send,
@@ -65,7 +65,7 @@ export default function ChatbotPage() {
       const aiMsg = {
         id: `ai_${Date.now()}`,
         role: 'assistant',
-        content: response?.content || response?.response || "I'm here to support your fitness journey! Let me know if you need specific diet or workout advice.",
+        content: response?.assistant_reply || response?.content || response?.response || response?.reply || "I'm here to support your fitness journey! Let me know if you need specific diet or workout advice.",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 

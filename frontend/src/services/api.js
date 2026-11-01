@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -25,8 +25,13 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('fitbuddy_user');
-      window.location.href = '/login';
+      const user = (() => {
+        try { return JSON.parse(localStorage.getItem('fitbuddy_user')); } catch { return null; }
+      })();
+      if (user && !user.isGuest && user.token) {
+        localStorage.removeItem('fitbuddy_user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }
@@ -38,11 +43,8 @@ const safeCall = async (fn, fallback) => {
     const res = await fn();
     return res.data;
   } catch (err) {
-    if (process.env.NODE_ENV === 'development' || !navigator.onLine) {
-      console.warn('API unavailable, using demo data');
-      return typeof fallback === 'function' ? fallback() : fallback;
-    }
-    throw err;
+    console.warn('API unavailable or request failed; utilizing fallback engine:', err.message);
+    return typeof fallback === 'function' ? fallback() : fallback;
   }
 };
 

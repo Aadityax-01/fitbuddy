@@ -41,13 +41,25 @@ app = FastAPI(
 )
 
 # ── CORS Middleware ─────────────────────────────────────────────────────────
-origins = settings.ALLOWED_ORIGINS
-if "*" not in origins:
-    origins = origins + ["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000"]
+origins = list(settings.ALLOWED_ORIGINS)
+for o in [
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://aadityax-01.github.io",
+]:
+    if o not in origins:
+        origins.append(o)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all for development & testing
+    allow_origins=origins,
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

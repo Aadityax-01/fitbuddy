@@ -15,7 +15,7 @@ from app.database import get_db
 from app.models.fitness import ChatHistory
 from app.models.user import User
 from app.services.ai_service import CHAT_SYSTEM_PROMPT_TEMPLATE, chat_response
-from app.utils.auth import get_current_user
+from app.utils.auth import get_current_user, get_optional_current_user
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -44,9 +44,8 @@ class ChatHistoryResponse(BaseModel):
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-def _build_system_prompt(user: User) -> str:
-    profile_parts = []
-    if user.profile:
+def _build_system_prompt(user: Optional[User]) -> str:
+    if user and user.profile:
         p = user.profile
         profile_parts = [
             f"Name: {user.name}",
@@ -58,8 +57,10 @@ def _build_system_prompt(user: User) -> str:
             f"Diet: {p.diet_type or 'unknown'}",
             f"Activity: {p.activity_level or 'unknown'}",
         ]
-    else:
+    elif user:
         profile_parts = [f"Name: {user.name}"]
+    else:
+        profile_parts = ["Name: Guest Athlete (Guest Mode, full feature access)"]
 
     profile_str = ", ".join(profile_parts)
     return CHAT_SYSTEM_PROMPT_TEMPLATE.format(profile=profile_str)
@@ -87,50 +88,56 @@ def _get_or_create_session(db: Session, user_id: int, session_id: Optional[str])
 @router.post("/message", response_model=ChatMessageResponse, status_code=status.HTTP_200_OK)
 def send_message(
     payload: ChatMessageRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db),
 ):
     """
     Send a chat message and receive an AI response.
-    The full conversation history is maintained per session_id.
+    Full access supported for both guest visitors and registered users.
     """
-    history = _get_or_create_session(db, current_user.id, payload.session_id)
+    session_id = payload.session_id or str(uuid.uuid4())
+    messages: List[Dict[str, str]] = []
 
-    # Load existing messages
-    messages: List[Dict[str, str]] = json.loads(history.messages_json)
-
-    # Append user message
-    messages.append({"role": "user", "content": payload.message})
-
-    # Build system prompt with user profile
-    system_prompt = _build_system_prompt(current_user)
-
-    # Get AI reply
-    reply = chat_response(messages, system_prompt)
-
-    # Append assistant reply
-    messages.append({"role": "assistant", "content": reply})
-
-    # Persist (keep last 50 messages to avoid DB bloat)
-    history.messages_json = json.dumps(messages[-50:])
-    db.commit()
-    db.refresh(history)
+    if current_user:
+        history = _get_or_create_session(db, current_user.id, session_id)
+        messages = json.loads(history.messages_json)
+        messages.append({"role": "user", "content": payload.message})
+        system_prompt = _build_system_prompt(current_user)
+        reply = chat_response(messages, system_prompt)
+        messages.append({"role": "assistant", "content": reply})
+        history.messages_json = json.dumps(messages[-50:])
+        db.commit()
+        db.refresh(history)
+        created_at = history.created_at
+    else:
+        # Unrestricted Guest Mode
+        messages.append({"role": "user", "content": payload.message})
+        system_prompt = _build_system_prompt(None)
+        reply = chat_response(messages, system_prompt)
+        created_at = datetime.utcnow()
 
     return ChatMessageResponse(
-        session_id=history.session_id,
+        session_id=session_id,
         user_message=payload.message,
         assistant_reply=reply,
-        created_at=history.created_at,
+        created_at=created_at,
     )
 
 
 @router.get("/history/{session_id}", response_model=ChatHistoryResponse)
 def get_history(
     session_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db),
 ):
     """Retrieve the full message history for a chat session."""
+    if not current_user:
+        return ChatHistoryResponse(
+            session_id=session_id,
+            messages=[],
+            created_at=datetime.utcnow(),
+        )
+
     history = db.query(ChatHistory).filter(
         ChatHistory.user_id == current_user.id,
         ChatHistory.session_id == session_id,
@@ -148,10 +155,13 @@ def get_history(
 @router.delete("/history/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_history(
     session_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db),
 ):
     """Delete all messages in a chat session."""
+    if not current_user:
+        return
+
     history = db.query(ChatHistory).filter(
         ChatHistory.user_id == current_user.id,
         ChatHistory.session_id == session_id,
