@@ -399,7 +399,7 @@
                 <button onclick="startGuestSession('coach'); askCoachPrompt('How much protein in 4 eggs?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
                   🥚 Protein in 4 eggs?
                 </button>
-                <button onclick="startGuestSession('coach'); askCoachPrompt('What's the best time to work out?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
+                <button onclick="startGuestSession('coach'); askCoachPrompt('What is the best time to work out?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
                   🔥 What's the best time to work out?
                 </button>
                 <button onclick="startGuestSession('coach'); askCoachPrompt('Vegetarian muscle gain diet')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
@@ -584,7 +584,7 @@
                 <button onclick="askCoachPrompt('How much protein in 4 eggs?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
                   🥚 Protein in 4 eggs?
                 </button>
-                <button onclick="askCoachPrompt('What's the best time to work out?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
+                <button onclick="askCoachPrompt('What is the best time to work out?')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
                   🔥 What's the best time to work out?
                 </button>
                 <button onclick="askCoachPrompt('Vegetarian muscle gain diet')" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#030712] border border-[#1e293b] text-[#C4C4C4] hover:text-white hover:border-[#06b6d4] transition-all">
@@ -1385,16 +1385,24 @@
     }
 
     function updateActiveUser(mutator) {
-      const activeKey = getActiveUserEmail();
-      if (activeKey && (activeKey.toLowerCase() === '__guest__' || activeKey === '__GUEST__')) {
+      let activeKey = getActiveUserEmail();
+      if (!activeKey) {
+        setActiveUserEmail('__guest__');
+        activeKey = '__guest__';
+      }
+      if (activeKey.toLowerCase() === '__guest__' || activeKey === '__GUEST__') {
         const guest = getGuestData();
         mutator(guest);
         saveGuestData(guest);
         return guest;
       }
-      if (!activeKey) return null;
       const db = getUsersDb();
-      if (!db[activeKey]) return null;
+      if (!db[activeKey]) {
+        const guest = getGuestData();
+        mutator(guest);
+        saveGuestData(guest);
+        return guest;
+      }
       mutator(db[activeKey]);
       saveUsersDb(db);
       return db[activeKey];
@@ -2172,10 +2180,15 @@
       if (e) e.preventDefault();
       const hp = document.getElementById('homepage-coach-input');
       const cp = document.getElementById('coach-input');
-      const text = (hp && hp.value.trim()) ? hp.value.trim() : (cp ? cp.value.trim() : '');
+      const pp = document.getElementById('public-coach-input');
+      const text = (hp && hp.value.trim()) ? hp.value.trim() : (cp && cp.value.trim() ? cp.value.trim() : (pp && pp.value.trim() ? pp.value.trim() : ''));
       if (!text) return;
 
-      const user = getActiveUser();
+      let user = getActiveUser();
+      if (!user) {
+        setActiveUserEmail('__guest__');
+        user = getActiveUser();
+      }
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       // Append user msg
@@ -2186,31 +2199,31 @@
 
       if (hp) hp.value = '';
       if (cp) cp.value = '';
+      if (pp) pp.value = '';
       renderChatMessages();
 
       // Show typing indicator in UI
       const typingId = 'typing_' + Date.now();
-      const chatContainer = document.getElementById('coach-messages');
-      const homeChatContainer = document.getElementById('homepage-coach-messages');
+      const containers = [
+        document.getElementById('chat-messages'),
+        document.getElementById('homepage-chat-messages')
+      ].filter(Boolean);
+
       const typingHtml = '<div id=\"' + typingId + '\" class=\"flex gap-2 items-center text-xs text-[#A3A3A3] italic animate-pulse py-1\"><div class=\"w-1.5 h-1.5 rounded-full bg-[#06b6d4]\"></div><span>FitBuddy AI is thinking...</span></div>';
-      if (chatContainer) {
-        chatContainer.insertAdjacentHTML('beforeend', typingHtml);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-      if (homeChatContainer) {
-        homeChatContainer.insertAdjacentHTML('beforeend', typingHtml);
-        homeChatContainer.scrollTop = homeChatContainer.scrollHeight;
-      }
+      containers.forEach(c => {
+        c.insertAdjacentHTML('beforeend', typingHtml);
+        c.scrollTop = c.scrollHeight;
+      });
 
       let assistantReply = null;
 
       // 1. Check if backend API is available
-      const apiUrl = window.FITBUDDY_API_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:8000' : null);
+      const apiUrl = window.FITBUDDY_API_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? (window.location.port === '5000' ? 'http://localhost:5000' : 'http://localhost:8000') : null);
 
       if (apiUrl) {
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
           const token = localStorage.getItem('fitbuddy_token') || (user && user.token ? user.token : null);
           const headers = { 'Content-Type': 'application/json' };
           if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -2220,7 +2233,7 @@
             headers: headers,
             body: JSON.stringify({
               message: text,
-              session_id: user.sessionId || ('session_' + (user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : 'guest'))
+              session_id: (user && user.sessionId) ? user.sessionId : ('session_' + (user && user.email ? user.email.replace(/[^a-zA-Z0-9]/g, '_') : 'guest'))
             }),
             signal: controller.signal
           });
@@ -2237,18 +2250,16 @@
 
       // 2. Fallback to client smart nutrition & fitness engine
       if (!assistantReply) {
-        await new Promise(r => setTimeout(r, 250));
+        await new Promise(r => setTimeout(r, 200));
         assistantReply = generateAIResponse(text, user);
       }
 
       // Remove typing indicators
-      const t1 = document.getElementById(typingId);
-      if (t1) t1.remove();
-      const t2 = document.getElementById(typingId);
-      if (t2) t2.remove();
+      document.querySelectorAll('#' + typingId).forEach(el => el.remove());
 
       // Append assistant reply
       updateActiveUser(u => {
+        if (!u.chatHistory) u.chatHistory = [];
         u.chatHistory.push({
           role: 'assistant',
           text: assistantReply,
